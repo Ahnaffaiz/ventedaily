@@ -1,0 +1,55 @@
+<?php
+
+namespace App\Models;
+
+use Illuminate\Database\Eloquent\Factories\HasFactory;
+use Illuminate\Database\Eloquent\Model;
+
+class ProductStock extends Model
+{
+    use HasFactory;
+
+    protected $fillable = [
+        'product_id',
+        'size_id',
+        'color_id',
+        'all_stock',
+        'home_stock',
+        'qc_stock',
+        'storage_stock',
+        'vermak_stock',
+        'selling_price',
+        'purchase_price',
+        'status',
+    ];
+
+    public function product()
+    {
+        return $this->belongsTo(Product::class);
+    }
+
+    public function size()
+    {
+        return $this->belongsTo(Size::class);
+    }
+
+    public function color()
+    {
+        return $this->belongsTo(Color::class);
+    }
+
+    public function purchaseItems()
+    {
+        return $this->hasMany(PurchaseItem::class);
+    }
+
+    public function keepProducts()
+    {
+        return $this->hasMany(KeepProduct::class);
+    }
+
+    public function saleItems()
+    {
+        return $this->hasMany(SaleItem::class);
+    }
+}

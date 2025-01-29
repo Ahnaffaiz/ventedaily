@@ -65,11 +65,13 @@ class Color extends Component
 
     public function openModal()
     {
+        $this->reset();
         $this->isOpen = true;
     }
 
     public function closeModal()
     {
+        $this->reset();
         $this->isOpen = false;
     }
 
@@ -77,7 +79,6 @@ class Color extends Component
     {
         $this->validate($this->rules);
         ModelsColor::firstOrCreate(['name' => $this->name],['desc'=>$this->desc]);
-        $this->reset();
         $this->closeModal();
         $this->alert('success', 'Color Succesfully Created');
     }
@@ -87,7 +88,7 @@ class Color extends Component
         $this->color = ModelsColor::find($color);
         $this->name = $this->color->name;
         $this->desc = $this->color->desc;
-        $this->openModal();
+        $this->isOpen = true;
     }
 
     public function update() {
@@ -96,7 +97,6 @@ class Color extends Component
             'desc' => $this->desc,
             'updated_at' => Carbon::now()
         ]);
-        $this->reset();
         $this->closeModal();
         $this->alert('success', 'Color Successfully Updated');
     }

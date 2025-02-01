@@ -40,11 +40,15 @@
 
 
             <li class="menu-item">
+                @php
+                    $activeRoutes = ['product', 'category', 'color', 'size', 'create-product'];
+                    $isActive = in_array(request()->route()->getName(), $activeRoutes);
+                @endphp
                 <a href="javascript:void(0)" data-fc-type="collapse" class="menu-link">
                     <span class="menu-icon">
-                        <i class="ri-shirt-line"></i>
+                        <i class="ri-shirt-line {{ $isActive ? 'text-white font-bold' : 'text-gray-300' }}"></i>
                     </span>
-                    <span class="menu-text"> Product </span>
+                    <span class="menu-text {{ $isActive ? 'text-white font-bold' : 'text-gray-300' }}"> Product </span>
                     <span class="menu-arrow"></span>
                 </a>
 
@@ -55,6 +59,7 @@
                     <x-menu-item activeRoute="size" text="Size" />
                 </ul>
             </li>
+            <x-menu-item activeRoute="supplier" text="Supplier" iconClass="ri-user-line" />
         </ul>
 
     </div>

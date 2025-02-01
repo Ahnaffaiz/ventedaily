@@ -46,30 +46,14 @@
         </div>
         <div class="overflow-x-auto">
             <table class="min-w-full divide-y divide-gray-200 dark:divide-gray-700">
-                <thead>
-                    <tr>
-                        <th scope="col" class="px-4 py-4 text-sm font-medium text-center text-gray-500">No</th>
-                        <th scope="col" class="px-4 py-4 text-sm font-medium text-gray-500 text-start"
-                            wire:click="sortByColumn('name')">
-                            Name
-                            @if ($sortBy === 'name')
-                                @if ($sortDirection === 'asc')
-                                    <i class="ri-arrow-up-s-line"></i>
-                                @else
-                                    <i class="ri-arrow-down-s-line"></i>
-                                @endif
-                            @else
-                                <i class="ri-expand-up-down-line"></i>
-                            @endif
-                        </th>
-                        @if ($showColumns['desc'])
-                            <th scope="col" class="px-4 py-4 text-sm font-medium text-gray-500 text-start">Desc</th>
-                        @endif
-                        @if ($showColumns['created_at'])
+                @if ($colors->count() > 0)
+                    <thead>
+                        <tr>
+                            <th scope="col" class="px-4 py-4 text-sm font-medium text-center text-gray-500">No</th>
                             <th scope="col" class="px-4 py-4 text-sm font-medium text-gray-500 text-start"
-                                wire:click="sortByColumn('created_at')">
-                                Created at
-                                @if ($sortBy === 'created_at')
+                                wire:click="sortByColumn('name')">
+                                Name
+                                @if ($sortBy === 'name')
                                     @if ($sortDirection === 'asc')
                                         <i class="ri-arrow-up-s-line"></i>
                                     @else
@@ -79,60 +63,83 @@
                                     <i class="ri-expand-up-down-line"></i>
                                 @endif
                             </th>
-                        @endif
-                        @if ($showColumns['updated_at'])
-                            <th scope="col" class="px-4 py-4 text-sm font-medium text-gray-500 text-start"
-                                wire:click="sortByColumn('updated_at')">
-                                Updated at
-                                @if ($sortBy === 'updated_at')
-                                    @if ($sortDirection === 'asc')
-                                        <i class="ri-arrow-up-s-line"></i>
-                                    @else
-                                        <i class="ri-arrow-down-s-line"></i>
-                                    @endif
-                                @else
-                                    <i class="ri-expand-up-down-line"></i>
-                                @endif
-                            </th>
-                        @endif
-                        <th scope="col" class="justify-end px-4 py-4 pr-3 text-sm font-medium text-gray-500">
-                            Action</th>
-                    </tr>
-                </thead>
-                <tbody class="divide-y divide-gray-200 dark:divide-gray-700">
-                    @foreach ($colors as $color)
-                        <tr class="bg-gray-50 dark:bg-gray-900">
-                            <th class="px-4 py-4 text-sm text-gray-500 whitespace-nowrap dark:text-gray-200">
-                                {{($colors->currentpage() - 1) * $colors->perpage() + $loop->index + 1}}
-                            </th>
-                            <td class="px-4 py-4 text-sm text-gray-500 whitespace-nowrap dark:text-gray-200">
-                                {{ $color->name }}
-                            </td>
                             @if ($showColumns['desc'])
-                                <td class="px-4 py-4 text-sm text-gray-500 whitespace-nowrap dark:text-gray-200">
-                                    {{ $color->desc }}
-                                </td>
+                                <th scope="col" class="px-4 py-4 text-sm font-medium text-gray-500 text-start">Desc</th>
                             @endif
                             @if ($showColumns['created_at'])
-                                <td class="px-4 py-4 text-sm text-gray-500 whitespace-nowrap dark:text-gray-200">
-                                    {{ $color->created_at }}
-                                </td>
+                                <th scope="col" class="px-4 py-4 text-sm font-medium text-gray-500 text-start"
+                                    wire:click="sortByColumn('created_at')">
+                                    Created at
+                                    @if ($sortBy === 'created_at')
+                                        @if ($sortDirection === 'asc')
+                                            <i class="ri-arrow-up-s-line"></i>
+                                        @else
+                                            <i class="ri-arrow-down-s-line"></i>
+                                        @endif
+                                    @else
+                                        <i class="ri-expand-up-down-line"></i>
+                                    @endif
+                                </th>
                             @endif
                             @if ($showColumns['updated_at'])
-                                <td class="px-4 py-4 text-sm text-gray-500 whitespace-nowrap dark:text-gray-200">
-                                    {{ $color->updated_at }}
-                                </td>
+                                <th scope="col" class="px-4 py-4 text-sm font-medium text-gray-500 text-start"
+                                    wire:click="sortByColumn('updated_at')">
+                                    Updated at
+                                    @if ($sortBy === 'updated_at')
+                                        @if ($sortDirection === 'asc')
+                                            <i class="ri-arrow-up-s-line"></i>
+                                        @else
+                                            <i class="ri-arrow-down-s-line"></i>
+                                        @endif
+                                    @else
+                                        <i class="ri-expand-up-down-line"></i>
+                                    @endif
+                                </th>
                             @endif
-                            <td class="px-4 py-4">
-                                <div class="flex items-center justify-center pr-4 space-x-3">
-                                    <button wire:click="edit({{ $color->id }})"><i class="ri-edit-circle-line"></i></button>
-                                    <button wire:click="deleteAlert({{ $color->id }})"><i
-                                            class="text-base ri-delete-bin-2-line"></i></button>
-                                </div>
-                            </td>
+                            <th scope="col" class="justify-end px-4 py-4 pr-3 text-sm font-medium text-gray-500">
+                                Action</th>
                         </tr>
-                    @endforeach
-                </tbody>
+                    </thead>
+                    <tbody class="divide-y divide-gray-200 dark:divide-gray-700">
+                        @foreach ($colors as $color)
+                            <tr class="bg-gray-50 dark:bg-gray-900">
+                                <th class="px-4 py-4 text-sm text-gray-500 whitespace-nowrap dark:text-gray-200">
+                                    {{($colors->currentpage() - 1) * $colors->perpage() + $loop->index + 1}}
+                                </th>
+                                <td class="px-4 py-4 text-sm text-gray-500 whitespace-nowrap dark:text-gray-200">
+                                    {{ $color->name }}
+                                </td>
+                                @if ($showColumns['desc'])
+                                    <td class="px-4 py-4 text-sm text-gray-500 whitespace-nowrap dark:text-gray-200">
+                                        {{ $color->desc }}
+                                    </td>
+                                @endif
+                                @if ($showColumns['created_at'])
+                                    <td class="px-4 py-4 text-sm text-gray-500 whitespace-nowrap dark:text-gray-200">
+                                        {{ $color->created_at }}
+                                    </td>
+                                @endif
+                                @if ($showColumns['updated_at'])
+                                    <td class="px-4 py-4 text-sm text-gray-500 whitespace-nowrap dark:text-gray-200">
+                                        {{ $color->updated_at }}
+                                    </td>
+                                @endif
+                                <td class="px-4 py-4">
+                                    <div class="flex items-center justify-center pr-4 space-x-3">
+                                        <button wire:click="edit({{ $color->id }})"><i class="ri-edit-circle-line"></i></button>
+                                        <button wire:click="deleteAlert({{ $color->id }})"><i
+                                                class="text-base ri-delete-bin-2-line"></i></button>
+                                    </div>
+                                </td>
+                            </tr>
+                        @endforeach
+                    </tbody>
+                @else
+                    <div class="text-center">
+                        <i class="text-4xl ri-file-warning-line"></i>
+                        <p class="my-5 text-base">No Category Found</p>
+                    </div>
+                @endif
             </table>
         </div>
 

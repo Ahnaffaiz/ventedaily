@@ -1,21 +1,11 @@
 <div>
-    <x-modal wire:model="isOpen" title="{{ $product ? 'Edit ' . $product?->name : 'Create Product' }}"
-        saveButton="{{ $product ? 'update' : 'save' }}" closeButton="closeModal"
-        large="{{ $isProductStock ? true : false}}">
-        @if ($isProductStock)
-            @livewire('product.product-stock', ['product' => $product], key($product->id))
-        @else
-            <div>
-                <x-input-text name="name" id="name" title="Name" placeholder="Input Product Name Here" />
-                <x-input-text name="imei" id="imei" title="Barcode Imei" placeholder="Input Imei Barcode Here" />
-                <x-input-select id="category_id" name="category_id" title="Category" placeholder="Select Category"
-                    :options="App\Models\Category::all()->pluck('name', 'id')->toArray()" />
-                <x-input-select id="status" name="status" title="Product Status"
-                    :options="App\Enums\ProductStatus::asSelectArray()" placeholder="Select status" />
-                <x-input-switch id="is_favorite" name="is_favorite" title="Favorite" />
-                <x-textarea-input id="desc" name="desc" title="Description" />
-            </div>
-        @endif
+    <x-modal wire:model="isOpen" title="{{ $supplier ? 'Edit ' . $supplier?->name : 'Create Supplier' }}"
+        saveButton="{{ $supplier ? 'update' : 'save' }}" closeButton="closeModal">
+        <form>
+            <x-input-text id="name" name="name" title="Name" />
+            <x-input-text id="phone" name="phone" title="Phone" type="tel" prepend="+62" />
+            <x-textarea-input id="address" name="address" title="Address" />
+        </form>
     </x-modal>
     <div class="relative mt-4 overflow-hidden bg-white shadow-md dark:bg-gray-800 sm:rounded-lg">
         <div class="flex items-center justify-between p-4 d">
@@ -33,15 +23,15 @@
                 </div>
                 <div class="relative ms-auto">
                     <button data-fc-type="dropdown" data-fc-placement="bottom-end" type="button"
-                        class="flex items-center py-2 pl-3 pr-2 text-sm font-medium text-gray-500 bg-white border border-gray-300 rounded-md shadow-sm dark:border-gray-500 dark:bg-gray-700 hover:bg-gray-50 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-indigo-500"
+                        class="flex items-center py-2 pl-3 pr-2 text-sm font-medium text-gray-500 bg-white border border-gray-300 rounded-md shadow-sm hover:bg-gray-50 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-indigo-500"
                         id="menu-button" aria-expanded="true" aria-haspopup="true">
                         <i class="mr-2 ri-filter-line"></i>
                     </button>
-                    <div class="absolute right-0 z-10 hidden w-56 mt-2 origin-top-right bg-white divide-y divide-gray-100 rounded-md shadow-lg dark:divide-gray-600 dark:bg-gray-700 ring-1 ring-black ring-opacity-5 focus:outline-none"
+                    <div class="absolute right-0 z-10 hidden w-56 mt-2 origin-top-right bg-white divide-y divide-gray-100 rounded-md shadow-lg ring-1 ring-black ring-opacity-5 focus:outline-none"
                         role="menu" aria-orientation="vertical" aria-labelledby="menu-button" tabindex="-1">
                         <div class="py-1" role="none">
                             @foreach ($showColumns as $column => $isVisible)
-                                <div class="flex items-center px-4 py-2 text-sm text-gray-700 hover:bg-gray-100 dark:hover:bg-gray-900 hover:text-gray-900"
+                                <div class="flex items-center px-4 py-2 text-sm text-gray-700 hover:bg-gray-100 hover:text-gray-900"
                                     role="menuitem" tabindex="-1" id="menu-item-0">
                                     <input type="checkbox" class="w-4 h-4 text-indigo-600 form-checkbox"
                                         wire:model.live="showColumns.{{ $column }}">
@@ -57,7 +47,7 @@
         </div>
         <div class="overflow-x-auto">
             <table class="min-w-full divide-y divide-gray-200 dark:divide-gray-700">
-                @if ($products->count() > 0)
+                @if ($suppliers->count() > 0)
                     <thead>
                         <tr>
                             <th scope="col" class="px-4 py-4 text-sm font-medium text-center text-gray-500">No</th>
@@ -74,61 +64,14 @@
                                     <i class="ri-expand-up-down-line"></i>
                                 @endif
                             </th>
-                            @if ($showColumns['category_id'])
-                                <th scope="col" class="px-4 py-4 text-sm font-medium text-gray-500 text-start"
-                                    wire:click="sortByColumn('category_id')">
-                                    Category
-                                    @if ($sortBy === 'category_id')
-                                        @if ($sortDirection === 'asc')
-                                            <i class="ri-arrow-up-s-line"></i>
-                                        @else
-                                            <i class="ri-arrow-down-s-line"></i>
-                                        @endif
-                                    @else
-                                        <i class="ri-expand-up-down-line"></i>
-                                    @endif
-                                </th>
+                            @if ($showColumns['phone'])
+                                <th scope="col" class="px-4 py-4 text-sm font-medium text-gray-500 text-start">Phone</th>
                             @endif
-                            @if ($showColumns['status'])
+                            @if ($showColumns['address'])
                                 <th scope="col" class="px-4 py-4 text-sm font-medium text-gray-500 text-start"
-                                    wire:click="sortByColumn('status')">
-                                    Status
-                                    @if ($sortBy === 'status')
-                                        @if ($sortDirection === 'asc')
-                                            <i class="ri-arrow-up-s-line"></i>
-                                        @else
-                                            <i class="ri-arrow-down-s-line"></i>
-                                        @endif
-                                    @else
-                                        <i class="ri-expand-up-down-line"></i>
-                                    @endif
-                                </th>
-                            @endif
-                            @if ($showColumns['imei'])
-                                <th scope="col" class="px-4 py-4 text-sm font-medium text-gray-500 text-start"
-                                    wire:click="sortByColumn('imei')">
-                                    Barcode Imei
-                                    @if ($sortBy === 'imei')
-                                        @if ($sortDirection === 'asc')
-                                            <i class="ri-arrow-up-s-line"></i>
-                                        @else
-                                            <i class="ri-arrow-down-s-line"></i>
-                                        @endif
-                                    @else
-                                        <i class="ri-expand-up-down-line"></i>
-                                    @endif
-                                </th>
-                            @endif
-                            @if ($showColumns['is_favorite'])
-                                <th scope="col" class="px-4 py-4 text-sm font-medium text-gray-500 text-start">
-                                    Favorite
-                                </th>
-                            @endif
-                            @if ($showColumns['code'])
-                                <th scope="col" class="px-4 py-4 text-sm font-medium text-gray-500 text-start"
-                                    wire:click="sortByColumn('code')">
-                                    Code
-                                    @if ($sortBy === 'code')
+                                    wire:click="sortByColumn('address')">
+                                    Created at
+                                    @if ($sortBy === 'address')
                                         @if ($sortDirection === 'asc')
                                             <i class="ri-arrow-up-s-line"></i>
                                         @else
@@ -174,60 +117,39 @@
                         </tr>
                     </thead>
                     <tbody class="divide-y divide-gray-200 dark:divide-gray-700">
-                        @foreach ($products as $product)
+                        @foreach ($suppliers as $supplier)
                             <tr class="bg-gray-50 dark:bg-gray-900">
                                 <th class="px-4 py-4 text-sm text-gray-500 whitespace-nowrap dark:text-gray-200">
-                                    {{($products->currentpage() - 1) * $products->perpage() + $loop->index + 1}}
+                                    {{($suppliers->currentpage() - 1) * $suppliers->perpage() + $loop->index + 1}}
                                 </th>
                                 <td class="px-4 py-4 text-sm text-gray-500 whitespace-nowrap dark:text-gray-200">
-                                    {{ $product->name }}
+                                    {{ $supplier->name }}
                                 </td>
-                                @if ($showColumns['category_id'])
+                                @if ($showColumns['phone'])
                                     <td class="px-4 py-4 text-sm text-gray-500 whitespace-nowrap dark:text-gray-200">
-                                        {{ $product->category->name }}
+                                        {{ $supplier->phone }}
                                     </td>
                                 @endif
-                                @if ($showColumns['status'])
+                                @if ($showColumns['address'])
                                     <td class="px-4 py-4 text-sm text-gray-500 whitespace-nowrap dark:text-gray-200">
-                                        {{ $product->status }}
-                                    </td>
-                                @endif
-                                @if ($showColumns['imei'])
-                                    <td class="px-4 py-4 text-sm text-gray-500 whitespace-nowrap dark:text-gray-200">
-                                        {{ $product->imei }}
-                                    </td>
-                                @endif
-                                @if ($showColumns['is_favorite'])
-                                    <td class="px-4 py-4 text-sm text-gray-500 whitespace-nowrap dark:text-gray-200">
-                                        @if ($product->is_favorite)
-                                            <i class="text-xl text-center ri-check-double-line text-success"></i>
-                                        @else
-                                            <i class="text-xl text-center text-gray-400 ri-close-line"></i>
-                                        @endif
-                                    </td>
-                                @endif
-                                @if ($showColumns['code'])
-                                    <td class="px-4 py-4 text-sm text-gray-500 whitespace-nowrap dark:text-gray-200">
-                                        {{ $product->code }}
+                                        {{ $supplier->address }}
                                     </td>
                                 @endif
                                 @if ($showColumns['created_at'])
                                     <td class="px-4 py-4 text-sm text-gray-500 whitespace-nowrap dark:text-gray-200">
-                                        {{ $product->created_at }}
+                                        {{ $supplier->created_at }}
                                     </td>
                                 @endif
                                 @if ($showColumns['updated_at'])
                                     <td class="px-4 py-4 text-sm text-gray-500 whitespace-nowrap dark:text-gray-200">
-                                        {{ $product->updated_at }}
+                                        {{ $supplier->updated_at }}
                                     </td>
                                 @endif
                                 <td class="px-4 py-4">
                                     <div class="flex items-center justify-center pr-4 space-x-3">
-                                        <button wire:click="addProductStock({{ $product->id }})" class="text-primary"><i
-                                                class="ri-add-circle-line"></i></button>
-                                        <button wire:click="edit({{ $product->id }})" class="text-info"><i
+                                        <button wire:click="edit({{ $supplier->id }})"><i
                                                 class="ri-edit-circle-line"></i></button>
-                                        <button wire:click="deleteAlert({{ $product->id }})" class="text-danger"><i
+                                        <button wire:click="deleteAlert({{ $supplier->id }})"><i
                                                 class="text-base ri-delete-bin-2-line"></i></button>
                                     </div>
                                 </td>
@@ -237,7 +159,7 @@
                 @else
                     <div class="text-center">
                         <i class="text-4xl ri-file-warning-line"></i>
-                        <p class="my-5 text-base">No Product Found</p>
+                        <p class="my-5 text-base">No Supplier Found</p>
                     </div>
                 @endif
             </table>
@@ -257,7 +179,7 @@
                         <option value="100">100</option>
                     </select>
                 </div>
-                {{ $products->links(data: ['scrollTo' => false]) }}
+                {{ $suppliers->links(data: ['scrollTo' => false]) }}
             </div>
         </div>
     </div>

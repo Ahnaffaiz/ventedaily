@@ -2,6 +2,7 @@
 
 namespace App\Models;
 
+use App\Enums\ProductStatus;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 
@@ -18,6 +19,10 @@ class Product extends Model
         'category_id',
         'desc',
     ];
+
+protected $casts = [
+    'status' => ProductStatus::class,
+];
 
     public function category()
     {

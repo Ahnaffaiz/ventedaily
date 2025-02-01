@@ -53,7 +53,7 @@
             <!-- item-->
             <a href="javascript:void(0);"
                 class="flex items-center px-3 py-2 text-sm text-gray-800 hover:bg-gray-100 dark:text-gray-400 dark:hover:bg-gray-700 dark:hover:text-gray-300">
-                <img class="h-8 rounded-full me-2" src="assets/images/users/avatar-2.jpg"
+                <img class="h-8 rounded-full me-2" src="{{ asset('assets/images/users/avatar-2.jpg') }}"
                     alt="Generic placeholder image">
                 <div class="flex-grow">
                     <h5 class="m-0 fs-14">Erwin Brown</h5>
@@ -64,7 +64,7 @@
             <!-- item-->
             <a href="javascript:void(0);"
                 class="flex items-center px-3 py-2 text-sm text-gray-800 hover:bg-gray-100 dark:text-gray-400 dark:hover:bg-gray-700 dark:hover:text-gray-300">
-                <img class="h-8 rounded-full me-2" src="assets/images/users/avatar-5.jpg"
+                <img class="h-8 rounded-full me-2" src="{{ asset('assets/images/users/avatar-5.jpg') }}"
                     alt="Generic placeholder image">
                 <div class="flex-grow">
                     <h5 class="m-0 fs-14">Jacob Deo</h5>
@@ -78,7 +78,7 @@
     <div class="relative ms-auto">
         <button data-fc-type="dropdown" data-fc-placement="bottom-end" type="button" class="p-2 nav-link fc-dropdown">
             <span class="flex items-center gap-2">
-                <img src="assets/images/flags/us.jpg" alt="flag-image" class="h-3">
+                <img src="{{ asset('assets/images/flags/us.jpg') }}" alt="flag-image" class="h-3">
                 <div class="hidden lg:block">
                     <span>English</span>
                     <i class="ri-arrow-down-s-line"></i>
@@ -92,28 +92,28 @@
             <!-- item-->
             <a href="javascript:void(0);"
                 class="flex items-center gap-2.5 py-2 px-3 text-sm text-gray-800 hover:bg-gray-100 dark:text-gray-400 dark:hover:bg-gray-700 dark:hover:text-gray-300">
-                <img src="assets/images/flags/germany.jpg" alt="user-image" class="h-4">
+                <img src="{{ asset('assets/images/flags/germany.jpg') }}" alt="user-image" class="h-4">
                 <span class="align-middle">German</span>
             </a>
 
             <!-- item-->
             <a href="javascript:void(0);"
                 class="flex items-center gap-2.5 py-2 px-3 text-sm text-gray-800 hover:bg-gray-100 dark:text-gray-400 dark:hover:bg-gray-700 dark:hover:text-gray-300">
-                <img src="assets/images/flags/italy.jpg" alt="user-image" class="h-4">
+                <img src="{{ asset('assets/images/flags/italy.jpg') }}" alt="user-image" class="h-4">
                 <span class="align-middle">Italian</span>
             </a>
 
             <!-- item-->
             <a href="javascript:void(0);"
                 class="flex items-center gap-2.5 py-2 px-3 text-sm text-gray-800 hover:bg-gray-100 dark:text-gray-400 dark:hover:bg-gray-700 dark:hover:text-gray-300">
-                <img src="assets/images/flags/spain.jpg" alt="user-image" class="h-4">
+                <img src="{{ asset('assets/images/flags/spain.jpg') }}" alt="user-image" class="h-4">
                 <span class="align-middle">Spanish</span>
             </a>
 
             <!-- item-->
             <a href="javascript:void(0);"
                 class="flex items-center gap-2.5 py-2 px-3 text-sm text-gray-800 hover:bg-gray-100 dark:text-gray-400 dark:hover:bg-gray-700 dark:hover:text-gray-300">
-                <img src="assets/images/flags/russia.jpg" alt="user-image" class="h-4">
+                <img src="{{ asset('assets/images/flags/russia.jpg') }}" alt="user-image" class="h-4">
                 <span class="align-middle">Russian</span>
             </a>
         </div>
@@ -186,7 +186,8 @@
                         class="px-3 py-2 text-sm text-gray-800 hover:bg-gray-100 dark:text-gray-400 dark:hover:bg-gray-700 dark:hover:text-gray-300">
                         <div class="flex items-center">
                             <div class="flex-shrink-0">
-                                <img src="assets/images/users/avatar-2.jpg" class="rounded-full h-9 w-9" alt="">
+                                <img src="{{ asset('assets/images/users/avatar-2.jpg') }}" class="rounded-full h-9 w-9"
+                                    alt="">
                             </div>
                             <div class="flex-grow truncate ms-2">
                                 <h5 class="mb-1 text-sm font-semibold">Cristina Pride <small class="font-normal ms-1">1
@@ -223,7 +224,8 @@
                         class="px-3 py-2 text-sm text-gray-800 hover:bg-gray-100 dark:text-gray-400 dark:hover:bg-gray-700 dark:hover:text-gray-300">
                         <div class="flex items-center">
                             <div class="flex-shrink-0">
-                                <img src="assets/images/users/avatar-4.jpg" class="rounded-full h-9 w-9" alt="">
+                                <img src="{{ asset('assets/images/users/avatar-4.jpg') }}" class="rounded-full h-9 w-9"
+                                    alt="">
                             </div>
                             <div class="flex-grow truncate ms-2">
                                 <h5 class="mb-1 text-sm font-semibold">Karen Robinson</h5>
@@ -255,37 +257,37 @@
             <div class="grid grid-cols-3 gap-3">
                 <a class="flex flex-col items-center justify-center gap-1.5 py-3 px-6 rounded-md text-sm text-gray-800 hover:bg-gray-100 dark:text-gray-400 dark:hover:bg-gray-700 dark:hover:text-gray-300"
                     href="#">
-                    <img src="assets/images/brands/github.png" class="h-6" alt="Github">
+                    <img src="{{ asset('assets/images/brands/github.png') }}" class="h-6" alt="Github">
                     <span>GitHub</span>
                 </a>
 
                 <a class="flex flex-col items-center justify-center gap-1.5 py-3 px-6 rounded-md text-sm text-gray-800 hover:bg-gray-100 dark:text-gray-400 dark:hover:bg-gray-700 dark:hover:text-gray-300"
                     href="#">
-                    <img src="assets/images/brands/bitbucket.png" class="h-6" alt="bitbucket">
+                    <img src="{{ asset('assets/images/brands/bitbucket.png') }}" class="h-6" alt="bitbucket">
                     <span>Bitbucket</span>
                 </a>
 
                 <a class="flex flex-col items-center justify-center gap-1.5 py-3 px-6 rounded-md text-sm text-gray-800 hover:bg-gray-100 dark:text-gray-400 dark:hover:bg-gray-700 dark:hover:text-gray-300"
                     href="#">
-                    <img src="assets/images/brands/dropbox.png" class="h-6" alt="dropbox">
+                    <img src="{{ asset('assets/images/brands/dropbox.png') }}" class="h-6" alt="dropbox">
                     <span>Dropbox</span>
                 </a>
 
                 <a class="flex flex-col items-center justify-center gap-1.5 py-3 px-6 rounded-md text-sm text-gray-800 hover:bg-gray-100 dark:text-gray-400 dark:hover:bg-gray-700 dark:hover:text-gray-300"
                     href="#">
-                    <img src="assets/images/brands/slack.png" class="h-6" alt="slack">
+                    <img src="{{ asset('assets/images/brands/slack.png') }}" class="h-6" alt="slack">
                     <span>Slack</span>
                 </a>
 
                 <a class="flex flex-col items-center justify-center gap-1.5 py-3 px-6 rounded-md text-sm text-gray-800 hover:bg-gray-100 dark:text-gray-400 dark:hover:bg-gray-700 dark:hover:text-gray-300"
                     href="#">
-                    <img src="assets/images/brands/dribbble.png" class="h-6" alt="dribbble">
+                    <img src="{{ asset('assets/images/brands/dribbble.png') }}" class="h-6" alt="dribbble">
                     <span>Dribbble</span>
                 </a>
 
                 <a class="flex flex-col items-center justify-center gap-1.5 py-3 px-6 rounded-md text-sm text-gray-800 hover:bg-gray-100 dark:text-gray-400 dark:hover:bg-gray-700 dark:hover:text-gray-300"
                     href="#">
-                    <img src="assets/images/brands/behance.png" class="h-6" alt="Behance">
+                    <img src="{{ asset('assets/images/brands/behance.png') }}" class="h-6" alt="Behance">
                     <span>Behance</span>
                 </a>
             </div>
@@ -327,7 +329,7 @@
     <div class="relative">
         <button data-fc-type="dropdown" data-fc-placement="bottom-end" type="button"
             class="nav-link flex items-center gap-2.5 px-3 bg-black/5 border-x border-black/10">
-            <img src="assets/images/users/avatar-1.jpg" alt="user-image" class="h-8 rounded-full">
+            <img src="{{ asset('assets/images/users/avatar-1.jpg') }}" alt="user-image" class="h-8 rounded-full">
             <span class="md:flex flex-col gap-0.5 text-start hidden">
                 <h5 class="text-sm">Tosha Minner</h5>
                 <span class="text-xs">Founder</span>

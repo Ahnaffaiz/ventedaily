@@ -1,6 +1,6 @@
 @props(['id', 'name', 'title', 'placeholder' => null, 'class' => null])
 
-<div class="mb-3">
+<div class="mt-2 mb-3">
     <label class="mb-2" for="{{ $id }}">{{ $title }}</label>
     <textarea class="form-input {{ $errors->first($name) ? 'border border-red-500' : '' }}" id="{{ $id }}"
         wire:model="{{ $name }}" rows="5"></textarea>

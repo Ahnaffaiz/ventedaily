@@ -23,7 +23,7 @@ return new class extends Migration
             $table->integer('vermak_stock');
             $table->integer('selling_price');
             $table->integer('purchase_price');
-            $table->integer('status');
+            $table->enum('status', ['ACTIVE', 'DEFAULT', 'ARCHIVE'])->default('DEFAULT');
             $table->timestamps();
         });
     }

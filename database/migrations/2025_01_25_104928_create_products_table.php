@@ -18,7 +18,8 @@ return new class extends Migration
             $table->string('imei', 225);
             $table->string('code', 225);
             $table->boolean('is_favorite')->default(false);
-            $table->integer('status')->default(0);
+            $table->enum('discount_type', ['%', 'rupiah'])->nullable();
+            $table->enum('status', ['ACTIVE', 'DEFAULT', 'ARCHIVE'])->default('DEFAULT');
             $table->foreignId('category_id')->constrained()->onDelete('cascade');
             $table->longText('desc')->nullable();
             $table->timestamps();

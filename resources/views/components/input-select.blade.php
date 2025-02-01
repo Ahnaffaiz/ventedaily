@@ -2,7 +2,8 @@
 
 <div class="mt-3">
     <label class="block mb-2" for="{{ $id }}">{{ $title }}</label>
-    <select class="w-full form-input" wire:model="{{ $name }}" id="{{ $id }}">
+    <select class="w-full form-input {{ $errors->first($name) ? 'border-2 border-danger' : '' }}"
+        wire:model="{{ $name }}" id="{{ $id }}">
         @if ($placeholder)
             <option value="">{{ $placeholder }}</option>
         @endif

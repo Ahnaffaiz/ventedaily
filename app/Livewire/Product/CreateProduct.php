@@ -11,6 +11,7 @@ use Illuminate\Support\Facades\Session;
 use Jantinnerezo\LivewireAlert\LivewireAlert;
 use Livewire\Attributes\Title;
 use Livewire\Component;
+use Str;
 
 class CreateProduct extends Component
 {
@@ -39,7 +40,7 @@ class CreateProduct extends Component
                 'category_id' => $this->category_id,
                 'is_favorite' => $this->is_favorite,
                 'imei' => $this->imei,
-                'code' => '876876878',
+                'code' => Str::random(10),
                 'status' => $this->status,
                 'updated_at' => Carbon::now()
             ]);

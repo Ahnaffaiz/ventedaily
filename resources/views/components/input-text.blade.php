@@ -7,12 +7,12 @@
             <span
                 class="inline-flex items-center px-4 text-sm text-gray-500 border border-r-0 border-gray-200 rounded-l min-w-fit bg-gray-50 dark:bg-gray-700 dark:border-gray-600 dark:text-gray-400">{{$prepend}}</span>
             <input type="{{ $type }}" id="{{ $id }}" @if ($disabled) disabled @endif
-                class="form-input rounded-l-none {{ $errors->first($name) ? 'border border-red-500' : '' }}"
-                wire:model.live="{{ $name }}" placeholder="{{ $placeholder }}">
+                class="form-input rounded-l-none {{ $errors->first($name) ? 'border-2 border-danger' : '' }}"
+                wire:model.blur="{{ $name }}" placeholder="{{ $placeholder }}">
         </div>
     @else
         <input type="{{ $type }}" id="{{ $id }}" @if ($disabled) disabled @endif
-            class="form-input {{ $errors->first($name) ? 'border border-red-500' : '' }}" wire:model.live="{{ $name }}"
+            class="form-input {{ $errors->first($name) ? 'border-2 border-danger' : '' }}" wire:model.blur="{{ $name }}"
             placeholder="{{ $placeholder }}">
     @endif
     @error($name)

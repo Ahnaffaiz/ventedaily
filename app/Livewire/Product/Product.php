@@ -57,16 +57,6 @@ class Product extends Component
 
     #[Title('Product')]
 
-    public function rules()
-    {
-        return [
-            'name' => 'required|unique:products',
-            'imei' => 'required',
-            'status' => 'required',
-            'category_id' => 'required'
-        ];
-    }
-
     protected $listeners = [
         'delete'
     ];

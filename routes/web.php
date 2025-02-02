@@ -1,5 +1,7 @@
 <?php
 
+use App\Livewire\Customer\Customer;
+use App\Livewire\Customer\Group;
 use App\Livewire\Dashboard;
 use App\Livewire\Product\Category;
 use App\Livewire\Product\Color;
@@ -25,5 +27,10 @@ Route::middleware([
     Route::get('/color', Color::class)->name('color');
     Route::get('/size', Size::class)->name('size');
 
+    //supplier
     Route::get('/supplier', Supplier::class)->name('supplier');
+
+    //customer
+    Route::get('/customer', Customer::class)->name('customer');
+    Route::get('/group', Group::class)->name('group');
 });

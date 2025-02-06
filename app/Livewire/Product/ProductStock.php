@@ -87,12 +87,12 @@ class ProductStock extends Component
 
     public function updatedPurchasePrice()
     {
-        $this->margin_price = $this->selling_price - $this->purchase_price;
+        $this->margin_price = (int) $this->selling_price - (int) $this->purchase_price;
     }
 
     public function updatedSellingPrice()
     {
-        $this->margin_price = $this->selling_price - $this->purchase_price;
+        $this->margin_price = (int) $this->selling_price - (int) $this->purchase_price;
     }
 
     public function save()

@@ -111,6 +111,7 @@ class Product extends Component
     public function save()
     {
         $this->validate();
+        $path = null;
         if($this->image){
             $path = $this->image->store('products', 'public');
             $this->current_image = $path;

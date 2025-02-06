@@ -38,7 +38,7 @@
 
             <li class="menu-title">Product</li>
 
-
+            {{-- product --}}
             <li class="menu-item">
                 @php
                     $activeRoutes = ['product', 'category', 'color', 'size', 'create-product'];
@@ -59,6 +59,8 @@
                     <x-menu-item activeRoute="size" text="Size" />
                 </ul>
             </li>
+            {{-- end of product --}}
+            {{-- customer --}}
             <li class="menu-item">
                 @php
                     $activeRoutes = ['customer', 'group'];
@@ -77,6 +79,28 @@
                     <x-menu-item activeRoute="group" text="Group" />
                 </ul>
             </li>
+            {{-- end of customer --}}
+            {{-- Purchase --}}
+            <li class="menu-item">
+                @php
+                    $activeRoutes = ['create-purchase', 'purchase'];
+                    $isActive = in_array(request()->route()->getName(), $activeRoutes);
+                @endphp
+                <a href="javascript:void(0)" data-fc-type="collapse" class="menu-link">
+                    <span class="menu-icon">
+                        <i
+                            class="ri-shopping-cart-2-line {{ $isActive ? 'text-white font-bold' : 'text-gray-300' }}"></i>
+                    </span>
+                    <span class="menu-text {{ $isActive ? 'text-white font-bold' : 'text-gray-300' }}"> Purchase </span>
+                    <span class="menu-arrow"></span>
+                </a>
+
+                <ul class="hidden sub-menu">
+                    <x-menu-item activeRoute="create-purchase" text="Create Purchase" />
+                    <x-menu-item activeRoute="purchase" text="Purchase" />
+                </ul>
+            </li>
+            {{-- end of Purchase --}}
             <x-menu-item activeRoute="supplier" text="Supplier" iconClass="ri-user-line" />
         </ul>
 

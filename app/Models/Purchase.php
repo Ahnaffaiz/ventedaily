@@ -2,6 +2,7 @@
 
 namespace App\Models;
 
+use App\Enums\DiscountType;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 
@@ -14,12 +15,17 @@ class Purchase extends Model
         'supplier_id',
         'term_of_payment_id',
         'discount_type',
+        'outstanding_balance',
         'discount',
         'tax',
         'total_price',
-        'net_price',
+        'sub_total',
         'total_items',
         'desc',
+    ];
+
+    protected $cast = [
+        'discount_type' => DiscountType::class
     ];
 
     public function user()

@@ -8,7 +8,6 @@
     <title>{{ isset($title) && $title ? $title . ' - Ventedaily' : 'Page Title - Ventedaily' }}</title>
 
     @vite(['resources/css/app.css', 'resources/js/app.js'])
-    @stack('styles')
     @include('components.layouts.styles')
     @livewireStyles
 </head>

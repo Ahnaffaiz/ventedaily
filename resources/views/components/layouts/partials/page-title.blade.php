@@ -6,18 +6,18 @@
         <div class="flex items-center gap-2">
             <a href="#" class="text-sm font-medium text-slate-700 dark:text-slate-400">{{ env('APP_NAME') }}</a>
         </div>
-
+        @if ($subtitle != 'default')
+            <div class="flex items-center gap-2">
+                <i class="text-base ri-arrow-right-s-line text-slate-400 rtl:rotate-180"></i>
+                <a wire:navigate href="{{ route($subRoute) }}"
+                    class="text-sm font-medium text-slate-700 dark:text-slate-400">{{ $subtitle }}</a>
+            </div>
+        @endif
         <div class="flex items-center gap-2">
             <i class="text-base ri-arrow-right-s-line text-slate-400 rtl:rotate-180"></i>
             <a href="#" class="text-sm font-medium text-slate-700 dark:text-slate-400"
                 aria-current="page">{{ $title }}</a>
         </div>
-        @if ($subtitle)
-            <div class="flex items-center gap-2">
-                <i class="text-base ri-arrow-right-s-line text-slate-400 rtl:rotate-180"></i>
-                <a href="#" class="text-sm font-medium text-slate-700 dark:text-slate-400">{{ $subtitle }}</a>
-            </div>
-        @endif
     </div>
 </div>
 <!-- Page Title End -->

@@ -8,7 +8,7 @@
 @endphp
 
 <li class="menu-item">
-    <a wire:navigate href="{{ route($activeRoute) }}" class="menu-link">
+    <a wire:navigate href="{{ is_array($activeRoute) ? route($activeRoute[0], $activeRoute[1]) : route($activeRoute) }}" class="menu-link">
         @if ($iconClass)
             <span class="menu-icon {{ $isActive ? 'text-white font-bold' : 'text-gray-300' }}">
                 <i class="{{ $iconClass }}"></i>

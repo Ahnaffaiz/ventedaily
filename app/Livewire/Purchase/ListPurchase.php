@@ -13,6 +13,7 @@ class ListPurchase extends Component
     use WithPagination, WithoutUrlPagination;
 
     public $purchase;
+    public $isOpen = false, $isPayment = false;
     public $query = '', $perPage = 10, $sortBy = 'name', $sortDirection = 'asc';
     public $showColumns = [
         'supplier_id' => true,
@@ -52,5 +53,12 @@ class ListPurchase extends Component
                 ->orderBy($this->sortBy, $this->sortDirection)
                 ->paginate($this->perPage)
         ]);
+    }
+
+    public function addPayment($purchase)
+    {
+        $this->isPayment = true;
+        $this->purchase = Purchase::with('purchasePayments')->where('id', $purchase)->first();
+        $this->isOpen = true;
     }
 }

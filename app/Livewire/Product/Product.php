@@ -152,9 +152,8 @@ class Product extends Component
 
     public function update() {
         if(!$this->isProductStock) {
-            $path = null;
+            $path = $this->current_image;
             if($this->image){
-                // dd("disini");
                 if (Storage::disk('public')->exists($this->current_image)) {
                     Storage::disk('public')->delete($this->current_image);
                 }

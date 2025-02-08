@@ -10,6 +10,7 @@ use App\Livewire\Product\Product;
 use App\Livewire\Product\Size;
 use App\Livewire\Purchase\CreatePurchase;
 use App\Livewire\Purchase\ListPurchase;
+use App\Livewire\Setting;
 use App\Livewire\Supplier\Supplier;
 use Illuminate\Support\Facades\Route;
 
@@ -39,4 +40,7 @@ Route::middleware([
     //purchase
     Route::get('/purchase', ListPurchase::class)->name('purchase');
     Route::get('/create-purchase/{purchase?}', CreatePurchase::class)->name('create-purchase');
+
+    //settings
+    Route::get('/settings', Setting::class)->name('settings');
 });

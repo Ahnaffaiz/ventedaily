@@ -102,6 +102,7 @@
             </li>
             {{-- end of Purchase --}}
             <x-menu-item activeRoute="supplier" text="Supplier" iconClass="ri-user-line" />
+            <x-menu-item activeRoute="settings" text="Settings" iconClass="ri-settings-line" />
         </ul>
 
     </div>

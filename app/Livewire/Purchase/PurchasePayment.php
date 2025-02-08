@@ -87,7 +87,7 @@ class PurchasePayment extends Component
                     'user_id' => Auth::user()->id,
                     'date' => Carbon::now(),
                     'reference' => $this->reference,
-                    'amount' => $this->cash_change > 0 ? $this->out_balance : $this->cash_received,
+                    'amount' => $this->cash_change > 0 ? -1 * $this->out_balance : $this->cash_received,
                     'cash_received' => $this->cash_received,
                     'cash_change' => $this->cash_change,
                     'payment_type' => strtolower($this->payment_type),
@@ -100,7 +100,7 @@ class PurchasePayment extends Component
             }
 
             //update outstanding balance
-            $this->out_balance = $this->total_price > $this->purchase->purchasePayments->sum('amount') ? $this->total_price - $this->purchase->purchasePayments->sum('amount') : 0;
+            $this->out_balance = $this->total_price > $this->purchase->purchasePayments->sum('amount') ? -1 * ($this->total_price - $this->purchase->purchasePayments->sum('amount')) : 0;
             $this->purchase->update([
                 'outstanding_balance' => $this->out_balance
             ]);
@@ -132,9 +132,10 @@ class PurchasePayment extends Component
     public function delete()
     {
         $this->purchase->update([
-            'outstanding_balance' => $this->purchase->outstanding_balance + $this->payment->amount
+            'outstanding_balance' => $this->purchase->outstanding_balance - $this->payment->amount
         ]);
         $this->payment->delete();
+        $this->payment = null;
         $this->mount($this->purchase);
     }
 

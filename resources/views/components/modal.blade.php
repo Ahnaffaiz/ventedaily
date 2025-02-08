@@ -22,7 +22,9 @@
             <button class="text-gray-800 transition-all btn bg-light" wire:click="{{ $closeButton }}" type="button">
                 Close
             </button>
-            <button class="text-white btn bg-primary" wire:click="{{ $saveButton }}">Save</button>
+            @if ($saveButton)
+                <button class="text-white btn bg-primary" wire:click="{{ $saveButton }}">Save</button>
+            @endif
         </div>
     </div>
 </div>

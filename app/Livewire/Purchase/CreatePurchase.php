@@ -184,7 +184,7 @@ class CreatePurchase extends Component
         if (isset($this->cart[$productStockId]) && $this->cart[$productStockId]['quantity'] > 1) {
             $this->cart[$productStockId]['quantity']--;
             $this->addToCart($productStockId);
-        } else {
+        } elseif(isset($this->cart[$productStockId]) && $this->cart[$productStockId]['quantity'] == 1) {
             $this->productStock = $this->cart[$productStockId]['id'];
             $this->alert('question', 'Delete', [
                 'toast' => false,
@@ -200,6 +200,8 @@ class CreatePurchase extends Component
                 'confirmButtonColor' => '#3085d6',
                 'cancelButtonColor' => '#d33'
             ]);
+        } else {
+            $this->alert('warning','Product not added');
         }
     }
 
@@ -374,6 +376,7 @@ class CreatePurchase extends Component
         Session::forget('discount');
         Session::forget('discount_type');
         Session::forget('tax');
+        $this->mount();
     }
 
 }

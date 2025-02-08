@@ -63,6 +63,21 @@ class PurchasePayment extends Component
         $this->cash_change = (int) $this->cash_received + (int) $this->out_balance;
     }
 
+    public function edit($payment)
+    {
+        $this->payment = ModelsPurchasePayment::find($payment);
+        $this->cash_received = $this->payment?->cash_received;
+        $this->cash_change = $this->payment?->cash_change;
+        $this->payment_type = strtolower($this->payment?->payment_type);
+        $this->account_name = $this->payment?->account_name;
+        $this->account_number = $this->payment?->account_number;
+        $this->bank_id = $this->payment?->bank_id;
+        $this->desc = $this->payment?->desc;
+        $this->reference = $this->payment?->reference;
+
+
+    }
+
     public function save()
     {
         $this->validate();

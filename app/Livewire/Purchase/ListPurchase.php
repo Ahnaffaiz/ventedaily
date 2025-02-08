@@ -61,4 +61,10 @@ class ListPurchase extends Component
         $this->purchase = Purchase::with('purchasePayments')->where('id', $purchase)->first();
         $this->isOpen = true;
     }
+
+    public function closeModal()
+    {
+        $this->reset();
+        $this->isOpen = false;
+    }
 }

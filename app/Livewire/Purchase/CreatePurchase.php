@@ -123,6 +123,8 @@ class CreatePurchase extends Component
         } elseif($this->discount_type === DiscountType::RUPIAH) {
             $this->sub_total_after_discount = $this->sub_total - $this->discount;
             $this->total_price = $this->sub_total_after_discount;
+        } else {
+            $this->sub_total_after_discount = $this->total_price;
         }
         if($this->tax) {
             $this->total_price = $this->sub_total_after_discount + round($this->sub_total_after_discount* (int) $this->tax/100);
@@ -251,7 +253,7 @@ class CreatePurchase extends Component
             'user_id' => Auth::user()->id,
             'date' => Carbon::now(),
             'reference' => 'First Payment',
-            'amount' => $this->cash_received,
+            'amount' => $this->cash_change > 0 ? $this->total_price : $this->cash_received,
             'cash_received' => $this->cash_received,
             'cash_change' => $this->cash_change,
             'payment_type' => strtolower($this->payment_type),
@@ -363,6 +365,15 @@ class CreatePurchase extends Component
 
         $this->alert('success', 'Purchase Order Succesfully Updated');
         $this->mount();
+    }
+
+    public function resetPurchase()
+    {
+        $this->reset();
+        Session::forget('cart');
+        Session::forget('discount');
+        Session::forget('discount_type');
+        Session::forget('tax');
     }
 
 }

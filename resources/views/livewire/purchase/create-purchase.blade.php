@@ -211,7 +211,8 @@
                 <div class="grid lg:grid-cols-3 lg:gap-3 md:grid-cols-2 md:gap-2">
                     <x-input-select id="payment_type" name="payment_type" title="Payment Type"
                         :options="App\Enums\PaymentType::asSelectArray()" placeholder="Select Payment Type" />
-                    <x-input-text id="cash_received" name="cash_received" title="Amount" type="number" prepend="Rp." />
+                    <x-input-text id="cash_received" name="cash_received" title="Cash Received" type="number"
+                        prepend="Rp." />
                     <x-input-text id="cash_change" name="cash_change" title="Change" type="number" prepend="Rp."
                         disabled="true" />
                 </div>
@@ -226,15 +227,15 @@
                 @endif
             </div>
             <div class="flex justify-end gap-3 mt-6">
-                <button class="gap-1 btn bg-danger/20 text-danger" wire:click="reset()">
-                    <i class="ri-refresh-line"></i>
-                    Reset
-                </button>
                 @if ($isEdit)
                     <button class="gap-1 text-white btn bg-primary" wire:click="update">
                         <i class="ri-save-line"></i>
                         Update Purchase</button>
                 @else
+                    <button class="gap-1 btn bg-danger/20 text-danger" wire:click="resetPurchase()">
+                        <i class="ri-refresh-line"></i>
+                        Reset
+                    </button>
                     <button class="gap-1 text-white btn bg-primary" wire:click="save">
                         <i class="ri-save-line"></i>
                         Save Purchase</button>

@@ -125,6 +125,8 @@
                                 <div class="flex items-center justify-center pr-4 space-x-3">
                                     <button wire:click="edit({{ $payment->id }})" class="text-info"><i
                                             class="ri-edit-circle-line"></i></button>
+                                    <button wire:click="printPayment({{ $payment->id }})" class="text-info"><i
+                                            class="ri-printer-line"></i></button>
                                     @if (strtolower($payment->reference) != 'first payment')
                                         <button wire:click="deleteAlert({{ $payment->id }})" class="text-danger"><i
                                                 class="text-base ri-delete-bin-2-line"></i></button>
@@ -143,3 +145,25 @@
         </table>
     </div>
 </div>
+
+@script
+<script>
+    Livewire.on('print-payment', (url) => {
+        let printWindow = window.open(url, '_blank', 'width=100,height=100,resizable=yes,scrollbars=yes,left=50,right=50');
+
+        if (printWindow) {
+            printWindow.focus();
+
+            printWindow.onload = function () {
+                let body = printWindow.document.body;
+                let width = body.scrollWidth;
+                let height = body.scrollHeight;
+                let left = (screen.width - width) / 2;
+                let top = (screen.height - height) / 2;
+
+                printWindow.resizeTo(width + 50, height + 250);
+            };
+        }
+    });
+</script>
+@endscript

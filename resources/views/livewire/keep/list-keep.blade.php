@@ -1,61 +1,10 @@
 <div>
-    <x-modal wire:model="isOpen" title="{{ $product ? 'Edit ' . $product?->name : 'Create Product' }}"
-        saveButton="{{ $product ? 'update' : 'save' }}" closeButton="closeModal"
-        large="{{ $isProductStock ? true : false}}">
-        @if ($isProductStock)
-            @livewire('product.product-stock', ['product' => $product], key($product->id))
-        @else
-            <div>
-                <form>
-                    <x-input-text name="name" id="name" title="Name" placeholder="Input Product Name Here" />
-                    @if (!$image)
-                        <x-input-text name="image" id="image" title="Image" placeholder="Input Product Image" type="file" />
-                        <small class="text-muted">Image max. 512 kb </small>
-                    @endif
-                    <div wire:loading wire:target="image">
-                        <div class="card-body">
-                            <div>
-                                <div class="spinner-grow spinner-grow-sm" role="status">
-                                    <span class="sr-only"></span>
-                                </div>
-                                Uploading...
-                            </div>
-                        </div>
-                    </div>
-                    <div class="mb-3 text-center">
-                        @if ($image)
-                            <div class="flex justify-end">
-                                <a href="#" class="text-sm text-danger" wire:click="deleteImage">
-                                    <i class="inline ri-delete-bin-line"></i> Delete
-                                </a>
-                            </div>
-
-                            <div wire:ignore>
-                                <img id="image" src="{{ $image->temporaryUrl() }}" alt="Preview Image"
-                                    class="rounded w-[100%] h-[100%]">
-                            </div>
-
-                        @elseif ($current_image)
-                            <img src="{{ Storage::url($current_image) }}" alt="" class="rounded w-[100%] h-[100%]">
-                        @endif
-                    </div>
-                    <x-input-text name="imei" id="imei" title="Barcode Imei" placeholder="Input Imei Barcode Here" />
-                    <x-input-select id="category_id" name="category_id" title="Category" placeholder="Select Category"
-                        :options="App\Models\Category::all()->pluck('name', 'id')->toArray()" />
-                    <x-input-select id="status" name="status" title="Product Status"
-                        :options="App\Enums\ProductStatus::asSelectArray()" placeholder="Select status" />
-                    <x-input-switch id="is_favorite" name="is_favorite" title="Favorite" />
-                    <x-textarea-input id="desc" name="desc" title="Description" />
-                </form>
-            </div>
-        @endif
-    </x-modal>
     <div class="relative mt-4 overflow-hidden bg-white shadow-md dark:bg-gray-800 sm:rounded-lg">
         <div class="flex items-center justify-between p-4 d">
             <div class="flex">
                 <div class="relative w-full">
-                    <button class="text-white btn bg-primary" wire:click="openModal" type="button">
-                        Create </button>
+                    <a class="text-white btn bg-primary" wire:navigate href="{{ route('create-keep') }}" type="button">
+                        Create </a>
                 </div>
             </div>
             <div class="flex justify-end mb-4">
@@ -90,29 +39,14 @@
         </div>
         <div class="overflow-x-auto">
             <table class="min-w-full divide-y divide-gray-200 dark:divide-gray-700">
-                @if ($products->count() > 0)
+                @if ($keeps->count() > 0)
                     <thead>
                         <tr>
                             <th scope="col" class="px-4 py-4 text-sm font-medium text-center text-gray-500">No</th>
-                            @if ($showColumns['image'])
-                                <th scope="col" class="px-4 py-4 text-sm font-medium text-gray-500 text-start"
-                                    wire:click="sortByColumn('image')">
-                                    Image
-                                    @if ($sortBy === 'image')
-                                        @if ($sortDirection === 'asc')
-                                            <i class="ri-arrow-up-s-line"></i>
-                                        @else
-                                            <i class="ri-arrow-down-s-line"></i>
-                                        @endif
-                                    @else
-                                        <i class="ri-expand-up-down-line"></i>
-                                    @endif
-                                </th>
-                            @endif
                             <th scope="col" class="px-4 py-4 text-sm font-medium text-gray-500 text-start"
-                                wire:click="sortByColumn('name')">
-                                Name
-                                @if ($sortBy === 'name')
+                                wire:click="sortByColumn('no_keep')">
+                                No Keep
+                                @if ($sortBy === 'no_keep')
                                     @if ($sortDirection === 'asc')
                                         <i class="ri-arrow-up-s-line"></i>
                                     @else
@@ -122,11 +56,24 @@
                                     <i class="ri-expand-up-down-line"></i>
                                 @endif
                             </th>
-                            @if ($showColumns['category_id'])
+                            <th scope="col" class="px-4 py-4 text-sm font-medium text-gray-500 text-start"
+                                wire:click="sortByColumn('customer_id')">
+                                Customer
+                                @if ($sortBy === 'customer_id')
+                                    @if ($sortDirection === 'asc')
+                                        <i class="ri-arrow-up-s-line"></i>
+                                    @else
+                                        <i class="ri-arrow-down-s-line"></i>
+                                    @endif
+                                @else
+                                    <i class="ri-expand-up-down-line"></i>
+                                @endif
+                            </th>
+                            @if ($showColumns['keep_time'])
                                 <th scope="col" class="px-4 py-4 text-sm font-medium text-gray-500 text-start"
-                                    wire:click="sortByColumn('category_id')">
-                                    Category
-                                    @if ($sortBy === 'category_id')
+                                    wire:click="sortByColumn('keep_time')">
+                                    Keep Status
+                                    @if ($sortBy === 'keep_time')
                                         @if ($sortDirection === 'asc')
                                             <i class="ri-arrow-up-s-line"></i>
                                         @else
@@ -137,11 +84,11 @@
                                     @endif
                                 </th>
                             @endif
-                            @if ($showColumns['status'])
+                            @if ($showColumns['total_items'])
                                 <th scope="col" class="px-4 py-4 text-sm font-medium text-gray-500 text-start"
-                                    wire:click="sortByColumn('status')">
-                                    Status
-                                    @if ($sortBy === 'status')
+                                    wire:click="sortByColumn('total_items')">
+                                    Total Items
+                                    @if ($sortBy === 'total_items')
                                         @if ($sortDirection === 'asc')
                                             <i class="ri-arrow-up-s-line"></i>
                                         @else
@@ -152,46 +99,11 @@
                                     @endif
                                 </th>
                             @endif
-                            @if ($showColumns['imei'])
+                            @if ($showColumns['total_price'])
                                 <th scope="col" class="px-4 py-4 text-sm font-medium text-gray-500 text-start"
-                                    wire:click="sortByColumn('imei')">
-                                    Barcode Imei
-                                    @if ($sortBy === 'imei')
-                                        @if ($sortDirection === 'asc')
-                                            <i class="ri-arrow-up-s-line"></i>
-                                        @else
-                                            <i class="ri-arrow-down-s-line"></i>
-                                        @endif
-                                    @else
-                                        <i class="ri-expand-up-down-line"></i>
-                                    @endif
-                                </th>
-                            @endif
-                            @if ($showColumns['is_favorite'])
-                                <th scope="col" class="px-4 py-4 text-sm font-medium text-gray-500 text-start">
-                                    Favorite
-                                </th>
-                            @endif
-                            @if ($showColumns['code'])
-                                <th scope="col" class="px-4 py-4 text-sm font-medium text-gray-500 text-start"
-                                    wire:click="sortByColumn('code')">
-                                    Code
-                                    @if ($sortBy === 'code')
-                                        @if ($sortDirection === 'asc')
-                                            <i class="ri-arrow-up-s-line"></i>
-                                        @else
-                                            <i class="ri-arrow-down-s-line"></i>
-                                        @endif
-                                    @else
-                                        <i class="ri-expand-up-down-line"></i>
-                                    @endif
-                                </th>
-                            @endif
-                            @if ($showColumns['stock'])
-                                <th scope="col" class="px-4 py-4 text-sm font-medium text-gray-500 text-start"
-                                    wire:click="sortByColumn('stock')">
-                                    Stock
-                                    @if ($sortBy === 'stock')
+                                    wire:click="sortByColumn('total_price')">
+                                    Total Purchase
+                                    @if ($sortBy === 'total_price')
                                         @if ($sortDirection === 'asc')
                                             <i class="ri-arrow-up-s-line"></i>
                                         @else
@@ -237,74 +149,56 @@
                         </tr>
                     </thead>
                     <tbody class="divide-y divide-gray-200 dark:divide-gray-700">
-                        @foreach ($products as $product)
+                        @foreach ($keeps as $keep)
                             <tr class="bg-gray-50 dark:bg-gray-900">
                                 <th class="px-4 py-4 text-sm text-gray-500 whitespace-nowrap dark:text-gray-200">
-                                    {{($products->currentpage() - 1) * $products->perpage() + $loop->index + 1}}
+                                    {{($keeps->currentpage() - 1) * $keeps->perpage() + $loop->index + 1}}
                                 </th>
-                                @if ($showColumns['image'])
-                                    <td class="px-4 py-4 text-sm text-gray-500 whitespace-nowrap dark:text-gray-200">
-                                        @if ($product->image)
-                                            <img src="{{ Storage::url($product->image) }}" alt="" srcset="" height="50" width="50">
-                                        @endif
-                                    </td>
-                                @endif
                                 <td class="px-4 py-4 text-sm text-gray-500 whitespace-nowrap dark:text-gray-200">
-                                    {{ $product->name }}
+                                    {{ $keep->no_keep }}
                                 </td>
-                                @if ($showColumns['category_id'])
+                                <td class="px-4 py-4 text-sm text-gray-500 whitespace-nowrap dark:text-gray-200">
+                                    {{ $keep->customer->name }}
+                                </td>
+                                @if ($showColumns['keep_time'])
                                     <td class="px-4 py-4 text-sm text-gray-500 whitespace-nowrap dark:text-gray-200">
-                                        {{ $product->category->name }}
-                                    </td>
-                                @endif
-                                @if ($showColumns['status'])
-                                    <td class="px-4 py-4 text-sm text-gray-500 whitespace-nowrap dark:text-gray-200">
-                                        {{ $product->status }}
-                                    </td>
-                                @endif
-                                @if ($showColumns['imei'])
-                                    <td class="px-4 py-4 text-sm text-gray-500 whitespace-nowrap dark:text-gray-200">
-                                        {{ $product->imei }}
-                                    </td>
-                                @endif
-                                @if ($showColumns['is_favorite'])
-                                    <td class="px-4 py-4 text-sm text-gray-500 whitespace-nowrap dark:text-gray-200">
-                                        @if ($product->is_favorite)
+                                        @if ($keep->keep_time >= \Carbon\Carbon::now())
                                             <i class="text-xl text-center ri-check-double-line text-success"></i>
                                         @else
                                             <i class="text-xl text-center text-gray-400 ri-close-line"></i>
                                         @endif
                                     </td>
                                 @endif
-                                @if ($showColumns['code'])
+                                @if ($showColumns['total_items'])
                                     <td class="px-4 py-4 text-sm text-gray-500 whitespace-nowrap dark:text-gray-200">
-                                        {{ $product->code }}
+                                        {{ $keep->total_items }}
                                     </td>
                                 @endif
-                                @if ($showColumns['stock'])
+                                @if ($showColumns['total_price'])
                                     <td class="px-4 py-4 text-sm text-gray-500 whitespace-nowrap dark:text-gray-200">
-                                        {{ $product->totalStock() }}
+                                        Rp. {{ number_format($keep->total_price, 0, ',', '.') }}
                                     </td>
                                 @endif
                                 @if ($showColumns['created_at'])
                                     <td class="px-4 py-4 text-sm text-gray-500 whitespace-nowrap dark:text-gray-200">
-                                        {{ $product->created_at }}
+                                        {{ $keep->created_at }}
                                     </td>
                                 @endif
                                 @if ($showColumns['updated_at'])
                                     <td class="px-4 py-4 text-sm text-gray-500 whitespace-nowrap dark:text-gray-200">
-                                        {{ $product->updated_at }}
+                                        {{ $keep->updated_at }}
                                     </td>
                                 @endif
                                 <td class="px-4 py-4">
                                     <div class="flex items-center justify-center pr-4 space-x-3">
-                                        <button wire:click="addProductStock({{ $product->id }})" class="text-primary">
-                                            <i class="ri-archive-line"></i>
+                                        <button wire:click="showProduct({{ $keep->id }})" class="text-primary">
+                                            <i class="ri-shirt-line"></i>
                                         </button>
-                                        <button wire:click="edit({{ $product->id }})" class="text-info">
+                                        <a wire:navigate href="{{ route('create-keep', ['keep' => $keep->id]) }}"
+                                            class="text-info">
                                             <i class="ri-edit-circle-line"></i>
-                                        </button>
-                                        <button wire:click="deleteAlert({{ $product->id }})" class="text-danger">
+                                        </a>
+                                        <button wire:click="deleteAlert({{ $keep->id }})" class="text-danger">
                                             <i class="text-base ri-delete-bin-2-line"></i>
                                         </button>
                                     </div>
@@ -315,7 +209,7 @@
                 @else
                     <div class="text-center">
                         <i class="text-4xl ri-file-warning-line"></i>
-                        <p class="my-5 text-base">No Product Found</p>
+                        <p class="my-5 text-base">No Keep Found</p>
                     </div>
                 @endif
             </table>
@@ -335,7 +229,7 @@
                         <option value="100">100</option>
                     </select>
                 </div>
-                {{ $products->links(data: ['scrollTo' => false]) }}
+                {{ $keeps->links(data: ['scrollTo' => false]) }}
             </div>
         </div>
     </div>

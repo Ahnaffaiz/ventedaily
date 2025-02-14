@@ -5,8 +5,10 @@ namespace App\Livewire\Purchase;
 use App\Enums\DiscountType;
 use App\Enums\PaymentType;
 use App\Models\PurchasePayment as ModelsPurchasePayment;
+use App\Models\Setting;
 use Carbon\Carbon;
 use Illuminate\Support\Facades\Auth;
+use Illuminate\Support\Facades\Session;
 use Jantinnerezo\LivewireAlert\LivewireAlert;
 use Livewire\Attributes\Validate;
 use Livewire\Component;
@@ -95,6 +97,7 @@ class PurchasePayment extends Component
                     'desc' => $this->desc,
                     'bank_id' => $this->bank_id
                 ]);
+                $this->payment = null;
                 $this->alert('success', 'Payment Successfully Updated');
             } else {
                 ModelsPurchasePayment::create([
@@ -164,5 +167,14 @@ class PurchasePayment extends Component
         $this->account_name = null;
         $this->payment_type = null;
         $this->desc = null;
+    }
+
+    public function printPayment($payment)
+    {
+        $payment = ModelsPurchasePayment::with('purchase', 'purchase.supplier', 'bank')->where('id', $payment)->first();
+        $setting = Setting::first();
+        Session::put('payment', $payment);
+        Session::put('setting', $setting);
+        $this->dispatch('print-payment',route('print-payment', ['payment' => $payment->id]));
     }
 }

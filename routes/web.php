@@ -3,6 +3,8 @@
 use App\Livewire\Customer\Customer;
 use App\Livewire\Customer\Group;
 use App\Livewire\Dashboard;
+use App\Livewire\Keep\CreateKeep;
+use App\Livewire\Keep\ListKeep;
 use App\Livewire\Product\Category;
 use App\Livewire\Product\Color;
 use App\Livewire\Product\CreateProduct;
@@ -10,9 +12,11 @@ use App\Livewire\Product\Product;
 use App\Livewire\Product\Size;
 use App\Livewire\Purchase\CreatePurchase;
 use App\Livewire\Purchase\ListPurchase;
+use App\Livewire\Purchase\PurchasePayment;
 use App\Livewire\Setting;
 use App\Livewire\Supplier\Supplier;
 use Illuminate\Support\Facades\Route;
+use Illuminate\Support\Facades\Session;
 
 Route::get('/', function () {
     return view('welcome');
@@ -40,6 +44,15 @@ Route::middleware([
     //purchase
     Route::get('/purchase', ListPurchase::class)->name('purchase');
     Route::get('/create-purchase/{purchase?}', CreatePurchase::class)->name('create-purchase');
+    Route::get('/print-payment/{payment}', function () {
+        $payment = Session::get('payment');
+        $setting = Session::get('setting');
+        return view('print.purchase-payment', compact('payment', 'setting'));
+    })->name('print-payment');
+
+    //keep
+    Route::get('/keep', ListKeep::class)->name('keep');
+    Route::get('/create-keep/{keep?}', CreateKeep::class)->name('create-keep');
 
     //settings
     Route::get('/settings', Setting::class)->name('settings');

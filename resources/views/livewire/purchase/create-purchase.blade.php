@@ -1,5 +1,5 @@
 <div>
-    <x-modal wire:model="isOpen" title="Add Product" saveButton="saveDiscountTax" closeButton="closeModal">
+    <x-modal wire:model="isOpen" title="Add Product" saveButton="saveDiscountTaxShip" closeButton="closeModal">
         <div>
             @if ($modalType == 'product')
                 <form>
@@ -66,6 +66,11 @@
             @elseif ($modalType == 'tax')
                 <form>
                     <x-input-text type="number" id="tax" name="tax" title="Tax" placeholder="Input Tax" prepend="%" />
+                </form>
+            @elseif ($modalType == 'ship')
+                <form>
+                    <x-input-text type="number" id="ship" name="ship" title="Shipping Cost"
+                        placeholder="Input Shipping Cost" prepend="Rp" />
                 </form>
             @endif
         </div>
@@ -172,6 +177,11 @@
                                                 class="inline-flex items-center gap-1.5 py-0.5 px-1.5 rounded-full text-sm font-medium bg-danger/10 text-danger">{{ $tax }}%</span>
                                         </a> :
                                     </div>
+                                    <div class="mb-2">
+                                        <a wire:click="openModal('ship')" class="text-base font-bold">
+                                            Shipping Cost
+                                        </a> :
+                                    </div>
                                 </td>
                                 <td class="py-4 font-semibold text-md text-start ps-4">
                                     <p class="mt-2 text-lg font-semibold text-end">Rp
@@ -183,6 +193,9 @@
                                     </p>
                                     <p class="mt-2 text-base font-semibold text-danger text-end">
                                         +Rp. {{ number_format($sub_total_after_discount * (int) $tax / 100, 0, ',', '.') }}
+                                    </p>
+                                    <p class="mt-2 text-base font-semibold text-end">
+                                        +Rp. {{ number_format($ship, 0, ',', '.') }}
                                     </p>
                                 </td>
                             </tr>
@@ -243,6 +256,4 @@
             </div>
         </div>
     </div>
-    {{-- end of product --}}
-
 </div>

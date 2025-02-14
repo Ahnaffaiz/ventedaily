@@ -16,6 +16,6 @@
             placeholder="{{ $placeholder }}">
     @endif
     @error($name)
-        <span class="font-normal text-danger text-small">{{ $message }}</span>
+        <span class="font-normal is-invalid text-danger text-small" id="is-invalid">{{ $message }}</span>
     @enderror
 </div>

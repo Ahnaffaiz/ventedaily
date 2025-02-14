@@ -1,7 +1,8 @@
 <?php
 
-namespace App\Livewire\Purchase;
+namespace App\Livewire\Keep;
 
+use App\Models\Keep;
 use App\Models\Purchase;
 use Exception;
 use Jantinnerezo\LivewireAlert\LivewireAlert;
@@ -10,22 +11,19 @@ use Livewire\Component;
 use Livewire\WithoutUrlPagination;
 use Livewire\WithPagination;
 
-class ListPurchase extends Component
+class ListKeep extends Component
 {
     use LivewireAlert;
     use WithPagination, WithoutUrlPagination;
 
-    public $purchase;
-    public $isOpen = false, $isPayment = false;
+    public $keep;
     public $query = '', $perPage = 10, $sortBy = 'name', $sortDirection = 'asc';
     public $showColumns = [
-        'supplier_id' => true,
-        'term_of_payment_id' => true,
-        'sub_total' => true,
-        'discount' => false,
-        'tax' => true,
+        'no_keep' => true,
+        'customer_id' => true,
+        'keep_time' => true,
+        'total_items' => true,
         'total_price' => true,
-        'outstanding_balance' => true,
         'created_at' => false,
         'updated_at' => false,
     ];
@@ -34,7 +32,7 @@ class ListPurchase extends Component
         'delete'
     ];
 
-    #[Title('Purchase')]
+    #[Title('Keep')]
 
     public function sortByColumn($column)
     {
@@ -53,34 +51,21 @@ class ListPurchase extends Component
     }
     public function render()
     {
-        return view('livewire.purchase.list-purchase', [
-            'purchases' => Purchase::select('purchases.*')
-                ->join('suppliers', 'purchases.supplier_id', '=', 'suppliers.id')
-                ->where('suppliers.name', 'like', '%' . $this->query . '%')
+        return view('livewire.keep.list-keep', [
+            'keeps' => Keep::select('keeps.*')
+                ->join('customers', 'keeps.customer_id', '=', 'customers.id')
+                ->where('customers.name', 'like', '%' . $this->query . '%')
                 ->orderBy($this->sortBy, $this->sortDirection)
                 ->paginate($this->perPage)
         ]);
     }
 
-    public function addPayment($purchase)
+    public function deleteAlert($keep)
     {
-        $this->isPayment = true;
-        $this->purchase = Purchase::with('purchasePayments')->where('id', $purchase)->first();
-        $this->isOpen = true;
-    }
-
-    public function closeModal()
-    {
-        $this->reset();
-        $this->isOpen = false;
-    }
-
-    public function deleteAlert($purchase)
-    {
-        $this->purchase = Purchase::find($purchase);
+        $this->keep = Keep::find($keep);
         $this->alert('question', 'Delete', [
             'toast' => false,
-            'text' => 'Are you sure to delete Purchase ?',
+            'text' => 'Are you sure to delete this keep ?',
             'position' => 'center',
             'showConfirmButton' => true,
             'confirmButtonText' => 'Yes',
@@ -97,14 +82,14 @@ class ListPurchase extends Component
     public function delete()
     {
         try {
-            foreach ($this->purchase->purchaseItems as $purchaseItem) {
-                $purchaseItem->productStock->update([
-                    'all_stock' => $purchaseItem->productStock->all_stock - $purchaseItem->total_items,
-                    'home_stock' => $purchaseItem->productStock->home_stock - $purchaseItem->total_items,
+            foreach ($this->keep->keepProducts as $keepProduct) {
+                $keepProduct->productStock->update([
+                    'all_stock' => $keepProduct->productStock->all_stock + $keepProduct->total_items,
+                    'home_stock' => $keepProduct->productStock->home_stock + $keepProduct->total_items,
                 ]);
             }
-            $this->purchase->delete();
-            $this->alert('success', 'Purchase Succesfully Deleted');
+            $this->keep->delete();
+            $this->alert('success', 'Keep Data Succesfully Deleted');
         } catch (Exception $th) {
             $this->alert('error', $th);
         }

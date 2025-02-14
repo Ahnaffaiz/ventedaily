@@ -2,6 +2,7 @@
 
 namespace App\Models;
 
+use App\Enums\KeepType;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 
@@ -9,10 +10,10 @@ class Keep extends Model
 {
     use HasFactory;
 
-    protected $fillable = ['no_keep', 'customer_id', 'user_id', 'keep_type', 'keep_time', 'total_item', 'total_price', 'desc'];
+    protected $fillable = ['no_keep', 'customer_id', 'user_id', 'keep_type', 'keep_time', 'total_items', 'total_price', 'desc'];
 
     protected $casts = [
-        'keep_type' => 'enum:custom,regular',
+        'keep_type' => KeepType::class,
     ];
 
     public function customer()
@@ -25,7 +26,7 @@ class Keep extends Model
         return $this->belongsTo(User::class);
     }
 
-    public function keep_products()
+    public function keepProducts()
     {
         return $this->hasMany(KeepProduct::class);
     }

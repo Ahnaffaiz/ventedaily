@@ -46,10 +46,12 @@ class Product extends Component
 
     public $query = '', $perPage = 10, $sortBy = 'name', $sortDirection = 'asc';
     public $showColumns = [
+        'image' => false,
         'category_id' => true,
         'imei' => true,
         'status' => true,
         'code' => false,
+        'stock' => true,
         'is_favorite' => true,
         'created_at' => false,
         'updated_at' => false,
@@ -154,8 +156,10 @@ class Product extends Component
         if(!$this->isProductStock) {
             $path = $this->current_image;
             if($this->image){
-                if (Storage::disk('public')->exists($this->current_image)) {
-                    Storage::disk('public')->delete($this->current_image);
+                if($this->current_image != null) {
+                    if (Storage::disk('public')->exists($this->current_image)) {
+                        Storage::disk('public')->delete($this->current_image);
+                    }
                 }
                 $path = $this->image->store('products', 'public');
                 $this->current_image = $path;

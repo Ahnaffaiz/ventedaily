@@ -31,4 +31,9 @@ class PurchasePayment extends Model
     {
         return $this->belongsTo(Purchase::class);
     }
+
+    public function bank()
+    {
+        return $this->belongsTo(Bank::class);
+    }
 }

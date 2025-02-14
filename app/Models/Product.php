@@ -21,9 +21,9 @@ class Product extends Model
         'image'
     ];
 
-protected $casts = [
-    'status' => ProductStatus::class,
-];
+    protected $casts = [
+        'status' => ProductStatus::class,
+    ];
 
     public function category()
     {
@@ -33,5 +33,10 @@ protected $casts = [
     public function productStocks()
     {
         return $this->hasMany(ProductStock::class);
+    }
+
+    public function totalStock()
+    {
+        return $this->productStocks()->sum('all_stock');
     }
 }

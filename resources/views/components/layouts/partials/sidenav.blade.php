@@ -100,7 +100,27 @@
                     <x-menu-item activeRoute="purchase" text="Purchase" />
                 </ul>
             </li>
-            {{-- end of Purchase --}}
+
+            {{-- Keep Booking --}}
+            <li class="menu-item">
+                @php
+                    $activeRoutes = ['create-keep', 'keep'];
+                    $isActive = in_array(request()->route()->getName(), $activeRoutes);
+                @endphp
+                <a href="javascript:void(0)" data-fc-type="collapse" class="menu-link">
+                    <span class="menu-icon">
+                        <i class="ri-shopping-bag-line {{ $isActive ? 'text-white font-bold' : 'text-gray-300' }}"></i>
+                    </span>
+                    <span class="menu-text {{ $isActive ? 'text-white font-bold' : 'text-gray-300' }}"> Keep </span>
+                    <span class="menu-arrow"></span>
+                </a>
+
+                <ul class="hidden sub-menu">
+                    <x-menu-item activeRoute="create-keep" text="Create Keep" />
+                    <x-menu-item activeRoute="keep" text="Keep List" />
+                </ul>
+            </li>
+            {{-- end of Keep Booking --}}
             <x-menu-item activeRoute="supplier" text="Supplier" iconClass="ri-user-line" />
             <x-menu-item activeRoute="settings" text="Settings" iconClass="ri-settings-line" />
         </ul>

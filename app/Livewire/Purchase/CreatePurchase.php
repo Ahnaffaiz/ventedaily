@@ -28,11 +28,9 @@ class CreatePurchase extends Component
     public $suppliers, $termOfPayments;
     public string $subtitle = 'Purchase';
     public string $subRoute = 'purchase';
-    public $productStockList;
-    public $product_id;
-    public $productStock;
+    public $productStockList, $product_id, $productStock;
 
-    public $cart = [], $total_items, $total_price, $discount_type, $discount, $tax, $sub_total, $sub_total_after_discount;
+    public $cart = [], $total_items, $total_price, $discount_type, $discount, $tax, $ship, $sub_total, $sub_total_after_discount;
 
     #[Validate('required')]
     public $supplier_id;
@@ -67,14 +65,13 @@ class CreatePurchase extends Component
             $this->edit();
             $this->getTotalPrice();
         } else {
-            $this->suppliers = Supplier::all()->pluck('name', 'id')->toArray();
-            $this->termOfPayments = TermOfPayment::all()->pluck('name', 'id')->toArray();
 
             //session
             $this->cart = Session::get('cart', []);
             $this->discount = Session::get('discount');
             $this->discount_type = Session::get('discount_type', DiscountType::PERSEN);
             $this->tax = Session::get('tax');
+            $this->ship = Session::get('ship');
             $this->getTotalPrice();
         }
 
@@ -82,7 +79,7 @@ class CreatePurchase extends Component
 
     public function render()
     {
-        return view('livewire.purchase.create-purchase')->with('subtitle', $this->subtitle);;
+        return view('livewire.purchase.create-purchase')->with('subtitle', $this->subtitle);
     }
 
     public function openModal($modalType)
@@ -96,7 +93,7 @@ class CreatePurchase extends Component
         $this->isOpen = false;
     }
 
-    public function saveDiscountTax()
+    public function saveDiscountTaxShip()
     {
         if($this->modalType == 'discount') {
             Session::put('discount', $this->discount);
@@ -105,8 +102,10 @@ class CreatePurchase extends Component
         } elseif($this->modalType == 'tax') {
             Session::put('tax', $this->tax);
             $this->alert('success', 'Tax Successfully Added');
+        } elseif($this->modalType == 'ship') {
+            Session::put('ship', $this->ship);
+            $this->alert('success', 'Shipping Cost Successfully Added');
         }
-
         $this->getTotalPrice();
         $this->modalType = 'product';
         $this->isOpen = false;
@@ -128,6 +127,9 @@ class CreatePurchase extends Component
         }
         if($this->tax) {
             $this->total_price = $this->sub_total_after_discount + round($this->sub_total_after_discount* (int) $this->tax/100);
+        }
+        if($this->ship) {
+            $this->total_price = $this->total_price + $this->ship;
         }
 
         if($this->cash_received) {
@@ -228,6 +230,7 @@ class CreatePurchase extends Component
             'discount_type' => $this->discount_type ?? null,
             'discount' => $this->discount,
             'tax' => $this->tax,
+            'ship' => $this->ship,
             'sub_total' => $this->sub_total,
             'total_price' => $this->total_price,
             'total_items' => $this->total_items,
@@ -268,6 +271,7 @@ class CreatePurchase extends Component
         Session::remove('cart');
         Session::remove('discount');
         Session::remove('tax');
+        Session::remove('ship');
         Session::remove('discount_type');
         $this->reset();
         $this->alert('success', 'Purchase Order Succesfully Created');
@@ -295,7 +299,8 @@ class CreatePurchase extends Component
         $this->discount = $this->purchase->discount;
         $this->discount_type = $this->purchase->discount_type;
         $this->tax = $this->purchase->tax;
-        $this->payment_type = $this->purchase->purchasePayments->first()?->payment_type->value;
+        $this->ship = $this->purchase->ship;
+        $this->payment_type = $this->purchase->purchasePayments->first()?->payment_type->key;
         $this->cash_received = $this->purchase->purchasePayments->first()?->cash_received;
         $this->cash_change = $this->purchase->purchasePayments->first()?->cash_change;
         if($this->payment_type === PaymentType::TRANSFER) {
@@ -308,6 +313,7 @@ class CreatePurchase extends Component
         Session::put('discount', $this->discount);
         Session::put('discount_type', $this->discount_type);
         Session::put('tax', $this->tax);
+        Session::put('ship', $this->ship);
     }
     public function update()
     {
@@ -319,6 +325,7 @@ class CreatePurchase extends Component
             'discount_type' => $this->discount_type ?? null,
             'discount' => $this->discount,
             'tax' => $this->tax,
+            'ship' => $this->ship,
             'sub_total' => $this->sub_total,
             'total_price' => $this->total_price,
             'total_items' => $this->total_items,
@@ -366,16 +373,6 @@ class CreatePurchase extends Component
         ]);
 
         $this->alert('success', 'Purchase Order Succesfully Updated');
-        $this->mount();
-    }
-
-    public function resetPurchase()
-    {
-        $this->reset();
-        Session::forget('cart');
-        Session::forget('discount');
-        Session::forget('discount_type');
-        Session::forget('tax');
         $this->mount();
     }
 

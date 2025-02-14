@@ -19,6 +19,7 @@ return new class extends Migration
             $table->enum('discount_type', ['persen', 'rupiah'])->nullable();
             $table->integer('discount')->nullable();
             $table->integer('tax')->nullable();
+            $table->integer('ship')->nullable();
             $table->integer('total_price');
             $table->integer('outstanding_balance')->default(0);
             $table->integer('sub_total');

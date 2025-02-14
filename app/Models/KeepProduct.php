@@ -16,7 +16,7 @@ class KeepProduct extends Model
         return $this->belongsTo(Keep::class);
     }
 
-    public function product_stock()
+    public function productStock()
     {
         return $this->belongsTo(ProductStock::class);
     }

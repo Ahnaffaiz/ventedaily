@@ -90,8 +90,14 @@ class CreateKeep extends Component
     public function updatedKeepType()
     {
         if (strtolower($this->keep_type) === KeepType::REGULAR) {
-            $keepTimeout = Setting::first()->keep_timeout;
-            $this->keep_time = Carbon::tomorrow()->setTimeFromTimeString($keepTimeout);
+            $setting = Setting::first();
+            if($setting?->keep_timeout == null) {
+                $this->alert('warning', 'Keep Timeout Belum diatur');
+                $this->keep_type = null;
+            } else {
+                $keepTimeout = Setting::first()->keep_timeout;
+                $this->keep_time = Carbon::tomorrow()->setTimeFromTimeString($keepTimeout);
+            }
         } else {
             $this->keep_time = null;
         }
@@ -183,35 +189,44 @@ class CreateKeep extends Component
     public function save()
     {
         $this->validate();
-        $keep = Keep::create([
-            'user_id' => Auth::user()->id,
-            'no_keep' => 'HELLO',
-            'customer_id' => $this->customer_id,
-            'total_price' => $this->total_price,
-            'total_items' => $this->total_items,
-            'keep_time' => $this->keep_time,
-            'desc' => $this->desc,
-        ]);
+        $setting = Setting::first();
+        try {
+            $keep = Keep::create([
+                'user_id' => Auth::user()->id,
+                'no_keep' => $setting->keep_code . str_pad($setting->keep_increment + 1, 4, '0', STR_PAD_LEFT),
+                'customer_id' => $this->customer_id,
+                'total_price' => $this->total_price,
+                'total_items' => $this->total_items,
+                'keep_time' => $this->keep_time,
+                'desc' => $this->desc,
+            ]);
 
-        foreach ($this->cart as $productStock) {
-            $keepProduct = KeepProduct::create([
-                'keep_id' => $keep->id,
-                'product_stock_id' => $productStock['id'],
-                'total_items' => $productStock['quantity'],
-                'selling_price' => $productStock['selling_price'],
-                'purchase_price' => $productStock['purchase_price'],
-                'total_price' => $productStock['total_price']
+            $setting->update([
+                'keep_increment' => $setting->keep_increment + 1
             ]);
-            $stock = ProductStock::where('id', $productStock['id'])->first();
-            $stock->update([
-                'home_stock' => $stock->home_stock-$productStock['quantity'],
-                'all_stock' => $stock->all_stock-$productStock['quantity'],
-            ]);
+
+            foreach ($this->cart as $productStock) {
+                $keepProduct = KeepProduct::create([
+                    'keep_id' => $keep->id,
+                    'product_stock_id' => $productStock['id'],
+                    'total_items' => $productStock['quantity'],
+                    'selling_price' => $productStock['selling_price'],
+                    'purchase_price' => $productStock['purchase_price'],
+                    'total_price' => $productStock['total_price']
+                ]);
+                $stock = ProductStock::where('id', $productStock['id'])->first();
+                $stock->update([
+                    'home_stock' => $stock->home_stock-$productStock['quantity'],
+                    'all_stock' => $stock->all_stock-$productStock['quantity'],
+                ]);
+            }
+
+            $this->reset();
+            $this->alert('success', 'Keep Order Succesfully Created');
+            $this->mount();
+        } catch (\Throwable $th) {
+            //throw $th;
         }
-
-        $this->reset();
-        $this->alert('success', 'Keep Order Succesfully Created');
-        $this->mount();
     }
 
     public function edit()

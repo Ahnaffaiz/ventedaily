@@ -18,6 +18,8 @@ return new class extends Migration
             $table->string('telp', 25)->nullable();
             $table->string('owner', 25)->nullable();
             $table->time('keep_timeout')->nullable();
+            $table->string('keep_code');
+            $table->string('keep_increment');
             $table->string('logo', 255)->nullable();
             $table->timestamps();
         });

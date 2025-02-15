@@ -12,7 +12,9 @@ class Setting extends Model
         'owner',
         'keep_timeout',
         'logo',
-        'name'
+        'name',
+        'keep_code',
+        'keep_increment'
     ];
 
     public function getStartTimeAttribute($value)

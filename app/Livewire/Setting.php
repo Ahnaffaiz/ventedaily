@@ -16,9 +16,30 @@ class Setting extends Component
     use WithFileUploads;
 
     public $setting;
-    public $name, $address, $telp, $owner, $keep_timeout, $current_logo;
 
-    #[Validate('max:512')]
+    #[Validate('required')]
+    public $name;
+
+    #[Validate('required')]
+    public $address;
+
+    #[Validate('required|regex:/^8\d+$/')]
+    public $telp;
+
+    #[Validate('required')]
+    public $owner;
+
+    #[Validate('required')]
+    public $keep_timeout;
+
+    public $current_logo;
+
+    #[Validate('required')]
+    public $keep_code;
+
+    #[Validate('required')]
+    public $keep_increment;
+
     public $logo;
 
     #[Title('Setting')]
@@ -32,6 +53,8 @@ class Setting extends Component
         $this->telp = $this->setting?->telp;
         $this->owner = $this->setting?->owner;
         $this->keep_timeout = $this->setting?->keep_timeout;
+        $this->keep_code = $this->setting?->keep_code;
+        $this->keep_increment = $this->setting?->keep_increment;
     }
     public function render()
     {
@@ -51,14 +74,30 @@ class Setting extends Component
             $path = $this->logo->store('logo', 'public');
             $this->current_logo = $path;
         }
-        ModelsSetting::first()->update([
-            'name' => $this->name,
-            'address' => $this->address,
-            'telp' => $this->telp,
-            'owner' => $this->owner,
-            'keep_timeout' => $this->keep_timeout,
-            'logo' => $path
-        ]);
+        $setting = ModelsSetting::first();
+        if($setting == null) {
+            ModelsSetting::create([
+                'name' => $this->name,
+                'address' => $this->address,
+                'telp' => $this->telp,
+                'owner' => $this->owner,
+                'keep_timeout' => $this->keep_timeout,
+                'logo' => $path,
+                'keep_code' => $this->keep_code,
+                'keep_increment' => $this->keep_increment,
+            ]);
+        } else {
+            $setting->update([
+                'name' => $this->name,
+                'address' => $this->address,
+                'telp' => $this->telp,
+                'owner' => $this->owner,
+                'keep_timeout' => $this->keep_timeout,
+                'logo' => $path,
+                'keep_code' => $this->keep_code,
+                'keep_increment' => $this->keep_increment,
+            ]);
+        }
         $this->alert('success', 'Setting Succesfully Saved');
         $this->reset();
         $this->mount();

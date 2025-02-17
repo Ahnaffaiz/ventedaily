@@ -36,7 +36,7 @@
                 </ul>
             </li>
 
-            <li class="menu-title">Product</li>
+            <li class="menu-title">Inventory</li>
 
             {{-- product --}}
             <li class="menu-item">
@@ -60,26 +60,7 @@
                 </ul>
             </li>
             {{-- end of product --}}
-            {{-- customer --}}
-            <li class="menu-item">
-                @php
-                    $activeRoutes = ['customer', 'group'];
-                    $isActive = in_array(request()->route()->getName(), $activeRoutes);
-                @endphp
-                <a href="javascript:void(0)" data-fc-type="collapse" class="menu-link">
-                    <span class="menu-icon">
-                        <i class="ri-shield-user-line {{ $isActive ? 'text-white font-bold' : 'text-gray-300' }}"></i>
-                    </span>
-                    <span class="menu-text {{ $isActive ? 'text-white font-bold' : 'text-gray-300' }}"> Customer </span>
-                    <span class="menu-arrow"></span>
-                </a>
 
-                <ul class="hidden sub-menu">
-                    <x-menu-item activeRoute="customer" text="Customer" />
-                    <x-menu-item activeRoute="group" text="Group" />
-                </ul>
-            </li>
-            {{-- end of customer --}}
             {{-- Purchase --}}
             <li class="menu-item">
                 @php
@@ -100,6 +81,9 @@
                     <x-menu-item activeRoute="purchase" text="Purchase" />
                 </ul>
             </li>
+            <x-menu-item activeRoute="supplier" text="Supplier" iconClass="ri-user-line" />
+
+            <li class="menu-title">Sales</li>
 
             {{-- Keep Booking --}}
             <li class="menu-item">
@@ -121,7 +105,28 @@
                 </ul>
             </li>
             {{-- end of Keep Booking --}}
-            <x-menu-item activeRoute="supplier" text="Supplier" iconClass="ri-user-line" />
+            {{-- customer --}}
+            <li class="menu-item">
+                @php
+                    $activeRoutes = ['customer', 'group'];
+                    $isActive = in_array(request()->route()->getName(), $activeRoutes);
+                @endphp
+                <a href="javascript:void(0)" data-fc-type="collapse" class="menu-link">
+                    <span class="menu-icon">
+                        <i class="ri-shield-user-line {{ $isActive ? 'text-white font-bold' : 'text-gray-300' }}"></i>
+                    </span>
+                    <span class="menu-text {{ $isActive ? 'text-white font-bold' : 'text-gray-300' }}"> Customer </span>
+                    <span class="menu-arrow"></span>
+                </a>
+
+                <ul class="hidden sub-menu">
+                    <x-menu-item activeRoute="customer" text="Customer" />
+                    <x-menu-item activeRoute="group" text="Group" />
+                </ul>
+            </li>
+            {{-- end of customer --}}
+            <x-menu-item activeRoute="discount" text="Discount" iconClass="ri-price-tag-3-line" />
+
             <x-menu-item activeRoute="settings" text="Settings" iconClass="ri-settings-line" />
         </ul>
 

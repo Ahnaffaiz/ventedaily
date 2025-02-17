@@ -3,6 +3,7 @@
 use App\Livewire\Customer\Customer;
 use App\Livewire\Customer\Group;
 use App\Livewire\Dashboard;
+use App\Livewire\Discount;
 use App\Livewire\Keep\CreateKeep;
 use App\Livewire\Keep\ListKeep;
 use App\Livewire\Product\Category;
@@ -13,6 +14,8 @@ use App\Livewire\Product\Size;
 use App\Livewire\Purchase\CreatePurchase;
 use App\Livewire\Purchase\ListPurchase;
 use App\Livewire\Purchase\PurchasePayment;
+use App\Livewire\Sale\CreateSale;
+use App\Livewire\Sale\ListSale;
 use App\Livewire\Setting;
 use App\Livewire\Supplier\Supplier;
 use Illuminate\Support\Facades\Route;
@@ -53,6 +56,13 @@ Route::middleware([
     //keep
     Route::get('/keep', ListKeep::class)->name('keep');
     Route::get('/create-keep/{keep?}', CreateKeep::class)->name('create-keep');
+
+    //sale
+    Route::get('/sale', ListSale::class)->name('sale');
+    Route::get('/create-sale/{keep?}', CreateSale::class)->name('create-sale');
+
+    //discount
+    Route::get('/discount', Discount::class)->name('discount');
 
     //settings
     Route::get('/settings', Setting::class)->name('settings');

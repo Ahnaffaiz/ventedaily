@@ -15,7 +15,8 @@ return new class extends Migration
             $table->id();
             $table->string('name', 25);
             $table->integer('value');
-            $table->enum('discount_type', ['%', 'rupiah'])->nullable();
+            $table->boolean('is_active')->default(true);
+            $table->enum('discount_type', ['persen', 'rupiah'])->nullable();
             $table->timestamps();
         });
     }

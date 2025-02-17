@@ -9,3 +9,5 @@
 <!-- Dashboard App js -->
 <script src="{{ asset('assets/js/pages/dashboard.js') }}"></script>
 <script src="//cdn.jsdelivr.net/npm/sweetalert2@11"></script>
+<script src="{{ asset('assets/js/pages/form-choises.min.js') }}"></script>
+<script src="{{ asset('assets/js/pages/form-choises.js') }}"></script>

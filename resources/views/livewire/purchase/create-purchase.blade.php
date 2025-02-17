@@ -2,9 +2,10 @@
     <x-modal wire:model="isOpen" title="Add Product" saveButton="saveDiscountTaxShip" closeButton="closeModal">
         <div>
             @if ($modalType == 'product')
-                <form>
-                    <x-input-select id="product_id" name="product_id" title="Product" placeholder="Select Product"
-                        :options="App\Models\Product::all()->pluck('name', 'id')->toArray()" />
+                <form class="pb-24">
+                    <x-input-select-search id="product_id" name="product_id" title="Product" placeholder="Select Product"
+                        :options="$products" searchFunction="searchProduct" />
+
                     @if ($productStockList)
                         <div class="mt-4 border border-gray-300 rounded-md">
                             <table class="min-w-full divide-y divide-gray-200 dark:divide-gray-700">

@@ -4,6 +4,7 @@ namespace App\Livewire\Purchase;
 
 use App\Enums\DiscountType;
 use App\Enums\PaymentType;
+use App\Models\Product;
 use App\Models\ProductStock;
 use App\Models\Purchase;
 use App\Models\PurchaseItem;
@@ -39,7 +40,7 @@ class CreatePurchase extends Component
     public $term_of_payment_id;
     #[Validate('required')]
     public $cash_received;
-    public $cash_change, $desc, $bank_id, $account_number, $account_name;
+    public $cash_change, $desc, $bank_id, $account_number, $account_name, $products;
 
     #[Validate('required')]
     public $payment_type;
@@ -91,6 +92,18 @@ class CreatePurchase extends Component
     public function closeModal()
     {
         $this->isOpen = false;
+    }
+
+    public function searchProduct($query)
+    {
+        $this->products = Product::all()->pluck('name', 'id')->toArray();
+        if ($query) {
+            $this->products = collect(Product::all()->pluck('name', 'id')->toArray())
+                ->filter(function ($label, $value) use ($query) {
+                    return stripos($label, $query) !== false;
+                })
+                ->toArray();
+            }
     }
 
     public function saveDiscountTaxShip()
@@ -374,6 +387,21 @@ class CreatePurchase extends Component
 
         $this->alert('success', 'Purchase Order Succesfully Updated');
         $this->mount();
+    }
+
+    public function resetPurchase()
+    {
+        $this->purchase = null;
+        $this->cart = null;
+        $this->supplier_id = null;
+        $this->term_of_payment_id = null;
+        $this->payment_type = null;
+        $this->cash_received = null;
+        $this->cash_change = null;
+        $this->cash_change = null;
+        $this->bank_id = null;
+        $this->account_number = null;
+        $this->account_name = null;
     }
 
 }

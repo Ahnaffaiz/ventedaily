@@ -15,7 +15,10 @@
             class="w-full form-input {{ $errors->first($name) ? 'border-2 border-danger' : '' }}"
             placeholder="{{ $placeholder ?? 'Search...' }}">
 
-        <div x-show="open" class="absolute z-50 w-full mt-1 bg-white border border-gray-300 rounded-md shadow-lg">
+        <!-- Dropdown hasil pencarian dengan scroll -->
+        <div x-show="open"
+            class="absolute z-50 w-full mt-1 overflow-y-auto bg-white border border-gray-300 rounded-md shadow-lg max-h-28">
+
             @if (empty($options))
                 <div class="px-4 py-2 text-gray-500">No results found</div>
             @else

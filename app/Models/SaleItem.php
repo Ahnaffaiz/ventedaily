@@ -9,9 +9,9 @@ class SaleItem extends Model
 {
     use HasFactory;
 
-    protected $fillable = ['product_stock_id', 'total_items', 'price', 'total_price'];
+    protected $fillable = ['product_stock_id', 'total_items', 'price', 'total_price', 'sale_id'];
 
-    public function product_stock()
+    public function productStock()
     {
         return $this->belongsTo(ProductStock::class);
     }

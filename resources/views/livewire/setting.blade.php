@@ -52,14 +52,20 @@
         </div>
         <div class="card">
             <div class="card-header">
-                <div class="card-title">Keep Settings</div>
+                <div class="card-title">Transaction Setting</div>
             </div>
             <div class="p-6 section">
                 <x-input-text type="text" name="keep_code" id="keep_code" title="Keep Code" placeholder="Keep Code" />
                 <x-input-text type="number" name="keep_increment" id="keep_increment" title="Keep Increment"
                     placeholder="Keep Increment" />
-                <button class="flex justify-end mt-5 text-white btn bg-primary" wire:click="save">Save Setting</button>
             </div>
+            <div class="p-6 section">
+                <x-input-text type="text" name="sale_code" id="sale_code" title="Sale Code" placeholder="Sale Code" />
+                <x-input-text type="number" name="sale_increment" id="sale_increment" title="Sale Increment"
+                    placeholder="Sale Increment" />
+            </div>
+            <button class="flex justify-end m-6 mt-5 text-white btn bg-primary" wire:click="save">Save
+                Change</button>
         </div>
     </div>
 </div>

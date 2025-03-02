@@ -2,11 +2,13 @@
 
 namespace App\Livewire\Keep;
 
+use App\Enums\KeepStatus;
 use App\Enums\KeepType;
 use App\Models\Customer;
 use App\Models\Group;
 use App\Models\Keep;
 use App\Models\KeepProduct;
+use App\Models\Product;
 use App\Models\ProductStock;
 use App\Models\Setting;
 use Carbon\Carbon;
@@ -27,7 +29,7 @@ class CreateKeep extends Component
 
     public $customers, $groups;
     public $keep, $isEdit;
-    public $productStockList, $product_id, $productStock;
+    public $productStockList, $product_id, $productStock, $products;
 
     #[Rule('required')]
     public $group_id;
@@ -57,13 +59,12 @@ class CreateKeep extends Component
     {
         View::share('subtitle', $this->subtitle);
         View::share('subRoute', $this->subRoute);
-
+        $this->groups = Group::all()->pluck('name', 'id')->toArray();
+        $this->products = Product::all()->pluck('name', 'id')->toArray();
         if($keep) {
             $this->keep = Keep::where('id', $keep)->first();
             $this->edit();
             $this->getTotalPrice();
-        } else {
-            $this->groups = Group::all()->pluck('name', 'id')->toArray();
         }
     }
 
@@ -79,12 +80,26 @@ class CreateKeep extends Component
 
     public function closeModal()
     {
+        $this->product_id = null;
+        $this->productStockList = null;
         $this->isOpen = false;
     }
 
     public function updatedGroupId()
     {
         $this->customers = Customer::where('group_id', $this->group_id)->pluck('name', 'id')->toArray();
+    }
+
+    public function searchProduct($query)
+    {
+        $this->products = Product::all()->pluck('name', 'id')->toArray();
+        if ($query) {
+            $this->products = collect(Product::all()->pluck('name', 'id')->toArray())
+                ->filter(function ($label, $value) use ($query) {
+                    return stripos($label, $query) !== false;
+                })
+                ->toArray();
+            }
     }
 
     public function updatedKeepType()
@@ -117,20 +132,36 @@ class CreateKeep extends Component
     public function addToCart($productStockId)
     {
         $productStock = ProductStock::where('id', $productStockId)->first();
-        $this->cart[$productStockId]['selling_price'] = $productStock->purchase_price;
-        if($productStock->home_stock > 0)
-        $this->cart[$productStockId] = [
-            'id' => $productStock->id,
-            'color' => $productStock->color->name,
-            'size' => $productStock->size->name,
-            'product' => $productStock->product->name,
-            'quantity' => $this->cart[$productStockId]['quantity'],
-            'stock' => $this->cart[$productStockId]['stock'],
-            'purchase_price' => $productStock->purchase_price,
-            'selling_price' => $productStock->selling_price,
-            'total_price' => $this->cart[$productStockId]['selling_price'] * $this->cart[$productStockId]['quantity']
-        ];
-        $this->getTotalPrice();
+        $this->cart[$productStockId]['selling_price'] = $productStock->selling_price;
+        if(!array_key_exists('stock', $this->cart[$productStockId])) {
+            $this->cart[$productStockId]['stock'] = ProductStock::where('id', $productStockId)->first()->home_stock;
+        }
+
+        if($this->cart[$productStockId]['quantity'] > $this->cart[$productStockId]['stock']) {
+            $this->cart[$productStockId]['quantity'] = $this->cart[$productStockId]['stock'];
+            $this->alert('warning', 'Stock Not Enough');
+        } elseif($this->cart[$productStockId]['quantity'] == null) {
+            $this->cart[$productStockId]['quantity'] = 0;
+            $this->productStock = $this->cart[$productStockId]['id'];
+            $this->deleteProductStock();
+        } elseif($this->cart[$productStockId]['quantity'] < 1) {
+            $this->cart[$productStockId]['quantity'] = 1;
+        }
+
+        if($this->cart[$productStockId]['quantity'] >= 1 && $this->cart[$productStockId]['quantity'] <= $this->cart[$productStockId]['stock']) {
+            $this->cart[$productStockId] = [
+                'id' => $productStock->id,
+                'color' => $productStock->color->name,
+                'size' => $productStock->size->name,
+                'product' => $productStock->product->name,
+                'quantity' => $this->cart[$productStockId]['quantity'],
+                'stock' => $this->cart[$productStockId]['stock'],
+                'purchase_price' => $productStock->purchase_price,
+                'selling_price' => $productStock->selling_price,
+                'total_price' => $this->cart[$productStockId]['selling_price'] * $this->cart[$productStockId]['quantity']
+            ];
+            $this->getTotalPrice();
+        }
     }
 
     public function addProductStock($productStockId)
@@ -183,6 +214,7 @@ class CreateKeep extends Component
     {
         unset($this->cart[$this->productStock]);
         $this->getTotalPrice();
+        $this->productStock = null;
         $this->alert('success', 'Product Successfully Deleted');
     }
 
@@ -193,6 +225,7 @@ class CreateKeep extends Component
         try {
             $keep = Keep::create([
                 'user_id' => Auth::user()->id,
+                'status' => strtolower(KeepStatus::ACTIVE),
                 'no_keep' => $setting->keep_code . str_pad($setting->keep_increment + 1, 4, '0', STR_PAD_LEFT),
                 'customer_id' => $this->customer_id,
                 'total_price' => $this->total_price,
@@ -258,6 +291,7 @@ class CreateKeep extends Component
         $this->validate();
         $this->keep->update([
             'user_id' => Auth::user()->id,
+            'status' => strtolower(KeepStatus::ACTIVE),
             'customer_id' => $this->customer_id,
             'total_price' => $this->total_price,
             'total_items' => $this->total_items,
@@ -292,5 +326,11 @@ class CreateKeep extends Component
 
         $this->alert('success', 'Purchase Order Succesfully Updated');
         $this->mount();
+    }
+
+    public function resetKeep() {
+        $this->reset();
+        $this->mount();
+        $this->alert('success', 'Form Reset Successfully');
     }
 }

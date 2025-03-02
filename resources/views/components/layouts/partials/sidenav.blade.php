@@ -105,6 +105,28 @@
                 </ul>
             </li>
             {{-- end of Keep Booking --}}
+
+            {{-- Sale --}}
+            <li class="menu-item">
+                @php
+                    $activeRoutes = ['create-sale', 'sale'];
+                    $isActive = in_array(request()->route()->getName(), $activeRoutes);
+                @endphp
+                <a href="javascript:void(0)" data-fc-type="collapse" class="menu-link">
+                    <span class="menu-icon">
+                        <i class="ri-calculator-line {{ $isActive ? 'text-white font-bold' : 'text-gray-300' }}"></i>
+                    </span>
+                    <span class="menu-text {{ $isActive ? 'text-white font-bold' : 'text-gray-300' }}"> Sale </span>
+                    <span class="menu-arrow"></span>
+                </a>
+
+                <ul class="hidden sub-menu">
+                    <x-menu-item activeRoute="create-sale" text="Cashier" />
+                    <x-menu-item activeRoute="sale" text="Sale List" />
+                </ul>
+            </li>
+            {{-- end of Sale --}}
+
             {{-- customer --}}
             <li class="menu-item">
                 @php

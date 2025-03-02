@@ -1,8 +1,8 @@
 <div>
-    <x-modal wire:model="isOpen" title="Add Product" saveButton="saveDiscountTaxShip" closeButton="closeModal">
+    <x-modal wire:model="isOpen" title="Add Product" saveButton="closeModal" closeButton="closeModal">
         <div>
             @if ($modalType == 'product')
-                <form class="pb-24">
+                <form class="pb-28">
                     <x-input-select-search id="product_id" name="product_id" title="Product" placeholder="Select Product"
                         :options="$products" searchFunction="searchProduct" />
 
@@ -62,7 +62,7 @@
                         :options="App\Enums\DiscountType::asSelectArray()" />
                     <x-input-text type="number" id="discount" name="discount" title="Discount"
                         placeholder="Input Discount without Rp or %"
-                        prepend="{{ $discount_type === App\Enums\DiscountType::RUPIAH ? 'Rp.' : '%' }}" />
+                        prepend="{{ strtolower($discount_type) === App\Enums\DiscountType::RUPIAH ? 'Rp.' : '%' }}" />
                 </form>
             @elseif ($modalType == 'tax')
                 <form>
@@ -165,7 +165,7 @@
                                     <div class="mb-2">
                                         <a wire:click="openModal('discount')" class="text-base font-bold text-success">
                                             Discount
-                                            @if ($discount_type === App\Enums\DiscountType::PERSEN)
+                                            @if (strtolower($discount_type) === App\Enums\DiscountType::PERSEN)
                                                 <span
                                                     class="inline-flex items-center gap-1.5 py-0.5 px-1.5 rounded-full text-sm font-medium bg-success/10 text-success">{{ $discount }}%</span>
                                             @endif
@@ -190,7 +190,7 @@
                                     </p>
                                     <p class="mt-2 text-base font-semibold text-success text-end">
                                         -Rp.
-                                        {{ $discount_type === App\Enums\DiscountType::PERSEN ? number_format($sub_total * (int) $discount / 100, 0, ',', '.') : number_format($discount, 0, ',', '.') }}
+                                        {{ strtolower($discount_type) === App\Enums\DiscountType::PERSEN ? number_format($sub_total * (int) $discount / 100, 0, ',', '.') : number_format($discount, 0, ',', '.') }}
                                     </p>
                                     <p class="mt-2 text-base font-semibold text-danger text-end">
                                         +Rp. {{ number_format($sub_total_after_discount * (int) $tax / 100, 0, ',', '.') }}

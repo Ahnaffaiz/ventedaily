@@ -59,7 +59,7 @@ Route::middleware([
 
     //sale
     Route::get('/sale', ListSale::class)->name('sale');
-    Route::get('/create-sale/{keep?}', CreateSale::class)->name('create-sale');
+    Route::get('/create-sale/{sale?}', CreateSale::class)->name('create-sale');
 
     //discount
     Route::get('/discount', Discount::class)->name('discount');

@@ -2,6 +2,7 @@
 
 namespace App\Livewire\Keep;
 
+use App\Models\Group;
 use App\Models\Keep;
 use App\Models\Purchase;
 use Exception;
@@ -16,11 +17,12 @@ class ListKeep extends Component
     use LivewireAlert;
     use WithPagination, WithoutUrlPagination;
 
+    public $isOpen = false;
     public $keep;
-    public $query = '', $perPage = 10, $sortBy = 'name', $sortDirection = 'asc';
+    public $query = '', $perPage = 10, $sortBy = 'name', $sortDirection = 'asc', $groupIds, $groupId = '';
+    public $total_price;
     public $showColumns = [
-        'no_keep' => true,
-        'customer_id' => true,
+        'keep_status' => true,
         'keep_time' => true,
         'total_items' => true,
         'total_price' => true,
@@ -33,6 +35,12 @@ class ListKeep extends Component
     ];
 
     #[Title('Keep')]
+
+    public function closeModal()
+    {
+        $this->reset();
+        $this->isOpen = false;
+    }
 
     public function sortByColumn($column)
     {
@@ -49,15 +57,26 @@ class ListKeep extends Component
     {
         $this->resetPage();
     }
+
+    public function mount() {
+        $this->groupIds = Group::get();
+    }
     public function render()
     {
         return view('livewire.keep.list-keep', [
             'keeps' => Keep::select('keeps.*')
                 ->join('customers', 'keeps.customer_id', '=', 'customers.id')
                 ->where('customers.name', 'like', '%' . $this->query . '%')
+                ->where('customers.group_id', 'like', '%' . $this->groupId . '%')
                 ->orderBy($this->sortBy, $this->sortDirection)
                 ->paginate($this->perPage)
         ]);
+    }
+
+    public function show($keep_id) {
+        $this->isOpen = true;
+        $this->keep = Keep::find($keep_id);
+        $this->total_price = array_sum(array_column($this->keep->keepProducts->toArray(), 'total_price'));
     }
 
     public function deleteAlert($keep)

@@ -2,6 +2,7 @@
 
 namespace App\Models;
 
+use App\Enums\PaymentType;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 
@@ -11,12 +12,11 @@ class SalePayment extends Model
 
     protected $fillable = [
         'user_id', 'sale_id', 'date', 'reference', 'amount', 'cash_received', 'cash_change', 'payment_type',
-        'bank', 'account_number', 'account_name', 'desc'
+        'bank_id', 'account_number', 'account_name', 'desc'
     ];
 
     protected $casts = [
-        'payment_type' => 'enum:cash,transfer',
-        'bank' => 'enum',
+        'payment_type' => PaymentType::class,
     ];
 
     public function user()

@@ -17,6 +17,7 @@ return new class extends Migration
             $table->foreignId('customer_id')->constrained()->onDelete('cascade');
             $table->foreignId('user_id')->constrained()->onDelete('cascade');
             $table->enum('keep_type', ['custom', 'regular']);
+            $table->enum('status', ['active', 'sold', 'canceled']);
             $table->timestamp('keep_time');
             $table->integer('total_items');
             $table->integer('total_price');

@@ -40,6 +40,12 @@ class Setting extends Component
     #[Validate('required')]
     public $keep_increment;
 
+    #[Validate('required')]
+    public $sale_code;
+
+    #[Validate('required')]
+    public $sale_increment;
+
     public $logo;
 
     #[Title('Setting')]
@@ -55,6 +61,8 @@ class Setting extends Component
         $this->keep_timeout = $this->setting?->keep_timeout;
         $this->keep_code = $this->setting?->keep_code;
         $this->keep_increment = $this->setting?->keep_increment;
+        $this->sale_code = $this->setting?->sale_code;
+        $this->sale_increment = $this->setting?->sale_increment;
     }
     public function render()
     {
@@ -85,6 +93,8 @@ class Setting extends Component
                 'logo' => $path,
                 'keep_code' => $this->keep_code,
                 'keep_increment' => $this->keep_increment,
+                'sale_code' => $this->sale_code,
+                'sale_increment' => $this->sale_increment,
             ]);
         } else {
             $setting->update([
@@ -96,6 +106,8 @@ class Setting extends Component
                 'logo' => $path,
                 'keep_code' => $this->keep_code,
                 'keep_increment' => $this->keep_increment,
+                'sale_code' => $this->sale_code,
+                'sale_increment' => $this->sale_increment,
             ]);
         }
         $this->alert('success', 'Setting Succesfully Saved');

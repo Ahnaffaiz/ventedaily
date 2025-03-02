@@ -1,9 +1,9 @@
 <div>
     <x-modal wire:model="isOpen" title="Add Product" saveButton="closeModal" closeButton="closeModal">
         <div>
-            <form>
-                <x-input-select id="product_id" name="product_id" title="Product" placeholder="Select Product"
-                    :options="App\Models\Product::all()->pluck('name', 'id')->toArray()" />
+            <form class="pb-28">
+                <x-input-select-search id="product_id" name="product_id" title="Product" placeholder="Select Product"
+                    :options="$products" searchFunction="searchProduct"/>
                 @if ($productStockList)
                     <div class="mt-4 border border-gray-300 rounded-md">
                         <table class="min-w-full divide-y divide-gray-200 dark:divide-gray-700">
@@ -185,9 +185,9 @@
                 @if ($isEdit)
                     <button class="gap-1 text-white btn bg-primary" wire:click="update">
                         <i class="ri-save-line"></i>
-                        Update Purchase</button>
+                        Update Keep</button>
                 @else
-                    <button class="gap-1 btn bg-danger/20 text-danger" wire:click="resetPurchase()">
+                    <button class="gap-1 btn bg-danger/20 text-danger" wire:click="resetKeep()">
                         <i class="ri-refresh-line"></i>
                         Reset
                     </button>

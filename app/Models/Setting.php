@@ -14,7 +14,9 @@ class Setting extends Model
         'logo',
         'name',
         'keep_code',
-        'keep_increment'
+        'keep_increment',
+        'sale_code',
+        'sale_increment'
     ];
 
     public function getStartTimeAttribute($value)

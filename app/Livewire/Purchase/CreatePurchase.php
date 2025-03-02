@@ -13,7 +13,6 @@ use App\Models\Supplier;
 use App\Models\TermOfPayment;
 use Carbon\Carbon;
 use Illuminate\Support\Facades\Auth;
-use Illuminate\Support\Facades\Session;
 use Illuminate\Support\Facades\View;
 use Jantinnerezo\LivewireAlert\LivewireAlert;
 use Livewire\Attributes\Layout;
@@ -58,21 +57,14 @@ class CreatePurchase extends Component
     {
         View::share('subtitle', $this->subtitle);
         View::share('subRoute', $this->subRoute);
+        $this->products = Product::all()->pluck('name', 'id')->toArray();
         $this->suppliers = Supplier::all()->pluck('name', 'id')->toArray();
         $this->termOfPayments = TermOfPayment::all()->pluck('name', 'id')->toArray();
+        $this->discount_type = DiscountType::PERSEN;
 
         if($purchase) {
             $this->purchase = Purchase::where('id', $purchase)->first();
             $this->edit();
-            $this->getTotalPrice();
-        } else {
-
-            //session
-            $this->cart = Session::get('cart', []);
-            $this->discount = Session::get('discount');
-            $this->discount_type = Session::get('discount_type', DiscountType::PERSEN);
-            $this->tax = Session::get('tax');
-            $this->ship = Session::get('ship');
             $this->getTotalPrice();
         }
 
@@ -91,6 +83,7 @@ class CreatePurchase extends Component
 
     public function closeModal()
     {
+        $this->getTotalPrice();
         $this->isOpen = false;
     }
 
@@ -104,24 +97,6 @@ class CreatePurchase extends Component
                 })
                 ->toArray();
             }
-    }
-
-    public function saveDiscountTaxShip()
-    {
-        if($this->modalType == 'discount') {
-            Session::put('discount', $this->discount);
-            Session::put('discount_type', $this->discount_type);
-            $this->alert('success', 'Discount Successfully Added');
-        } elseif($this->modalType == 'tax') {
-            Session::put('tax', $this->tax);
-            $this->alert('success', 'Tax Successfully Added');
-        } elseif($this->modalType == 'ship') {
-            Session::put('ship', $this->ship);
-            $this->alert('success', 'Shipping Cost Successfully Added');
-        }
-        $this->getTotalPrice();
-        $this->modalType = 'product';
-        $this->isOpen = false;
     }
 
     public function getTotalPrice()
@@ -148,10 +123,6 @@ class CreatePurchase extends Component
         if($this->cash_received) {
             $this->cash_change = (int) $this->cash_received - (int) $this->total_price;
         }
-
-        Session::put('sub_total', $this->sub_total);
-        Session::put('sub_total_after_discount', $this->sub_total_after_discount);
-        Session::put('total_price', $this->total_price);
     }
 
     public function updatedProductId()
@@ -162,26 +133,20 @@ class CreatePurchase extends Component
     public function addToCart($productStockId)
     {
         $productStock = ProductStock::where('id', $productStockId)->first();
-        $this->cart[$productStockId]['purchase_price'] = $productStock->purchase_price;
-        $cart = Session::get('cart', []);
-        if (isset($cart[$productStockId])) {
-            $cart[$productStockId]['quantity'] = $this->cart[$productStockId]['quantity'];
-            $cart[$productStockId]['total_price'] = $this->cart[$productStockId]['quantity'] * $this->cart[$productStockId]['purchase_price'];
-        } else {
-            $cart[$productStockId] = [
-                'id' => $productStock->id,
-                'color' => $productStock->color->name,
-                'size' => $productStock->size->name,
-                'price' => $productStock->purchase_price,
-                'product' => $productStock->product->name,
-                'quantity' => $this->cart[$productStockId]['quantity'],
-                'purchase_price' => $productStock->purchase_price,
-                'total_price' => $this->cart[$productStockId]['purchase_price'] * $this->cart[$productStockId]['quantity']
-            ];
+        if($this->cart[$productStockId]['quantity'] < 1) {
+            $this->cart[$productStockId]['quantity'] = 1;
         }
-        $this->cart = $cart;
+        $this->cart[$productStockId] = [
+            'id' => $productStock->id,
+            'color' => $productStock->color->name,
+            'size' => $productStock->size->name,
+            'price' => $productStock->purchase_price,
+            'product' => $productStock->product->name,
+            'quantity' => $this->cart[$productStockId]['quantity'],
+            'purchase_price' => $productStock->purchase_price,
+            'total_price' => $productStock->purchase_price * $this->cart[$productStockId]['quantity']
+        ];
         $this->getTotalPrice();
-        Session::put('cart', $cart);
     }
 
     public function addProductStock($productStockId)
@@ -223,7 +188,6 @@ class CreatePurchase extends Component
     public function deleteProductStock()
     {
         unset($this->cart[$this->productStock]);
-        Session::put('cart', $this->cart);
         $this->getTotalPrice();
         $this->alert('success', 'Product Successfully Deleted');
     }
@@ -281,11 +245,6 @@ class CreatePurchase extends Component
             'bank_id' => $this->bank_id
         ]);
 
-        Session::remove('cart');
-        Session::remove('discount');
-        Session::remove('tax');
-        Session::remove('ship');
-        Session::remove('discount_type');
         $this->reset();
         $this->alert('success', 'Purchase Order Succesfully Created');
         $this->mount();
@@ -316,17 +275,11 @@ class CreatePurchase extends Component
         $this->payment_type = $this->purchase->purchasePayments->first()?->payment_type->key;
         $this->cash_received = $this->purchase->purchasePayments->first()?->cash_received;
         $this->cash_change = $this->purchase->purchasePayments->first()?->cash_change;
-        if($this->payment_type === PaymentType::TRANSFER) {
+        if(strtolower($this->payment_type) === strtolower(PaymentType::TRANSFER)) {
             $this->bank_id = $this->purchase->purchasePayments->first()?->bank_id;
             $this->account_number = $this->purchase->purchasePayments->first()?->account_number;
             $this->account_name = $this->purchase->purchasePayments->first()?->account_name;
         }
-
-        Session::put('cart', $this->cart);
-        Session::put('discount', $this->discount);
-        Session::put('discount_type', $this->discount_type);
-        Session::put('tax', $this->tax);
-        Session::put('ship', $this->ship);
     }
     public function update()
     {

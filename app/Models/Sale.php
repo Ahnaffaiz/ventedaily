@@ -2,6 +2,7 @@
 
 namespace App\Models;
 
+use App\Enums\DiscountType;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 
@@ -11,11 +12,11 @@ class Sale extends Model
 
     protected $fillable = [
         'keep_id', 'user_id', 'customer_id', 'term_of_payment_id', 'discount_type', 'discount', 'discount_id', 'tax',
-        'total_price', 'net_price', 'total_items', 'desc'
+        'total_price', 'sub_total', 'total_items', 'desc', 'no_sale'
     ];
 
-    protected $casts = [
-        'discount_type' => 'enum:%,rupiah',
+    protected $cast = [
+        'discount_type' => DiscountType::class
     ];
 
     public function keep()
@@ -33,7 +34,7 @@ class Sale extends Model
         return $this->belongsTo(Customer::class);
     }
 
-    public function term_of_payment()
+    public function termOfPayment()
     {
         return $this->belongsTo(TermOfPayment::class);
     }
@@ -43,12 +44,12 @@ class Sale extends Model
         return $this->belongsTo(Discount::class);
     }
 
-    public function sale_payments()
+    public function salePayments()
     {
         return $this->hasMany(SalePayment::class);
     }
 
-    public function sale_items()
+    public function saleItems()
     {
         return $this->hasMany(SaleItem::class);
     }

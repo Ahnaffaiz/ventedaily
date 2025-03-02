@@ -17,12 +17,14 @@ return new class extends Migration
             $table->foreignId('user_id')->constrained()->onDelete('cascade');
             $table->foreignId('customer_id')->constrained()->onDelete('cascade');
             $table->foreignId('term_of_payment_id')->constrained()->onDelete('cascade');
-            $table->enum('discount_type', ['%', 'rupiah'])->nullable();
+            $table->string('no_sale', 25);
+            $table->enum('discount_type', ['persen', 'rupiah'])->nullable();
             $table->integer('discount')->nullable();
             $table->foreignId('discount_id')->nullable()->constrained()->onDelete('cascade');
             $table->integer('tax')->nullable();
+            $table->integer('ship')->nullable();
+            $table->integer('sub_total');
             $table->integer('total_price');
-            $table->integer('net_price');
             $table->integer('total_items');
             $table->longText('desc')->nullable();
             $table->timestamps();

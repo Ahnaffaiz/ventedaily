@@ -1,4 +1,7 @@
 <div>
+    <x-modal wire:model="isOpen" title="Detail Keep" closeButton="closeModal" large="true">
+        @include('livewire.keep.detail-keep')
+    </x-modal>
     <div class="relative mt-4 overflow-hidden bg-white shadow-md dark:bg-gray-800 sm:rounded-lg">
         <div class="flex items-center justify-between p-4 d">
             <div class="flex">
@@ -9,9 +12,17 @@
             </div>
             <div class="flex justify-end mb-4">
                 <div class="relative mr-4 ms-auto">
-                    <input type="search" class="relative border-none form-input bg-black/5 ps-8" wire:model.live="query"
-                        placeholder="Search...">
+                    <input type="search" class="relative h-10 border-none form-input bg-black/5 ps-8"
+                        wire:model.live="query" placeholder="Search...">
                     <span class="absolute z-10 text-base -translate-y-1/2 ri-search-line start-2 top-1/2"></span>
+                </div>
+                <div class="relative mr-4 ms-auto">
+                    <select class="w-48 form-input" wire:model.change="groupId">
+                        <option value="">All Keep</option>
+                        @foreach ($groupIds as $group)
+                            <option value="{{ $group->id }}">{{ $group->name }}</option>
+                        @endforeach
+                    </select>
                 </div>
                 <div class="relative ms-auto">
                     <button data-fc-type="dropdown" data-fc-placement="bottom-end" type="button"
@@ -69,10 +80,25 @@
                                     <i class="ri-expand-up-down-line"></i>
                                 @endif
                             </th>
+                            @if ($showColumns['keep_status'])
+                                <th scope="col" class="px-4 py-4 text-sm font-medium text-gray-500 text-start"
+                                    wire:click="sortByColumn('keep_status')">
+                                    Keep Status
+                                    @if ($sortBy === 'keep_status')
+                                        @if ($sortDirection === 'asc')
+                                            <i class="ri-arrow-up-s-line"></i>
+                                        @else
+                                            <i class="ri-arrow-down-s-line"></i>
+                                        @endif
+                                    @else
+                                        <i class="ri-expand-up-down-line"></i>
+                                    @endif
+                                </th>
+                            @endif
                             @if ($showColumns['keep_time'])
                                 <th scope="col" class="px-4 py-4 text-sm font-medium text-gray-500 text-start"
                                     wire:click="sortByColumn('keep_time')">
-                                    Keep Status
+                                    End Keep
                                     @if ($sortBy === 'keep_time')
                                         @if ($sortDirection === 'asc')
                                             <i class="ri-arrow-up-s-line"></i>
@@ -102,7 +128,7 @@
                             @if ($showColumns['total_price'])
                                 <th scope="col" class="px-4 py-4 text-sm font-medium text-gray-500 text-start"
                                     wire:click="sortByColumn('total_price')">
-                                    Total Purchase
+                                    Total Price
                                     @if ($sortBy === 'total_price')
                                         @if ($sortDirection === 'asc')
                                             <i class="ri-arrow-up-s-line"></i>
@@ -160,13 +186,30 @@
                                 <td class="px-4 py-4 text-sm text-gray-500 whitespace-nowrap dark:text-gray-200">
                                     {{ $keep->customer->name }}
                                 </td>
+                                @if ($showColumns['keep_status'])
+                                    <td class="px-4 py-4 text-sm text-gray-500 whitespace-nowrap dark:text-gray-200">
+                                        @if (strtolower($keep->status) === strtolower(App\Enums\KeepStatus::ACTIVE))
+                                            <span
+                                                class="inline-flex items-center gap-1.5 py-0.5 px-1.5 rounded-md text-xs font-medium bg-primary/10 text-primary">
+                                                {{ ucwords($keep->status) }}
+                                            </span>
+                                        @elseif (strtolower($keep->status) === strtolower(App\Enums\KeepStatus::SOLD))
+                                            <span class="inline-flex items-center gap-1.5 py-0.5 px-1.5 rounded-md text-xs font-medium bg-success/10 text-success">
+                                                {{ ucwords($keep->status) }}
+                                            </span>
+                                        @else
+                                            <span class="inline-flex items-center gap-1.5 py-0.5 px-1.5 rounded-md text-xs font-medium bg-danger/10 text-danger">
+                                                {{ ucwords($keep->status) }}
+                                            </span>
+                                        @endif
+                                        <p class="text-danger">
+                                            {{ $keep->keep_status }}
+                                        </p>
+                                    </td>
+                                @endif
                                 @if ($showColumns['keep_time'])
                                     <td class="px-4 py-4 text-sm text-gray-500 whitespace-nowrap dark:text-gray-200">
-                                        @if ($keep->keep_time >= \Carbon\Carbon::now())
-                                            <i class="text-xl text-center ri-check-double-line text-success"></i>
-                                        @else
-                                            <i class="text-xl text-center text-gray-400 ri-close-line"></i>
-                                        @endif
+                                        {{ $keep->keep_time }}
                                     </td>
                                 @endif
                                 @if ($showColumns['total_items'])
@@ -191,8 +234,8 @@
                                 @endif
                                 <td class="px-4 py-4">
                                     <div class="flex items-center justify-center pr-4 space-x-3">
-                                        <button wire:click="showProduct({{ $keep->id }})" class="text-primary">
-                                            <i class="ri-shirt-line"></i>
+                                        <button wire:click="show({{ $keep->id }})" class="text-primary">
+                                            <i class="ri-eye-line"></i>
                                         </button>
                                         <a wire:navigate href="{{ route('create-keep', ['keep' => $keep->id]) }}"
                                             class="text-info">

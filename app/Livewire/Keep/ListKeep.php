@@ -19,7 +19,7 @@ class ListKeep extends Component
 
     public $isOpen = false;
     public $keep;
-    public $query = '', $perPage = 10, $sortBy = 'name', $sortDirection = 'asc', $groupIds, $groupId = '';
+    public $query = '', $perPage = 10, $sortBy = 'no_keep', $sortDirection = 'asc', $groupIds, $groupId = '';
     public $total_price;
     public $showColumns = [
         'keep_status' => true,

@@ -3,6 +3,7 @@
 namespace App\Livewire\Sale;
 
 use App\Enums\DiscountType;
+use App\Enums\KeepStatus;
 use App\Enums\KeepType;
 use App\Enums\PaymentType;
 use App\Models\Customer;
@@ -79,7 +80,7 @@ class CreateSale extends Component
         $this->products = Product::all()->pluck('name', 'id')->toArray();
         $this->discount_type = DiscountType::PERSEN;
         $this->discount_programs = Discount::all()->pluck('name', 'id')->toArray();
-        $this->keeps = Keep::where('keep_time', '>=', Carbon::now())->pluck('no_keep', 'id')->toArray();
+        $this->keeps = Keep::where('keep_time', '>=', Carbon::now())->where('status', strtolower(KeepStatus::ACTIVE))->pluck('no_keep', 'id')->toArray();
         $this->groups = Group::all()->pluck('name', 'id')->toArray();
         $this->customers = Customer::all()->pluck('name', 'id')->toArray();
 
@@ -97,6 +98,8 @@ class CreateSale extends Component
 
     public function openModal($modalType)
     {
+        $this->product_id = null;
+        $this->productStockList = null;
         $this->modalType = $modalType;
         $this->isOpen = true;
     }
@@ -155,7 +158,15 @@ class CreateSale extends Component
 
     public function updatedProductId()
     {
-        $this->productStockList = ProductStock::where('product_id', $this->product_id)->get();
+        $this->productStockList = ProductStock::with('color', 'size')->where('product_id', $this->product_id)->get()->toArray();
+
+        $this->productStockList = collect($this->productStockList)->map(function ($stockItem) {
+            $cartItem = collect($this->cart)->firstWhere('id', $stockItem['id']);
+            if ($cartItem) {
+                $stockItem['home_stock'] += $cartItem['quantity'];
+            }
+            return $stockItem;
+        })->toArray();
     }
 
     public function updatedDiscountId()
@@ -181,7 +192,7 @@ class CreateSale extends Component
                     'size' => $keepProduct->productStock->size->name,
                     'product' => $keepProduct->productStock->product->name,
                     'quantity' => $keepProduct->total_items,
-                    'stock' => $keepProduct->productStock->home_stock,
+                    'stock' => $keepProduct->productStock->home_stock + $keepProduct->total_items,
                     'selling_price' => $keepProduct->selling_price,
                     'total_price' => $keepProduct->total_price
                 ];
@@ -312,6 +323,12 @@ class CreateSale extends Component
                 'total_items' => $this->total_items,
                 'desc' => $this->desc,
             ]);
+
+            if($this->keep != null) {
+                $this->keep->update([
+                    'status' => KeepStatus::SOLD
+                ]);
+            }
 
             $setting->update([
                 'sale_increment' => $setting->sale_increment + 1

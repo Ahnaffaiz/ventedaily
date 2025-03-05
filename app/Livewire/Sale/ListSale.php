@@ -2,8 +2,10 @@
 
 namespace App\Livewire\Sale;
 
+use App\Enums\KeepStatus;
 use App\Models\Keep;
 use App\Models\Sale;
+use Carbon\Carbon;
 use Exception;
 use Jantinnerezo\LivewireAlert\LivewireAlert;
 use Livewire\Attributes\Title;
@@ -106,6 +108,17 @@ class ListSale extends Component
                     $saleItem->productStock->update([
                         'all_stock' => $saleItem->productStock->all_stock + $saleItem->total_items,
                         'keep_stock' => $saleItem->productStock->keep_stock + $saleItem->total_items,
+                    ]);
+                }
+            }
+            if($this->sale->keep_id != null) {
+                if($this->sale->keep->keep_time >= Carbon::now()) {
+                    $this->sale->keep->update([
+                        'status' => KeepStatus::ACTIVE
+                    ]);
+                } else {
+                    $this->sale->keep->update([
+                        'status' => KeepStatus::CANCELED
                     ]);
                 }
             }

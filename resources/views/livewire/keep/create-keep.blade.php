@@ -21,35 +21,35 @@
                                 @foreach ($productStockList as $productStock)
                                     <tr>
                                         <td class="px-4 py-4 text-sm text-gray-500 whitespace-nowrap">
-                                            {{ $productStock->color->name }}
+                                            {{ $productStock['color']['name'] }}
                                         </td>
                                         <td class="px-4 py-4 text-sm text-gray-500 whitespace-nowrap">
-                                            {{ $productStock->size->name }}
+                                            {{ $productStock['size']['name'] }}
                                         </td>
                                         <td class="px-4 py-4 text-sm text-gray-500 whitespace-nowrap">
-                                            {{ $productStock->home_stock }}
+                                            {{ $productStock['home_stock'] }}
                                         </td>
                                         <td class="px-4 py-4 text-sm text-gray-500 whitespace-nowrap">
-                                            {{ $productStock->store_stock }}
+                                            {{ $productStock['store_stock'] }}
                                         </td>
                                         <td class="px-4 py-4 text-sm text-gray-500 whitespace-nowrap">
-                                            Rp. {{ number_format($productStock->selling_price, 0, ',', '.') }}
+                                            Rp. {{ number_format($productStock['selling_price'], 0, ',', '.') }}
                                         </td>
                                         <td>
-                                            @if ($productStock->all_stock > 0)
+                                            @if ($productStock['all_stock'] > 0)
                                                 <div class="flex items-center justify-center gap-2">
-                                                    <button wire:click="removeProductStock({{ $productStock->id }})"
+                                                    <button wire:click="removeProductStock({{ $productStock['id'] }})"
                                                         class="h-8 px-4 py-1 rounded-md bg-primary/25 text-primary hover:bg-primary hover:text-white font-md"
                                                         type="button">
                                                         -
                                                     </button>
 
                                                     <input type="number"
-                                                        wire:model.lazy="cart.{{ $productStock->id }}.{{ 'quantity' }}"
-                                                        wire:change="addToCart({{ $productStock->id }})"
+                                                        wire:model.lazy="cart.{{ $productStock['id'] }}.{{ 'quantity' }}"
+                                                        wire:change="addToCart({{ $productStock['id'] }})"
                                                         class="w-16 h-8 text-center text-gray-900 border border-gray-200 rounded-md no-arrow font-base">
 
-                                                    <button wire:click="addProductStock({{ $productStock->id }})"
+                                                    <button wire:click="addProductStock({{ $productStock['id'] }})"
                                                         class="h-8 px-4 py-1 rounded-md bg-primary/25 text-primary hover:bg-primary hover:text-white font-md"
                                                         type="button">
                                                         +

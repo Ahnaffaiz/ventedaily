@@ -133,7 +133,17 @@ class CreateKeep extends Component
 
     public function updatedProductId()
     {
-        $this->productStockList = ProductStock::where('product_id', $this->product_id)->get();
+        $this->productStockList = ProductStock::with('color', 'size')->where('product_id', $this->product_id)->get()->toArray();
+
+        $this->productStockList = collect($this->productStockList)->map(function ($stockItem) {
+            $cartItem = collect($this->cart)->firstWhere('id', $stockItem['id']);
+            if ($cartItem) {
+                $stockItem['all_stock'] += $cartItem['all_stock'];
+                $stockItem['home_stock'] += $cartItem['home_stock'];
+                $stockItem['store_stock'] += $cartItem['store_stock'];
+            }
+            return $stockItem;
+        })->toArray();
     }
 
     public function getTotalPrice()
@@ -263,29 +273,37 @@ class CreateKeep extends Component
             foreach ($this->cart as $productStock) {
                 $store_stock = 0;
                 $home_stock = 0;
-                $productStock = ProductStock::where('id', $productStock['id'])->first();
+                $stock = ProductStock::where('id', $productStock['id'])->first();
                 if ($this->group_id == 2) {
                     if ($productStock['home_stock'] < $productStock['quantity']) {
                         $store_stock = $productStock['quantity'] - $productStock['home_stock'];
-                        $productStock->update([
-                            'store_stock' => $productStock['store_stock'] - $store_stock,
+                        $home_stock = $stock->home_stock;
+                        $stock->update([
+                            'store_stock' => $stock->store_stock - $store_stock,
                             'home_stock' => 0,
+                            'all_stock' => $stock->store_stock - $store_stock,
                         ]);
                     } else {
-                        $productStock->update([
-                            'home_stock' => $productStock['home_stock'] - $productStock['quantity'],
+                        $home_stock = $productStock['quantity'];
+                        $stock->update([
+                            'home_stock' => $stock->home_stock - $productStock['quantity'],
+                            'all_stock' => $stock->home_stock - $productStock['quantity'] + $stock->store_stock,
                         ]);
                     }
                 } elseif ($this->group_id == 1) {
                     if ($productStock['store_stock'] < $productStock['quantity']) {
                         $home_stock = $productStock['quantity'] - $productStock['store_stock'];
-                        $productStock->update([
-                            'home_stock' => $productStock['home_stock'] - $home_stock,
+                        $store_stock = $stock->store_stock;
+                        $stock->update([
+                            'home_stock' => $stock->home_stock - $home_stock,
                             'store_stock' => 0,
+                            'all_stock' => $stock->home_stock - $home_stock,
                         ]);
                     } else {
-                        $productStock->update([
-                            'store_stock' => $productStock['store_stock'] - $productStock['quantity'],
+                        $store_stock = $productStock['quantity'];
+                        $stock->update([
+                            'store_stock' => $stock->store_stock - $productStock['quantity'],
+                            'all_stock' => $stock->store_stock - $productStock['quantity'] + $stock->home_stock,
                         ]);
                     }
                 }
@@ -305,7 +323,7 @@ class CreateKeep extends Component
             $this->alert('success', 'Keep Order Succesfully Created');
             $this->mount();
         } catch (\Throwable $th) {
-            //throw $th;
+            $this->alert('warning', $th);
         }
     }
 
@@ -325,8 +343,9 @@ class CreateKeep extends Component
                 'size' => $keepProduct->productStock->size->name,
                 'product' => $keepProduct->productStock->product->name,
                 'quantity' => $keepProduct->total_items,
-                'home_stock' => $keepProduct->productStock->home_stock,
-                'store_stock' => $keepProduct->productStock->store_stock,
+                'all_stock' => $keepProduct->home_stock + $keepProduct->store_stock + $keepProduct->productStock->all_stock,
+                'home_stock' => $keepProduct->home_stock + $keepProduct->productStock->home_stock,
+                'store_stock' => $keepProduct->store_stock + $keepProduct->productStock->store_stock,
                 'purchase_price' => $keepProduct->purchase_price,
                 'selling_price' => $keepProduct->selling_price,
                 'total_price' => $keepProduct->total_price
@@ -360,33 +379,40 @@ class CreateKeep extends Component
         foreach ($this->cart as $productStock) {
             $store_stock = 0;
             $home_stock = 0;
-            $productStock = ProductStock::where('id', $productStock['id'])->first();
+            $stock = ProductStock::where('id', $productStock['id'])->first();
             if ($this->group_id == 2) {
                 if ($productStock['home_stock'] < $productStock['quantity']) {
                     $store_stock = $productStock['quantity'] - $productStock['home_stock'];
-                    $productStock->update([
-                        'store_stock' => $productStock['store_stock'] - $store_stock,
+                    $home_stock = $stock->home_stock;
+                    $stock->update([
+                        'store_stock' => $stock->store_stock - $store_stock,
                         'home_stock' => 0,
+                        'all_stock' => $stock->store_stock - $store_stock,
                     ]);
                 } else {
-                    $productStock->update([
-                        'home_stock' => $productStock['home_stock'] - $productStock['quantity'],
+                    $home_stock = $productStock['quantity'];
+                    $stock->update([
+                        'home_stock' => $stock->home_stock - $productStock['quantity'],
+                        'all_stock' => $stock->home_stock - $productStock['quantity'] + $stock->store_stock,
                     ]);
                 }
             } elseif ($this->group_id == 1) {
                 if ($productStock['store_stock'] < $productStock['quantity']) {
                     $home_stock = $productStock['quantity'] - $productStock['store_stock'];
-                    $productStock->update([
-                        'home_stock' => $productStock['home_stock'] - $home_stock,
+                    $store_stock = $stock->store_stock;
+                    $stock->update([
+                        'home_stock' => $stock->home_stock - $home_stock,
                         'store_stock' => 0,
+                        'all_stock' => $stock->home_stock - $home_stock,
                     ]);
                 } else {
-                    $productStock->update([
-                        'store_stock' => $productStock['store_stock'] - $productStock['quantity'],
+                    $store_stock = $productStock['quantity'];
+                    $stock->update([
+                        'store_stock' => $stock->store_stock - $productStock['quantity'],
+                        'all_stock' => $stock->store_stock - $productStock['quantity'] + $stock->home_stock,
                     ]);
                 }
             }
-
             $keepProduct = KeepProduct::create([
                 'keep_id' => $this->keep->id,
                 'product_stock_id' => $productStock['id'],

@@ -79,7 +79,7 @@
                     <x-input-select id="customer_id" name="customer_id" title="Customer" :options="$customers"
                         placeholder="Select Customer" />
                     <x-input-select id="keep_type" name="keep_type" title="Keep Type"
-                        :options="App\Enums\KeepType::asSelectArray()" placeholder="Keep Type" />
+                        :options="App\Enums\KeepType::asSelectArray()"/>
                     @if (strtolower($keep_type) === App\Enums\KeepType::CUSTOM)
                         <x-input-text id="keep_time" name="keep_time" title="Keep Time" placeholder="Select Time"
                             type="datetime-local" />

@@ -16,33 +16,46 @@
                         wire:model.live="query" placeholder="Search...">
                     <span class="absolute z-10 text-base -translate-y-1/2 ri-search-line start-2 top-1/2"></span>
                 </div>
-                <div class="relative mr-4 ms-auto">
-                    <select class="w-48 form-input" wire:model.change="groupId">
-                        <option value="">All Keep</option>
-                        @foreach ($groupIds as $group)
-                            <option value="{{ $group->id }}">{{ $group->name }}</option>
-                        @endforeach
-                    </select>
-                </div>
                 <div class="relative ms-auto">
                     <button data-fc-type="dropdown" data-fc-placement="bottom-end" type="button"
                         class="flex items-center py-2 pl-3 pr-2 text-sm font-medium text-gray-500 bg-white border border-gray-300 rounded-md shadow-sm dark:border-gray-500 dark:bg-gray-700 hover:bg-gray-50 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-indigo-500"
                         id="menu-button" aria-expanded="true" aria-haspopup="true">
                         <i class="mr-2 ri-filter-line"></i>
                     </button>
-                    <div class="absolute right-0 z-10 hidden w-56 mt-2 origin-top-right bg-white divide-y divide-gray-100 rounded-md shadow-lg dark:divide-gray-600 dark:bg-gray-700 ring-1 ring-black ring-opacity-5 focus:outline-none"
-                        role="menu" aria-orientation="vertical" aria-labelledby="menu-button" tabindex="-1">
-                        <div class="py-1" role="none">
-                            @foreach ($showColumns as $column => $isVisible)
-                                <div class="flex items-center px-4 py-2 text-sm text-gray-700 hover:bg-gray-100 dark:hover:bg-gray-900 hover:text-gray-900"
-                                    role="menuitem" tabindex="-1" id="menu-item-0">
-                                    <input type="checkbox" class="w-4 h-4 text-indigo-600 form-checkbox"
-                                        wire:model.live="showColumns.{{ $column }}">
-                                    <label class="block ml-3 text-sm font-medium text-gray-700" for="comments">
-                                        {{ ucfirst(str_replace('_', ' ', $column)) }}
-                                    </label>
-                                </div>
-                            @endforeach
+                    <div class="absolute right-0 z-10 hidden w-56 mt-2 origin-top-right bg-white rounded-md shadow-lg dark:bg-gray-700 ring-1 ring-black ring-opacity-5 focus:outline-none"
+                        role="menu" aria-orientation="vertical" aria-labelledby="menu-button" tabindex="-1" onclick="event.stopPropagation()">
+                        <div class="max-h-[300px] h-56 overflow-auto mt-2">
+                            <span class="m-2">Status</span>
+                            <div class="flex w-full p-1">
+                                <select class="form-input" wire:model.change="status">
+                                    <option value="">All</option>
+                                    @foreach (\App\Enums\KeepStatus::asSelectArray() as $key => $value)
+                                        <option value="{{ $value }}">{{ ucfirst($value) }}</option>
+                                    @endforeach
+                                </select>
+                            </div>
+                            <span class="m-2">Group</span>
+                            <div class="flex w-full p-1">
+                                <select class="form-input" wire:model.change="groupId">
+                                    <option value="">All Keep</option>
+                                    @foreach ($groupIds as $group)
+                                        <option value="{{ $group->id }}">{{ $group->name }}</option>
+                                    @endforeach
+                                </select>
+                            </div>
+                            <div class="py-1" role="none">
+                                <span class="m-2">Column</span>
+                                @foreach ($showColumns as $column => $isVisible)
+                                    <div class="flex items-center px-4 py-2 text-sm text-gray-700 hover:bg-gray-100 dark:hover:bg-gray-900 hover:text-gray-900"
+                                        role="menuitem" tabindex="-1" id="menu-item-0">
+                                        <input type="checkbox" class="w-4 h-4 text-indigo-600 form-checkbox"
+                                            wire:model.live="showColumns.{{ $column }}">
+                                        <label class="block ml-3 text-sm font-medium text-gray-700" for="comments">
+                                            {{ ucfirst(str_replace('_', ' ', $column)) }}
+                                        </label>
+                                    </div>
+                                @endforeach
+                            </div>
                         </div>
                     </div>
                 </div>
@@ -80,11 +93,11 @@
                                     <i class="ri-expand-up-down-line"></i>
                                 @endif
                             </th>
-                            @if ($showColumns['keep_status'])
+                            @if ($showColumns['status'])
                                 <th scope="col" class="px-4 py-4 text-sm font-medium text-gray-500 text-start"
-                                    wire:click="sortByColumn('keep_status')">
+                                    wire:click="sortByColumn('status')">
                                     Keep Status
-                                    @if ($sortBy === 'keep_status')
+                                    @if ($sortBy === 'status')
                                         @if ($sortDirection === 'asc')
                                             <i class="ri-arrow-up-s-line"></i>
                                         @else
@@ -186,7 +199,7 @@
                                 <td class="px-4 py-4 text-sm text-gray-500 whitespace-nowrap dark:text-gray-200">
                                     {{ $keep->customer->name }}
                                 </td>
-                                @if ($showColumns['keep_status'])
+                                @if ($showColumns['status'])
                                     <td class="px-4 py-4 text-sm text-gray-500 whitespace-nowrap dark:text-gray-200">
                                         @if (strtolower($keep->status) === strtolower(App\Enums\KeepStatus::ACTIVE))
                                             <span
@@ -202,9 +215,6 @@
                                                 {{ ucwords($keep->status) }}
                                             </span>
                                         @endif
-                                        <p class="text-danger">
-                                            {{ $keep->keep_status }}
-                                        </p>
                                     </td>
                                 @endif
                                 @if ($showColumns['keep_time'])
@@ -237,10 +247,12 @@
                                         <button wire:click="show({{ $keep->id }})" class="text-primary">
                                             <i class="ri-eye-line"></i>
                                         </button>
-                                        <a wire:navigate href="{{ route('create-keep', ['keep' => $keep->id]) }}"
-                                            class="text-info">
-                                            <i class="ri-edit-circle-line"></i>
-                                        </a>
+                                        @if (strtolower($keep->status) === strtolower(App\Enums\KeepStatus::ACTIVE))
+                                            <a wire:navigate href="{{ route('create-keep', ['keep' => $keep->id]) }}"
+                                                class="text-info">
+                                                <i class="ri-edit-circle-line"></i>
+                                            </a>
+                                        @endif
                                         <button wire:click="deleteAlert({{ $keep->id }})" class="text-danger">
                                             <i class="text-base ri-delete-bin-2-line"></i>
                                         </button>

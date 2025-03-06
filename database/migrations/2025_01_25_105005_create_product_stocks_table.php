@@ -18,8 +18,8 @@ return new class extends Migration
             $table->foreignId('color_id')->constrained()->onDelete('cascade');
             $table->integer('all_stock');
             $table->integer('home_stock');
+            $table->integer('store_stock');
             $table->integer('qc_stock');
-            $table->integer('storage_stock');
             $table->integer('vermak_stock');
             $table->integer('selling_price');
             $table->integer('purchase_price');

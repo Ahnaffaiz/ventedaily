@@ -63,8 +63,16 @@ class CreateKeep extends Component
         $this->products = Product::all()->pluck('name', 'id')->toArray();
         if($keep) {
             $this->keep = Keep::where('id', $keep)->first();
-            $this->edit();
-            $this->getTotalPrice();
+            if(strtolower($this->keep->status) === strtolower(KeepStatus::ACTIVE)) {
+                $this->edit();
+                $this->getTotalPrice();
+            } else {
+                return redirect()->route('keep')->with('error', 'Keep Order Not Found');
+            }
+        } else {
+            $keepTimeout = Setting::first()->keep_timeout;
+            $this->keep_type = KeepType::REGULAR;
+            $this->keep_time = Carbon::tomorrow()->setTimeFromTimeString($keepTimeout);
         }
     }
 
@@ -325,7 +333,7 @@ class CreateKeep extends Component
         }
 
         $this->alert('success', 'Purchase Order Succesfully Updated');
-        $this->mount();
+        $this->mount($this->keep->id);
     }
 
     public function resetKeep() {

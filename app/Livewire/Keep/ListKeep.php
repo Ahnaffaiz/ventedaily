@@ -2,6 +2,7 @@
 
 namespace App\Livewire\Keep;
 
+use App\Enums\KeepStatus;
 use App\Models\Group;
 use App\Models\Keep;
 use App\Models\Purchase;
@@ -19,10 +20,10 @@ class ListKeep extends Component
 
     public $isOpen = false;
     public $keep;
-    public $query = '', $perPage = 10, $sortBy = 'no_keep', $sortDirection = 'asc', $groupIds, $groupId = '';
+    public $query = '', $perPage = 10, $sortBy = 'no_keep', $sortDirection = 'asc', $groupIds, $groupId = '', $status = KeepStatus::ACTIVE;
     public $total_price;
     public $showColumns = [
-        'keep_status' => true,
+        'status' => true,
         'keep_time' => true,
         'total_items' => true,
         'total_price' => true,
@@ -38,8 +39,8 @@ class ListKeep extends Component
 
     public function closeModal()
     {
-        $this->reset();
         $this->isOpen = false;
+        $this->keep = null;
     }
 
     public function sortByColumn($column)
@@ -58,6 +59,7 @@ class ListKeep extends Component
         $this->resetPage();
     }
 
+
     public function mount() {
         $this->groupIds = Group::get();
     }
@@ -68,6 +70,7 @@ class ListKeep extends Component
                 ->join('customers', 'keeps.customer_id', '=', 'customers.id')
                 ->where('customers.name', 'like', '%' . $this->query . '%')
                 ->where('customers.group_id', 'like', '%' . $this->groupId . '%')
+                ->where('status', 'like', '%' . $this->status . '%')
                 ->orderBy($this->sortBy, $this->sortDirection)
                 ->paginate($this->perPage)
         ]);

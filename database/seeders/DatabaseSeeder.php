@@ -25,5 +25,11 @@ class DatabaseSeeder extends Seeder
         $this->call(BankSeeder::class);
         $this->call(TermOfPaymentSeeder::class);
         $this->call(SettingSeeder::class);
+        $this->call(GroupSeeder::class);
+        $this->call(SupplierSeeder::class);
+        $this->call(CategorySeeder::class);
+        $this->call(ProductSeeder::class);
+        $this->call(ProductStockSeeder::class);
+        $this->call(CustomerSeeder::class);
     }
 }

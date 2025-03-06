@@ -30,7 +30,7 @@ class ProductStock extends Component
         'all_stock' => true,
         'home_stock' => true,
         'qc_stock' => true,
-        'storage_stock' => true,
+        'store_stock' => true,
         'vermak_stock' => true,
         'created_at' => false,
         'updated_at' => false,
@@ -119,11 +119,12 @@ class ProductStock extends Component
                     'all_stock' => 0,
                     'home_stock' => 0,
                     'qc_stock' => 0,
-                    'storage_stock' => 0,
+                    'store_stock' => 0,
                     'vermak_stock' => 0,
                 ]);
                 $this->alert('success', 'Product Successfully Created');
             } catch (Exception $th) {
+                dd($th);
                 $this->alert('error', 'Can\'t Create Product', ['text'=>$th]);
             }
         }

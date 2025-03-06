@@ -21,12 +21,13 @@
         </div>
     </div>
     <div class="mt-6 overflow-x-auto border border-gray-200 rounded-md">
-        <div class="flex items-center justify-between p-4 d">
+        <div class="flex items-center justify-between p-4">
             <div class="flex">
                 <h4 class="card-title">Daftar Jenis Product</h4>
             </div>
         </div>
         <table class="min-w-full divide-y divide-gray-200 dark:divide-gray-700">
+            <h1>{{ $productStocks?->count() }}</h1>
             @if ($productStocks?->count() > 0)
                 <thead>
                     <tr>
@@ -128,11 +129,11 @@
                                 @endif
                             </th>
                         @endif
-                        @if ($showColumns['storage_stock'])
+                        @if ($showColumns['store_stock'])
                             <th scope="col" class="px-4 py-4 text-sm font-medium text-gray-500 text-start"
-                                wire:click="sortByColumn('storage_stock')">
-                                Storage
-                                @if ($sortBy === 'storage_stock')
+                                wire:click="sortByColumn('store_stock')">
+                                Store
+                                @if ($sortBy === 'store_stock')
                                     @if ($sortDirection === 'asc')
                                         <i class="ri-arrow-up-s-line"></i>
                                     @else
@@ -225,9 +226,9 @@
                                     {{ $productStock->qc_stock }}
                                 </td>
                             @endif
-                            @if ($showColumns['storage_stock'])
+                            @if ($showColumns['store_stock'])
                                 <td class="px-4 py-4 text-sm text-gray-500 whitespace-nowrap dark:text-gray-200">
-                                    {{ $productStock->storage_stock }}
+                                    {{ $productStock->store_stock }}
                                 </td>
                             @endif
                             @if ($showColumns['vermak_stock'])
@@ -263,10 +264,10 @@
                 </div>
             @endif
         </table>
-        <div class="px-3 py-4">
-            <div class="flex justify-end">
-                {{ $productStocks->links() }}
-            </div>
+    </div>
+    <div class="px-3 py-4">
+        <div class="flex justify-end">
+            {{ $productStocks->links() }}
         </div>
     </div>
 </div>

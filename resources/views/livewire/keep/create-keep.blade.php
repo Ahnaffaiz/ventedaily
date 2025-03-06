@@ -11,7 +11,8 @@
                                 <tr>
                                     <th class="px-4 py-4 text-sm font-medium text-gray-500 text-start">Color</th>
                                     <th class="px-4 py-4 text-sm font-medium text-gray-500 text-start">Size</th>
-                                    <th class="px-4 py-4 text-sm font-medium text-gray-500 text-start">Stock</th>
+                                    <th class="px-4 py-4 text-sm font-medium text-gray-500 text-start">Home Stock</th>
+                                    <th class="px-4 py-4 text-sm font-medium text-gray-500 text-start">Store Stock</th>
                                     <th class="px-4 py-4 text-sm font-medium text-gray-500 text-start">Price</th>
                                     <th class="px-4 py-4 text-sm font-medium text-center text-gray-500">Action</th>
                                 </tr>
@@ -29,10 +30,13 @@
                                             {{ $productStock->home_stock }}
                                         </td>
                                         <td class="px-4 py-4 text-sm text-gray-500 whitespace-nowrap">
+                                            {{ $productStock->store_stock }}
+                                        </td>
+                                        <td class="px-4 py-4 text-sm text-gray-500 whitespace-nowrap">
                                             Rp. {{ number_format($productStock->selling_price, 0, ',', '.') }}
                                         </td>
                                         <td>
-                                            @if ($productStock->home_stock > 0)
+                                            @if ($productStock->all_stock > 0)
                                                 <div class="flex items-center justify-center gap-2">
                                                     <button wire:click="removeProductStock({{ $productStock->id }})"
                                                         class="h-8 px-4 py-1 rounded-md bg-primary/25 text-primary hover:bg-primary hover:text-white font-md"
@@ -98,7 +102,8 @@
                             </th>
                             <th scope="col" class="px-4 py-4 text-sm font-medium text-gray-500 text-start">Color</th>
                             <th scope="col" class="px-4 py-4 text-sm font-medium text-gray-500 text-start">Size</th>
-                            <th scope="col" class="px-4 py-4 text-sm font-medium text-gray-500 text-start">Stock</th>
+                            <th scope="col" class="px-4 py-4 text-sm font-medium text-gray-500 text-start">Home Stock</th>
+                            <th scope="col" class="px-4 py-4 text-sm font-medium text-gray-500 text-start">Store Stock</th>
                             <th scope="col" class="px-4 py-4 text-sm font-medium text-gray-500 text-start">Price (@)
                             <th scope="col" class="px-4 py-4 text-sm font-medium text-center text-gray-500">Qty</th>
                             </th>
@@ -123,7 +128,10 @@
                                         {{ $productStock['size'] }}
                                     </td>
                                     <td class="px-4 py-4 text-sm text-gray-500 whitespace-nowrap">
-                                        {{ $productStock['stock'] }}
+                                        {{ $productStock['home_stock'] }}
+                                    </td>
+                                    <td class="px-4 py-4 text-sm text-gray-500 whitespace-nowrap">
+                                        {{ $productStock['store_stock'] }}
                                     </td>
                                     <td class="px-4 py-4 text-sm text-gray-500 whitespace-nowrap">
                                         {{ number_format($productStock['selling_price'], 0, ',', '.') }}

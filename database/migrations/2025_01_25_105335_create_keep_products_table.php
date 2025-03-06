@@ -16,6 +16,8 @@ return new class extends Migration
             $table->foreignId('keep_id')->constrained()->onDelete('cascade');
             $table->foreignId('product_stock_id')->constrained()->onDelete('cascade');
             $table->integer('total_items');
+            $table->integer('home_stock');
+            $table->integer('store_stock');
             $table->integer('selling_price');
             $table->integer('purchase_price');
             $table->integer('total_price');

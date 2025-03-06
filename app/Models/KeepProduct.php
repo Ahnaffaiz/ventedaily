@@ -9,7 +9,7 @@ class KeepProduct extends Model
 {
     use HasFactory;
 
-    protected $fillable = ['keep_id', 'product_stock_id', 'total_items', 'selling_price', 'purchase_price', 'total_price'];
+    protected $fillable = ['keep_id', 'product_stock_id', 'total_items','home_stock', 'store_stock', 'selling_price', 'purchase_price', 'total_price'];
 
     public function keep()
     {

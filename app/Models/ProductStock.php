@@ -16,7 +16,7 @@ class ProductStock extends Model
         'all_stock',
         'home_stock',
         'qc_stock',
-        'storage_stock',
+        'store_stock',
         'vermak_stock',
         'selling_price',
         'purchase_price',

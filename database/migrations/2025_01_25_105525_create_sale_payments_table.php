@@ -22,7 +22,7 @@ return new class extends Migration
             $table->integer('cash_change')->nullable();
             $table->enum('payment_type', ['cash', 'transfer']);
             $table->foreignId('bank_id')->nullable()->constrained()->onDelete('cascade');
-            $table->integer('account_number')->nullable();
+            $table->string('account_number', 255)->nullable();
             $table->string('account_name', 225)->nullable();
             $table->longText('desc')->nullable();
             $table->timestamps();

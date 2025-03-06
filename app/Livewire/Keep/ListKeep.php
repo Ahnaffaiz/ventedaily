@@ -104,12 +104,14 @@ class ListKeep extends Component
     public function delete()
     {
         try {
-            foreach ($this->keep->keepProducts as $keepProduct) {
-                $keepProduct->productStock->update([
-                    'all_stock' => $keepProduct->productStock->all_stock + $keepProduct->total_items,
-                    'home_stock' => $keepProduct->productStock->home_stock + $keepProduct->home_stock,
-                    'store_stock' => $keepProduct->productStock->store_stock + $keepProduct->store_stock,
-                ]);
+            if ($this->keep->status == KeepStatus::ACTIVE) {
+                foreach ($this->keep->keepProducts as $keepProduct) {
+                    $keepProduct->productStock->update([
+                        'all_stock' => $keepProduct->productStock->all_stock + $keepProduct->total_items,
+                        'home_stock' => $keepProduct->productStock->home_stock + $keepProduct->home_stock,
+                        'store_stock' => $keepProduct->productStock->store_stock + $keepProduct->store_stock,
+                    ]);
+                }
             }
             $this->keep->delete();
             $this->alert('success', 'Keep Data Succesfully Deleted');

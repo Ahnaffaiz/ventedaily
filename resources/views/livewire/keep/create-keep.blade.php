@@ -93,7 +93,7 @@
                     <x-textarea-input id="desc" name="desc" title="Keep Note" />
                 </div>
             </div>
-            <div class="mt-4 border border-gray-200 rounded-md section">
+            <div class="mt-4 overflow-x-auto border border-gray-200 rounded-md section">
                 <table class="min-w-full divide-y divide-gray-200 dark:divide-gray-700">
                     <thead>
                         <tr>
@@ -170,7 +170,7 @@
                                 </td>
                             </tr>
                             <tr class="border-none">
-                                <td colspan="5" class="py-4 text-end"></td>
+                                <td colspan="7" class="py-4 text-end"></td>
                                 <td class="py-4 text-xl font-bold text-end">Total Price:</td>
                                 <td class="py-4 text-xl font-bold text-end"> Rp.
                                     {{ number_format($total_price, 0, ',', '.') }}

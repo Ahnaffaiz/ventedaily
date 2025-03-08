@@ -4,6 +4,7 @@ namespace App\Console\Commands;
 
 use App\Enums\KeepStatus;
 use App\Models\Keep;
+use App\Models\ProductStock;
 use Carbon\Carbon;
 use Illuminate\Console\Command;
 
@@ -28,10 +29,29 @@ class UpdateKeepStatus extends Command
      */
     public function handle()
     {
-        $keep = Keep::where('keep_time', '<', Carbon::now())
-            ->where('status', strtolower(KeepStatus::ACTIVE))
-            ->update(['status' => strtolower(KeepStatus::CANCELED)]);
+        $keeps = Keep::where('keep_time', '<', Carbon::now())
+            ->where('status', strtolower(KeepStatus::ACTIVE))->get();
 
-        $this->info(' Status keep telah diperbarui.');
+        try {
+            foreach ($keeps as $keep) {
+                foreach ($keep?->keepProducts as $keepProduct) {
+                    $productStock = ProductStock::find($keepProduct->product_stock_id);
+                    $productStock->update([
+                        'home_stock' => $productStock->home_stock + $keepProduct->home_stock,
+                        'store_stock' => $productStock->store_stock + $keepProduct->store_stock,
+                        'all_stock' => $productStock->all_stock + $keepProduct->home_stock + $keepProduct->store_stock,
+                    ]);
+                    $keepProduct->update([
+                        'home_stock' => 0,
+                        'store_stock' => 0,
+                    ]);
+                }
+                $keep->update([
+                    'status' => strtolower(KeepStatus::CANCELED),
+                ]);
+            }
+        } catch (\Throwable $th) {
+            $this->info($th->getMessage());
+        }
     }
 }

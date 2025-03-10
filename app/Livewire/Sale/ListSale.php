@@ -102,12 +102,13 @@ class ListSale extends Component
 
     public function delete()
     {
+        $stockStype = $this->sale->customer->group_id == 1 ? 'store_stock' : 'home_stock';
         try {
             foreach ($this->sale->saleItems as $saleItem) {
                 if(!$this->sale->keep()->exists()){
                     $saleItem->productStock->update([
                         'all_stock' => $saleItem->productStock->all_stock + $saleItem->total_items,
-                        'keep_stock' => $saleItem->productStock->keep_stock + $saleItem->total_items,
+                        $stockStype => $saleItem->productStock->$stockStype + $saleItem->total_items,
                     ]);
                 }
             }

@@ -101,12 +101,18 @@ class CreateSale extends Component
         $this->product_id = null;
         $this->productStockList = null;
         $this->modalType = $modalType;
-        $this->isOpen = true;
+        if($this->customer_id == null || $this->group_id == null) {
+            $this->alert('warning', 'select Group dan Customer first');
+        } else {
+            $this->isOpen = true;
+        }
     }
 
     public function closeModal()
     {
-        $this->getTotalPrice();
+        if($this->cart != null) {
+            $this->getTotalPrice();
+        }
         $this->isOpen = false;
     }
 
@@ -119,6 +125,7 @@ class CreateSale extends Component
 
     public function updatedGroupId()
     {
+        $this->cart = null;
         $this->customers = Customer::where('group_id', $this->group_id)->pluck('name', 'id')->toArray();
     }
 
@@ -147,23 +154,25 @@ class CreateSale extends Component
 
     public function searchKeep($query)
     {
+        $this->keeps = Keep::where('keep_time', '>=', Carbon::now())->where('status', strtolower(KeepStatus::ACTIVE))->pluck('no_keep', 'id')->toArray();
         if ($query) {
-            $this->keeps = collect(Keep::where('keep_time', '<=', Carbon::now())->pluck('no_keep', 'id')->toArray())
-                ->filter(function ($label, $value) use ($query) {
-                    return stripos($label, $query) !== false;
-                })
-                ->toArray();
+            $this->keeps = Keep::where('keep_time', '>=', Carbon::now())
+            ->where('status', strtolower(KeepStatus::ACTIVE))
+            ->where('no_keep', 'like', '%'.$query.'%')
+            ->pluck('no_keep', 'id')
+            ->toArray();
             }
     }
 
     public function updatedProductId()
     {
         $this->productStockList = ProductStock::with('color', 'size')->where('product_id', $this->product_id)->get()->toArray();
-
         $this->productStockList = collect($this->productStockList)->map(function ($stockItem) {
             $cartItem = collect($this->cart)->firstWhere('id', $stockItem['id']);
+            $stockType = $this->group_id == 1 ? 'store_stock' : 'home_stock';
             if ($cartItem) {
-                $stockItem['home_stock'] += $cartItem['quantity'];
+                $stockItem['all_stock'] += $cartItem['total_items'];
+                $stockItem[$stockType] += $cartItem['total_items'];
             }
             return $stockItem;
         })->toArray();
@@ -206,10 +215,10 @@ class CreateSale extends Component
         $this->total_items = array_sum(array_column($this->cart, 'quantity'));
         $this->sub_total = array_sum(array_column($this->cart, 'total_price'));
         $this->total_price = $this->sub_total;
-        if($this->discount_type === DiscountType::PERSEN) {
+        if(strtolower($this->discount_type) === strtolower(DiscountType::PERSEN)) {
             $this->sub_total_after_discount = $this->sub_total - round($this->sub_total* (int) $this->discount/100);
             $this->total_price = $this->sub_total_after_discount;
-        } elseif($this->discount_type === DiscountType::RUPIAH) {
+        } elseif(strtolower($this->discount_type) === strtolower(DiscountType::RUPIAH)) {
             $this->sub_total_after_discount = $this->sub_total - $this->discount;
             $this->total_price = $this->sub_total_after_discount;
         } else {
@@ -229,33 +238,63 @@ class CreateSale extends Component
 
     public function addToCart($productStockId)
     {
+        $stockType = $this->group_id == 1 ? 'store_stock' : 'home_stock';
         $productStock = ProductStock::where('id', $productStockId)->first();
         $this->cart[$productStockId]['selling_price'] = $productStock->selling_price;
-        $this->cart[$productStockId] = [
-            'id' => $productStock->id,
-            'color' => $productStock->color->name,
-            'size' => $productStock->size->name,
-            'product' => $productStock->product->name,
-            'quantity' => $this->cart[$productStockId]['quantity'],
-            'stock' => $this->cart[$productStockId]['stock'],
-            'selling_price' => $productStock->selling_price,
-            'total_price' => $this->cart[$productStockId]['selling_price'] * $this->cart[$productStockId]['quantity']
-        ];
-        $this->getTotalPrice();
+        if(!array_key_exists('home_stock', $this->cart[$productStockId])) {
+            $this->cart[$productStockId]['home_stock'] = ProductStock::where('id', $productStockId)->first()->home_stock;
+            $this->cart[$productStockId]['store_stock'] = ProductStock::where('id', $productStockId)->first()->store_stock;
+            $this->cart[$productStockId]['all_stock'] = ProductStock::where('id', $productStockId)->first()->all_stock;
+        }
+
+        if($this->cart[$productStockId]['quantity'] > $this->cart[$productStockId][$stockType]) {
+            $this->cart[$productStockId]['quantity'] = $this->cart[$productStockId][$stockType];
+            $this->alert('warning', 'Stock Not Enough');
+        } elseif($this->cart[$productStockId]['quantity'] == null) {
+            $this->cart[$productStockId]['quantity'] = 0;
+            $this->productStock = $this->cart[$productStockId]['id'];
+            $this->deleteProductStock();
+        } elseif($this->cart[$productStockId]['quantity'] < 1) {
+            $this->cart[$productStockId]['quantity'] = 1;
+        }
+
+        if($this->cart[$productStockId]['quantity'] >= 1 && $this->cart[$productStockId]['quantity'] <= $this->cart[$productStockId][$stockType]) {
+            $this->cart[$productStockId] = [
+                'id' => $productStock->id,
+                'color' => $productStock->color->name,
+                'size' => $productStock->size->name,
+                'product' => $productStock->product->name,
+                'quantity' => $this->cart[$productStockId]['quantity'],
+                'home_stock' => $this->cart[$productStockId]['home_stock'],
+                'store_stock' => $this->cart[$productStockId]['store_stock'],
+                'all_stock' => $this->cart[$productStockId]['all_stock'],
+                'purchase_price' => $productStock->purchase_price,
+                'selling_price' => $productStock->selling_price,
+                'total_price' => $this->cart[$productStockId]['selling_price'] * $this->cart[$productStockId]['quantity']
+            ];
+            $this->getTotalPrice();
+        }
+
     }
 
     public function addProductStock($productStockId)
     {
+        $stockType = $this->group_id == 1 ? 'store_stock' : 'home_stock';
         if (!isset($this->cart[$productStockId])) {
-            $this->cart[$productStockId]['stock'] = ProductStock::where('id', $productStockId)->first()->home_stock;
-            if ($this->cart[$productStockId]['stock'] > 0) {
+            $this->cart[$productStockId]['home_stock'] = ProductStock::where('id', $productStockId)->first()->home_stock;
+            $this->cart[$productStockId]['store_stock'] = ProductStock::where('id', $productStockId)->first()->store_stock;
+            $this->cart[$productStockId]['all_stock'] = ProductStock::where('id', $productStockId)->first()->all_stock;
+
+            if ($this->cart[$productStockId][$stockType] > 0) {
                 $this->cart[$productStockId]['quantity'] = 1;
                 $this->addToCart($productStockId);
             } else {
+                unset($this->cart[$productStockId]);
                 $this->alert('warning', "Out Of Stock");
             }
+
         } else {
-            if($this->cart[$productStockId]['stock'] > $this->cart[$productStockId]['quantity']) {
+            if($this->cart[$productStockId][$stockType] > $this->cart[$productStockId]['quantity']) {
                 $this->cart[$productStockId]['quantity']++;
                 $this->addToCart($productStockId);
             } else {
@@ -294,6 +333,7 @@ class CreateSale extends Component
     {
         unset($this->cart[$this->productStock]);
         $this->getTotalPrice();
+        $this->productStock = null;
         $this->alert('success', 'Product Successfully Deleted');
     }
 
@@ -306,6 +346,7 @@ class CreateSale extends Component
     {
         $this->validate();
         $setting = Setting::first();
+        $stockType = $this->group_id == 1 ? 'store_stock' : 'home_stock';
         try {
             $sale = Sale::create([
                 'user_id' => Auth::user()->id,
@@ -345,9 +386,11 @@ class CreateSale extends Component
                 if(!$this->keep) {
                     $stock = ProductStock::where('id', $productStock['id'])->first();
                     $stock->update([
-                        'home_stock' => $stock->home_stock-$productStock['quantity'],
+                        $stockType => $stock->home_stock-$productStock['quantity'],
                         'all_stock' => $stock->all_stock-$productStock['quantity'],
                     ]);
+                } else {
+                    //if have a keep
                 }
             }
 
@@ -389,7 +432,9 @@ class CreateSale extends Component
                 'size' => $product->productStock->size->name,
                 'product' => $product->productStock->product->name,
                 'quantity' => $product->total_items,
-                'stock' => $product->productStock->home_stock,
+                'all_stock' => $product->productStock->all_stock + $product->total_items,
+                'store_stock' => $product->productStock->store_stock + ($this->group_id == 1 ?  $product->total_items : 0),
+                'home_stock' => $product->productStock->home_stock + ($this->group_id == 2 ?  $product->total_items : 0),
                 'selling_price' => $product->price,
                 'total_price' => $product->total_price
             ];
@@ -428,10 +473,11 @@ class CreateSale extends Component
             'desc' => $this->desc,
         ]);
 
+        $stockType = $this->group_id == 1 ? 'store_stock' : 'home_stock';
         foreach ($this->sale->saleItems as $saleItem) {
             $stock = ProductStock::where('id', $saleItem->product_stock_id)->first();
             $stock->update([
-                'home_stock' => $stock->home_stock+$saleItem->total_items,
+                $stockType => $stock->home_stock+$saleItem->total_items,
                 'all_stock' => $stock->all_stock+$saleItem->total_items,
             ]);
             $saleItem->delete();
@@ -448,7 +494,7 @@ class CreateSale extends Component
             if(!$this->keep) {
                 $stock = ProductStock::where('id', $productStock['id'])->first();
                 $stock->update([
-                    'home_stock' => $stock->home_stock-$productStock['quantity'],
+                    $stockType => $stock->home_stock-$productStock['quantity'],
                     'all_stock' => $stock->all_stock-$productStock['quantity'],
                 ]);
             }
@@ -471,7 +517,5 @@ class CreateSale extends Component
 
         $this->alert('success', 'Sale Succesfully Updated');
         $this->mount();
-
-
     }
 }

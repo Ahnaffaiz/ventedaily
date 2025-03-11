@@ -371,6 +371,7 @@ class CreateKeep extends Component
             $productStock->update([
                 'home_stock' => $productStock['home_stock'] + $keepProduct->home_stock,
                 'store_stock' => $productStock['store_stock'] + $keepProduct->store_stock,
+                'all_stock' => $productStock['home_stock'] + $keepProduct->home_stock + $productStock['store_stock'] + $keepProduct->store_stock
             ]);
             $keepProduct->delete();
         }

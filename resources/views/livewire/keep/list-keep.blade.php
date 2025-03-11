@@ -202,18 +202,18 @@
                                     {{ $keep->no_keep }}
                                 </td>
                                 <td class="px-4 py-4 text-sm text-gray-500 whitespace-nowrap dark:text-gray-200">
-                                    {{ $keep->customer->name }}
+                                    {{ $keep->customer?->name }}
                                 </td>
                                 @if ($showColumns['group'])
                                     <td class="px-4 py-4 text-sm text-gray-500 whitespace-nowrap dark:text-gray-200">
-                                        @if (strtolower($keep->customer->group->name) === 'reseller')
+                                        @if (strtolower($keep->customer?->group?->name) === 'reseller')
                                             <span
                                                 class="inline-flex items-center gap-1.5 py-0.5 px-1.5 rounded-md text-xs font-medium bg-info/10 text-info">
-                                                {{ ucwords($keep->customer->group->name) }}
+                                                {{ ucwords($keep->customer?->group?->name) }}
                                             </span>
-                                        @elseif (strtolower($keep->customer->group->name) === 'online')
+                                        @elseif (strtolower($keep->customer?->group?->name) === 'online')
                                             <span class="inline-flex items-center gap-1.5 py-0.5 px-1.5 rounded-md text-xs font-medium bg-warning/10 text-warning">
-                                                {{ ucwords($keep->customer->group->name) }}
+                                                {{ ucwords($keep->customer?->group?->name) }}
                                             </span>
                                         @endif
                                     </td>

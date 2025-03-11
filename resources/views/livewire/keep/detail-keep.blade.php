@@ -10,8 +10,8 @@
                 </tr>
                 <tr>
                     <td class="font-bold text-md text-start">{{ $keep?->no_keep }}</td>
-                    <td class="font-bold text-md text-start">{{ $keep?->customer->group->name }}</td>
-                    <td class="font-bold text-md text-start">{{ $keep?->customer->name }}</td>
+                    <td class="font-bold text-md text-start">{{ $keep?->customer?->group?->name }}</td>
+                    <td class="font-bold text-md text-start">{{ $keep?->customer?->name }}</td>
                     <td class="font-bold text-md text-start">{{ $keep?->keep_time }}</td>
                 </tr>
             </tbody>

@@ -8,9 +8,9 @@
                 <x-input-select id="status" name="status" title="Product Status"
                     :options="App\Enums\ProductStatus::asSelectArray()" placeholder="Select status" />
                 <x-input-text type="number" name="purchase_price" id="purchase_price" title="Purchase Price"
-                    placeholder="100.000" prepend="Rp." />
-                <x-input-text type="number" name="selling_price" id="selling_price" title="Selling Price"
-                    placeholder="150.000" prepend="Rp." />
+                    placeholder="" prepend="Rp." />
+                <x-input-text type="number" name="selling_price" id="selling_price" title="Selling Price" placeholder=""
+                    prepend="Rp." />
                 <x-input-text type="number" name="margin_price" id="margin_price" title="Margin" disabled="true"
                     prepend="Rp." />
             </div>

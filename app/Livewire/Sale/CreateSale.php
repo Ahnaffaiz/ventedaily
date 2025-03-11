@@ -168,12 +168,18 @@ class CreateSale extends Component
     {
         $this->productStockList = ProductStock::with('color', 'size')->where('product_id', $this->product_id)->get()->toArray();
         $this->productStockList = collect($this->productStockList)->map(function ($stockItem) {
-            $cartItem = collect($this->cart)->firstWhere('id', $stockItem['id']);
             $stockType = $this->group_id == 1 ? 'store_stock' : 'home_stock';
-            if ($cartItem) {
-                $stockItem['all_stock'] += $cartItem['total_items'];
-                $stockItem[$stockType] += $cartItem['total_items'];
+            if ($this->keep) {
+                $keepProduct = KeepProduct::where('product_stock_id', $stockItem['id'])->where('keep_id', $this->keep_id)->first();
+                $stockItem['all_stock'] += $keepProduct?->total_items;
+                $stockItem[$stockType] += $keepProduct?->total_items;
             }
+            // $cartItem = collect($this->cart)->firstWhere('id', $stockItem['id']);
+            // if ($cartItem) {
+            //     info($cartItem);
+            //     $stockItem['all_stock'] += $cartItem['quantity'];
+            //     $stockItem[$stockType] += $cartItem['quantity'];
+            // }
             return $stockItem;
         })->toArray();
     }
@@ -191,22 +197,29 @@ class CreateSale extends Component
     {
         if($this->keep_id) {
             $this->keep = Keep::where('id', $this->keep_id)->first();
-            $this->group_id = $this->keep->customer->group_id;
-            $this->customer_id = $this->keep->customer_id;
-            $this->cart = [];
-            foreach ($this->keep->keepProducts as $keepProduct) {
-                $this->cart[$keepProduct->product_stock_id] = [
-                    'id' => $keepProduct->product_stock_id,
-                    'color' => $keepProduct->productStock->color->name,
-                    'size' => $keepProduct->productStock->size->name,
-                    'product' => $keepProduct->productStock->product->name,
-                    'quantity' => $keepProduct->total_items,
-                    'stock' => $keepProduct->productStock->home_stock + $keepProduct->total_items,
-                    'selling_price' => $keepProduct->selling_price,
-                    'total_price' => $keepProduct->total_price
-                ];
+            if($this->keep->keep_time <= Carbon::now()) {
+                $this->keep = null;
+                $this->alert('warning', 'Keep Time Out. Please Refresh the Page');
+            } else {
+                $this->group_id = $this->keep->customer->group_id;
+                $this->customer_id = $this->keep->customer_id;
+                $this->cart = [];
+                $stockType = $this->group_id == 1 ? 'store_stock' : 'home_stock';
+                foreach ($this->keep->keepProducts as $keepProduct) {
+                    $this->cart[$keepProduct->product_stock_id] = [
+                        'id' => $keepProduct->product_stock_id,
+                        'color' => $keepProduct->productStock->color->name,
+                        'size' => $keepProduct->productStock->size->name,
+                        'product' => $keepProduct->productStock->product->name,
+                        'quantity' => $keepProduct->total_items,
+                        'all_stock' => $keepProduct->productStock->all_stock + $keepProduct->total_items,
+                        $stockType => $keepProduct->productStock->$stockType + $keepProduct->total_items,
+                        'selling_price' => $keepProduct->selling_price,
+                        'total_price' => $keepProduct->total_price
+                    ];
+                }
+                $this->getTotalPrice();
             }
-            $this->getTotalPrice();
         }
     }
 
@@ -241,9 +254,9 @@ class CreateSale extends Component
         $stockType = $this->group_id == 1 ? 'store_stock' : 'home_stock';
         $productStock = ProductStock::where('id', $productStockId)->first();
         $this->cart[$productStockId]['selling_price'] = $productStock->selling_price;
-        if(!array_key_exists('home_stock', $this->cart[$productStockId])) {
-            $this->cart[$productStockId]['home_stock'] = ProductStock::where('id', $productStockId)->first()->home_stock;
-            $this->cart[$productStockId]['store_stock'] = ProductStock::where('id', $productStockId)->first()->store_stock;
+
+        if(!array_key_exists($stockType, $this->cart[$productStockId])) {
+            $this->cart[$productStockId][$stockType] = ProductStock::where('id', $productStockId)->first()->home_stock;
             $this->cart[$productStockId]['all_stock'] = ProductStock::where('id', $productStockId)->first()->all_stock;
         }
 
@@ -265,8 +278,7 @@ class CreateSale extends Component
                 'size' => $productStock->size->name,
                 'product' => $productStock->product->name,
                 'quantity' => $this->cart[$productStockId]['quantity'],
-                'home_stock' => $this->cart[$productStockId]['home_stock'],
-                'store_stock' => $this->cart[$productStockId]['store_stock'],
+                $stockType => $this->cart[$productStockId][$stockType],
                 'all_stock' => $this->cart[$productStockId]['all_stock'],
                 'purchase_price' => $productStock->purchase_price,
                 'selling_price' => $productStock->selling_price,
@@ -365,34 +377,52 @@ class CreateSale extends Component
                 'desc' => $this->desc,
             ]);
 
-            if($this->keep != null) {
-                $this->keep->update([
-                    'status' => KeepStatus::SOLD
-                ]);
-            }
-
-            $setting->update([
-                'sale_increment' => $setting->sale_increment + 1
-            ]);
-
             foreach ($this->cart as $productStock) {
-                $saleProduct = SaleItem::create([
+                $saleItem = SaleItem::create([
                     'sale_id' => $sale->id,
                     'product_stock_id' => $productStock['id'],
                     'total_items' => $productStock['quantity'],
                     'price' => $productStock['selling_price'],
                     'total_price' => $productStock['total_price']
                 ]);
-                if(!$this->keep) {
-                    $stock = ProductStock::where('id', $productStock['id'])->first();
-                    $stock->update([
-                        $stockType => $stock->home_stock-$productStock['quantity'],
-                        'all_stock' => $stock->all_stock-$productStock['quantity'],
+                if($this->keep == null) {
+                    $saleItem->productStock->update([
+                        $stockType => $saleItem->productStock->$stockType - $productStock['quantity'],
+                        'all_stock' => $saleItem->productStock->all_stock - $productStock['quantity'],
                     ]);
                 } else {
-                    //if have a keep
+                    $keepProduct = $this->keep->keepProducts->where('product_stock_id', $saleItem->product_stock_id)->first();
+                    if($keepProduct != null) {
+                        $additionalStock = $keepProduct->total_items - $saleItem->total_items;
+                        $keepProduct->productStock->update([
+                            $stockType => $keepProduct->productStock->$stockType + $additionalStock,
+                            'all_stock' => $keepProduct->productStock->all_stock + $additionalStock,
+                        ]);
+                    } else {
+                        $saleItem->productStock->update([
+                            $stockType => $saleItem->productStock->$stockType - $saleItem->total_items,
+                            'all_stock' => $saleItem->productStock->all_stock - $saleItem->total_items,
+                        ]);
+                    }
                 }
             }
+
+            if($this->keep != null) {
+                $this->keep->update([
+                    'status' => KeepStatus::SOLD
+                ]);
+                $keepNotSales = $this->keep->keepProducts->whereNotIn('product_stock_id', $sale->saleItems->pluck('product_stock_id')->toArray());
+                foreach ($keepNotSales as $keepNotSale) {
+                    $keepNotSale->productStock->update([
+                        $stockType => $keepNotSale->productStock->$stockType + $keepNotSale->total_items,
+                        'all_stock' => $keepNotSale->productStock->all_stock + $keepNotSale->total_items
+                    ]);
+                }
+            }
+
+            $setting->update([
+                'sale_increment' => $setting->sale_increment + 1
+            ]);
 
             SalePayment::create([
                 'sale_id' => $sale->id,
@@ -477,26 +507,29 @@ class CreateSale extends Component
         foreach ($this->sale->saleItems as $saleItem) {
             $stock = ProductStock::where('id', $saleItem->product_stock_id)->first();
             $stock->update([
-                $stockType => $stock->home_stock+$saleItem->total_items,
-                'all_stock' => $stock->all_stock+$saleItem->total_items,
+                $stockType => $stock->$stockType + $saleItem->total_items,
+                'all_stock' => $stock->all_stock + $saleItem->total_items,
             ]);
             $saleItem->delete();
         }
 
         foreach ($this->cart as $productStock) {
-            $saleProduct = SaleItem::create([
+            $saleItem = SaleItem::create([
                 'sale_id' => $this->sale->id,
                 'product_stock_id' => $productStock['id'],
                 'total_items' => $productStock['quantity'],
                 'price' => $productStock['selling_price'],
                 'total_price' => $productStock['total_price']
             ]);
-            if(!$this->keep) {
-                $stock = ProductStock::where('id', $productStock['id'])->first();
+
+            if($this->keep == null) {
+                $stock = ProductStock::where('id', $saleItem->product_stock_id)->first();
                 $stock->update([
-                    $stockType => $stock->home_stock-$productStock['quantity'],
-                    'all_stock' => $stock->all_stock-$productStock['quantity'],
+                    $stockType => $stock->$stockType - $productStock['quantity'],
+                    'all_stock' => $stock->all_stock - $productStock['quantity'],
                 ]);
+            } else {
+                //have keep
             }
         }
 

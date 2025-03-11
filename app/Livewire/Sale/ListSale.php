@@ -105,28 +105,21 @@ class ListSale extends Component
         $stockStype = $this->sale->customer->group_id == 1 ? 'store_stock' : 'home_stock';
         try {
             foreach ($this->sale->saleItems as $saleItem) {
-                if(!$this->sale->keep()->exists()){
-                    $saleItem->productStock->update([
-                        'all_stock' => $saleItem->productStock->all_stock + $saleItem->total_items,
-                        $stockStype => $saleItem->productStock->$stockStype + $saleItem->total_items,
-                    ]);
-                }
+                $saleItem->productStock->update([
+                    'all_stock' => $saleItem->productStock->all_stock + $saleItem->total_items,
+                    $stockStype => $saleItem->productStock->$stockStype + $saleItem->total_items,
+                ]);
             }
-            if($this->sale->keep_id != null) {
-                if($this->sale->keep->keep_time >= Carbon::now()) {
-                    $this->sale->keep->update([
-                        'status' => KeepStatus::ACTIVE
-                    ]);
-                } else {
-                    $this->sale->keep->update([
-                        'status' => KeepStatus::CANCELED
-                    ]);
-                }
+            if($this->sale->Keep()->exists()){
+                $this->sale->keep->update([
+                    'status' => KeepStatus::CANCELED
+                ]);
             }
+
             $this->sale->delete();
             $this->alert('success', 'Sale Succesfully Deleted');
         } catch (Exception $th) {
-            $this->alert('error', $th);
+            $this->alert('error', $th->getMessage());
         }
     }
 }

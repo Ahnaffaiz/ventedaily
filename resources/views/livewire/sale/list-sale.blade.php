@@ -1,4 +1,7 @@
 <div>
+    <x-modal wire:model="isOpen" title="Detail Sale" closeButton="closeModal" large="true">
+        @include('livewire.sale.detail-sale')
+    </x-modal>
     <div class="relative mt-4 overflow-hidden bg-white shadow-md dark:bg-gray-800 sm:rounded-lg">
         <div class="flex items-center justify-between p-4 d">
             <div class="flex">
@@ -303,6 +306,9 @@
                                                     @endif
                                                     <td class="px-4 py-4">
                                                         <div class="flex items-center justify-center pr-4 space-x-3">
+                                                            <button wire:click="show({{ $sale->id }})" class="text-primary">
+                                                                <i class="ri-eye-line"></i>
+                                                            </button>
                                                             <button wire:click="addPayment({{ $sale->id }})" class="text-primary">
                                                                 <i class="ri-bank-card-2-line"></i>
                                                             </button>

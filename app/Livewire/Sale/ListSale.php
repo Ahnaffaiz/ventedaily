@@ -2,6 +2,7 @@
 
 namespace App\Livewire\Sale;
 
+use App\Enums\DiscountType;
 use App\Enums\KeepStatus;
 use App\Models\Group;
 use App\Models\Keep;
@@ -21,7 +22,9 @@ class ListSale extends Component
 
     public $sale;
     public $isOpen = false, $isPayment = false;
-    public $query = '', $perPage = 10, $sortBy = 'name', $sortDirection = 'asc', $groupIds, $groupId;
+    public $query = '', $perPage = 10, $sortBy = 'no_sale', $sortDirection = 'desc', $groupIds, $groupId;
+
+    public $total_price, $sub_total_after_discount;
     public $showColumns = [
         'group' => true,
         'term_of_payment_id' => true,
@@ -80,9 +83,34 @@ class ListSale extends Component
         $this->isOpen = true;
     }
 
+    public function show($sale_id) {
+        $this->isOpen = true;
+        $this->sale = Sale::find($sale_id);
+        $this->getTotalPrice();
+    }
+
+    public function getTotalPrice()
+    {
+        $this->total_price = $this->sale->sub_total;
+        if(strtolower($this->sale->discount_type) === strtolower(DiscountType::PERSEN)) {
+            $this->sub_total_after_discount = $this->sale->sub_total - round($this->sale->sub_total* (int) $this->sale->discount/100);
+            $this->total_price = $this->sub_total_after_discount;
+        } elseif(strtolower($this->sale->discount_type) === strtolower(DiscountType::RUPIAH)) {
+            $this->sub_total_after_discount = $this->sale->sub_total - $this->sale->discount;
+            $this->total_price = $this->sub_total_after_discount;
+        } else {
+            $this->sub_total_after_discount = $this->total_price;
+        }
+        if($this->sale->tax) {
+            $this->total_price = $this->sub_total_after_discount + round($this->sub_total_after_discount* (int) $this->sale->tax/100);
+        }
+        if($this->sale->ship) {
+            $this->total_price = $this->total_price + $this->sale->ship;
+        }
+    }
+
     public function closeModal()
     {
-        $this->reset();
         $this->isOpen = false;
     }
 

@@ -195,7 +195,7 @@
                         <i class="ri-save-line"></i>
                         Save</button>
                 @else
-                    <button class="gap-1 btn bg-danger/20 text-danger" wire:click="resetPurchase()">
+                    <button class="gap-1 btn bg-danger/20 text-danger" wire:click="resetSale()">
                         <i class="ri-refresh-line"></i>
                         Reset
                     </button>

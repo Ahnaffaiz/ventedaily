@@ -10,7 +10,7 @@
             <div class="flex justify-end mb-4">
                 <div class="relative mr-4 ms-auto">
                     <input type="search" class="relative border-none form-input bg-black/5 ps-8" wire:model.live="query"
-                        placeholder="Search...">
+                        placeholder="Masukkan No Sale">
                     <span class="absolute z-10 text-base -translate-y-1/2 ri-search-line start-2 top-1/2"></span>
                 </div>
                 <div class="relative ms-auto">
@@ -19,19 +19,32 @@
                         id="menu-button" aria-expanded="true" aria-haspopup="true">
                         <i class="mr-2 ri-filter-line"></i>
                     </button>
-                    <div class="absolute right-0 z-10 hidden w-56 mt-2 origin-top-right bg-white divide-y divide-gray-100 rounded-md shadow-lg dark:divide-gray-600 dark:bg-gray-700 ring-1 ring-black ring-opacity-5 focus:outline-none"
-                        role="menu" aria-orientation="vertical" aria-labelledby="menu-button" tabindex="-1">
-                        <div class="py-1" role="none">
-                            @foreach ($showColumns as $column => $isVisible)
-                                <div class="flex items-center px-4 py-2 text-sm text-gray-700 hover:bg-gray-100 dark:hover:bg-gray-900 hover:text-gray-900"
-                                    role="menuitem" tabindex="-1" id="menu-item-0">
-                                    <input type="checkbox" class="w-4 h-4 text-indigo-600 form-checkbox"
-                                        wire:model.live="showColumns.{{ $column }}">
-                                    <label class="block ml-3 text-sm font-medium text-gray-700" for="comments">
-                                        {{ ucfirst(str_replace('_', ' ', $column)) }}
-                                    </label>
-                                </div>
-                            @endforeach
+                    <div class="absolute right-0 z-10 hidden w-56 mt-2 origin-top-right bg-white rounded-md shadow-lg dark:bg-gray-700 ring-1 ring-black ring-opacity-5 focus:outline-none"
+                        role="menu" aria-orientation="vertical" aria-labelledby="menu-button" tabindex="-1"
+                        onclick="event.stopPropagation()">
+                        <div class="max-h-[300px] h-56 overflow-auto mt-2">
+                            <span class="m-2">Group</span>
+                            <div class="flex w-full p-1">
+                                <select class="form-input" wire:model.change="groupId">
+                                    <option value="">All Keep</option>
+                                    @foreach ($groupIds as $group)
+                                        <option value="{{ $group->id }}">{{ $group->name }}</option>
+                                    @endforeach
+                                </select>
+                            </div>
+                            <div class="py-1" role="none">
+                                <span class="m-2">Column</span>
+                                @foreach ($showColumns as $column => $isVisible)
+                                    <div class="flex items-center px-4 py-2 text-sm text-gray-700 hover:bg-gray-100 dark:hover:bg-gray-900 hover:text-gray-900"
+                                        role="menuitem" tabindex="-1" id="menu-item-0">
+                                        <input type="checkbox" class="w-4 h-4 text-indigo-600 form-checkbox"
+                                            wire:model.live="showColumns.{{ $column }}">
+                                        <label class="block ml-3 text-sm font-medium text-gray-700" for="comments">
+                                            {{ ucfirst(str_replace('_', ' ', $column)) }}
+                                        </label>
+                                    </div>
+                                @endforeach
+                            </div>
                         </div>
                     </div>
                 </div>
@@ -69,6 +82,11 @@
                                             <i class="ri-expand-up-down-line"></i>
                                         @endif
                                     </th>
+                                    @if ($showColumns['group'])
+                                        <th scope="col" class="px-4 py-4 text-sm font-medium text-gray-500 text-start">
+                                            Group
+                                        </th>
+                                    @endif
                                     @if ($showColumns['term_of_payment_id'])
                                         <th scope="col" class="px-4 py-4 text-sm font-medium text-gray-500 text-start"
                                             wire:click="sortByColumn('term_of_payment_id')">
@@ -220,6 +238,21 @@
                                                     <td class="px-4 py-4 text-sm text-gray-500 whitespace-nowrap dark:text-gray-200">
                                                         {{ $sale->customer->name }}
                                                     </td>
+                                                    @if ($showColumns['group'])
+                                                        <td class="px-4 py-4 text-sm text-gray-500 whitespace-nowrap dark:text-gray-200">
+                                                            @if (strtolower($sale->customer?->group?->name) === 'reseller')
+                                                                <span
+                                                                    class="inline-flex items-center gap-1.5 py-0.5 px-1.5 rounded-md text-xs font-medium bg-info/10 text-info">
+                                                                    {{ ucwords($sale->customer?->group?->name) }}
+                                                                </span>
+                                                            @elseif (strtolower($sale->customer?->group?->name) === 'online')
+                                                                <span
+                                                                    class="inline-flex items-center gap-1.5 py-0.5 px-1.5 rounded-md text-xs font-medium bg-warning/10 text-warning">
+                                                                    {{ ucwords($sale->customer?->group?->name) }}
+                                                                </span>
+                                                            @endif
+                                                        </td>
+                                                    @endif
                                                     @if ($showColumns['term_of_payment_id'])
                                                         <td class="px-4 py-4 text-sm text-gray-500 whitespace-nowrap dark:text-gray-200">
                                                             {{ $sale->termOfPayment->name }}

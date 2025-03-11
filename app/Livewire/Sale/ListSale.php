@@ -3,6 +3,7 @@
 namespace App\Livewire\Sale;
 
 use App\Enums\KeepStatus;
+use App\Models\Group;
 use App\Models\Keep;
 use App\Models\Sale;
 use Carbon\Carbon;
@@ -20,10 +21,9 @@ class ListSale extends Component
 
     public $sale;
     public $isOpen = false, $isPayment = false;
-    public $query = '', $perPage = 10, $sortBy = 'name', $sortDirection = 'asc';
+    public $query = '', $perPage = 10, $sortBy = 'name', $sortDirection = 'asc', $groupIds, $groupId;
     public $showColumns = [
-        'no_sale' => true,
-        'customer_id' => true,
+        'group' => true,
         'term_of_payment_id' => true,
         'total_items' => true,
         'sub_total' => true,
@@ -56,13 +56,18 @@ class ListSale extends Component
     {
         $this->resetPage();
     }
+
+    public function mount()
+    {
+        $this->groupIds = Group::get();
+    }
     public function render()
     {
         return view('livewire.sale.list-sale', [
             'sales' => Sale::select('sales.*')
                 ->join('customers', 'sales.customer_id', '=', 'customers.id')
-                ->where('customers.name', 'like', '%' . $this->query . '%')
-                ->orWhere('no_sale', 'like', '%' . $this->query . '%')
+                ->where('no_sale', 'like', '%' . $this->query . '%')
+                ->where('customers.group_id', 'like', '%' . $this->groupId . '%')
                 ->orderBy($this->sortBy, $this->sortDirection)
                 ->paginate($this->perPage)
         ]);

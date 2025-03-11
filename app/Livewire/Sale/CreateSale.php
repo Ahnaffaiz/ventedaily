@@ -551,4 +551,21 @@ class CreateSale extends Component
         $this->alert('success', 'Sale Succesfully Updated');
         $this->mount();
     }
+
+    public function resetSale()
+    {
+        $this->sale = null;
+        $this->keep = null;
+        $this->cart = null;
+        $this->customer_id = null;
+        $this->group_id = null;
+        $this->term_of_payment_id = null;
+        $this->payment_type = null;
+        $this->cash_received = null;
+        $this->cash_change = null;
+        $this->cash_change = null;
+        $this->bank_id = null;
+        $this->account_number = null;
+        $this->account_name = null;
+    }
 }

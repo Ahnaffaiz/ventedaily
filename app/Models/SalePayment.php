@@ -5,6 +5,7 @@ namespace App\Models;
 use App\Enums\PaymentType;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
+use Illuminate\Database\Eloquent\Relations\BelongsTo;
 
 class SalePayment extends Model
 {
@@ -27,5 +28,10 @@ class SalePayment extends Model
     public function sale()
     {
         return $this->belongsTo(Sale::class);
+    }
+
+    public function bank()
+    {
+        return $this->belongsTo(Bank::class);
     }
 }

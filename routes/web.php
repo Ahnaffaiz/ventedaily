@@ -60,6 +60,11 @@ Route::middleware([
     //sale
     Route::get('/sale', ListSale::class)->name('sale');
     Route::get('/create-sale/{sale?}', CreateSale::class)->name('create-sale');
+    Route::get('/print-sale-payment/{payment}', function () {
+        $payment = Session::get('sale-payment');
+        $setting = Session::get('setting');
+        return view('print.sale-payment', compact('payment', 'setting'));
+    })->name('print-sale-payment');
 
     //discount
     Route::get('/discount', Discount::class)->name('discount');

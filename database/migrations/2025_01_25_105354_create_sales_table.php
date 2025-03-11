@@ -25,6 +25,7 @@ return new class extends Migration
             $table->integer('ship')->nullable();
             $table->integer('sub_total');
             $table->integer('total_price');
+            $table->integer('outstanding_balance')->default(0);
             $table->integer('total_items');
             $table->longText('desc')->nullable();
             $table->timestamps();

@@ -79,7 +79,7 @@ class ListSale extends Component
     public function addPayment($sale)
     {
         $this->isPayment = true;
-        $this->sale = Sale::with('purchasePayments')->where('id', $sale)->first();
+        $this->sale = Sale::with('salePayments')->where('id', $sale)->first();
         $this->isOpen = true;
     }
 

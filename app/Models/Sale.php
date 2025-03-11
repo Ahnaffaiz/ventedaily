@@ -12,7 +12,7 @@ class Sale extends Model
 
     protected $fillable = [
         'keep_id', 'user_id', 'customer_id', 'term_of_payment_id', 'discount_type', 'discount', 'discount_id', 'tax',
-        'total_price', 'sub_total', 'total_items', 'desc', 'no_sale', 'ship'
+        'total_price', 'sub_total', 'total_items', 'desc', 'no_sale', 'ship', 'outstanding_balance'
     ];
 
     protected $cast = [

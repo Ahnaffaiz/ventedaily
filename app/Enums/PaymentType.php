@@ -8,6 +8,7 @@ final class PaymentType extends Enum  {
     const TRANSFER = 'transfer';
     public static function asSelectArray(): array
     {
-        return self::asArray();
+        return array_combine(array_values(self::asArray()), array_values(self::asArray()));
     }
+
 }

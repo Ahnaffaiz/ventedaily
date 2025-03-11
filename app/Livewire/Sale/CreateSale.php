@@ -174,12 +174,6 @@ class CreateSale extends Component
                 $stockItem['all_stock'] += $keepProduct?->total_items;
                 $stockItem[$stockType] += $keepProduct?->total_items;
             }
-            // $cartItem = collect($this->cart)->firstWhere('id', $stockItem['id']);
-            // if ($cartItem) {
-            //     info($cartItem);
-            //     $stockItem['all_stock'] += $cartItem['quantity'];
-            //     $stockItem[$stockType] += $cartItem['quantity'];
-            // }
             return $stockItem;
         })->toArray();
     }
@@ -215,7 +209,7 @@ class CreateSale extends Component
                         'all_stock' => $keepProduct->productStock->all_stock + $keepProduct->total_items,
                         $stockType => $keepProduct->productStock->$stockType + $keepProduct->total_items,
                         'selling_price' => $keepProduct->selling_price,
-                        'total_price' => $keepProduct->total_price
+                        'total_price' => $keepProduct->total_price,
                     ];
                 }
                 $this->getTotalPrice();
@@ -373,6 +367,7 @@ class CreateSale extends Component
                 'discount_id' => $this->discount_id ?? null,
                 'sub_total' => $this->sub_total,
                 'total_price' => $this->total_price,
+                'outstanding_balance' => $this->cash_change < 0 ? $this->cash_change : 0,
                 'total_items' => $this->total_items,
                 'desc' => $this->desc,
             ]);
@@ -499,6 +494,7 @@ class CreateSale extends Component
             'discount_id' => $this->discount_id ?? null,
             'sub_total' => $this->sub_total,
             'total_price' => $this->total_price,
+            'cd standing_balance' => $this->cash_change < 0 ? $this->cash_change : 0,
             'total_items' => $this->total_items,
             'desc' => $this->desc,
         ]);
@@ -528,8 +524,6 @@ class CreateSale extends Component
                     $stockType => $stock->$stockType - $productStock['quantity'],
                     'all_stock' => $stock->all_stock - $productStock['quantity'],
                 ]);
-            } else {
-                //have keep
             }
         }
 

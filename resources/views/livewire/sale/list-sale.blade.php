@@ -1,6 +1,10 @@
 <div>
     <x-modal wire:model="isOpen" title="Detail Sale" closeButton="closeModal" large="true">
-        @include('livewire.sale.detail-sale')
+        @if ($isPayment)
+            @livewire('sale.sale-payment', ['sale' => $sale], key($sale->id))
+        @else
+            @include('livewire.sale.detail-sale')
+        @endif
     </x-modal>
     <div class="relative mt-4 overflow-hidden bg-white shadow-md dark:bg-gray-800 sm:rounded-lg">
         <div class="flex items-center justify-between p-4 d">

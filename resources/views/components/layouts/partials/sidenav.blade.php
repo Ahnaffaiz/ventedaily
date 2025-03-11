@@ -61,6 +61,10 @@
             </li>
             {{-- end of product --}}
 
+            {{-- stock management --}}
+            <x-menu-item activeRoute="stock-management" text="Stock Management" iconClass="ri-archive-line" />
+            {{-- end of stock management --}}
+
             {{-- Purchase --}}
             <li class="menu-item">
                 @php

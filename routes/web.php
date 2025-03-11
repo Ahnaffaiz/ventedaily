@@ -17,6 +17,8 @@ use App\Livewire\Purchase\PurchasePayment;
 use App\Livewire\Sale\CreateSale;
 use App\Livewire\Sale\ListSale;
 use App\Livewire\Setting;
+use App\Livewire\StockManagement\Dashboard as StockManagementDashboard;
+use App\Livewire\StockManagement\ListStock;
 use App\Livewire\Supplier\Supplier;
 use Illuminate\Support\Facades\Route;
 use Illuminate\Support\Facades\Session;
@@ -36,6 +38,9 @@ Route::middleware([
     Route::get('/category', Category::class)->name('category');
     Route::get('/color', Color::class)->name('color');
     Route::get('/size', Size::class)->name('size');
+
+    //stock management
+    Route::get('/stock-management', ListStock::class)->name('stock-management');
 
     //supplier
     Route::get('/supplier', Supplier::class)->name('supplier');

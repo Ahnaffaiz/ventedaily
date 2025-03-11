@@ -205,10 +205,10 @@
                                 {{ $productStock->color->name }}
                             </td>
                             <td class="px-4 py-4 text-sm text-gray-500 whitespace-nowrap dark:text-gray-200">
-                                {{ $productStock->selling_price }}
+                                {{ number_format($productStock->selling_price, 0, ',', '.') }}
                             </td>
                             <td class="px-4 py-4 text-sm text-gray-500 whitespace-nowrap dark:text-gray-200">
-                                {{ $productStock->purchase_price }}
+                                {{ number_format($productStock->purchase_price, 0, ',', '.') }}
                             </td>
                             @if ($showColumns['all_stock'])
                                 <td class="px-4 py-4 text-sm text-gray-500 whitespace-nowrap dark:text-gray-200">

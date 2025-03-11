@@ -2,8 +2,10 @@
 
 namespace App\Livewire\Product;
 
+use App\Enums\KeepStatus;
 use App\Enums\ProductStatus;
 use App\Models\Category;
+use App\Models\KeepProduct;
 use App\Models\Product as ModelsProduct;
 use Carbon\Carbon;
 use Exception;
@@ -45,14 +47,18 @@ class Product extends Component
     public $categories, $product, $isProductStock = false;
 
     public $query = '', $perPage = 10, $sortBy = 'name', $sortDirection = 'asc';
+
+    public $transferToStores, $transferToHomes;
     public $showColumns = [
         'image' => false,
         'category_id' => true,
-        'imei' => true,
-        'status' => true,
+        'imei' => false,
+        'status' => false,
         'code' => false,
-        'stock' => true,
-        'is_favorite' => true,
+        'all_stock' => true,
+        'home_stock' => true,
+        'store_stock' => true,
+        'is_favorite' => false,
         'created_at' => false,
         'updated_at' => false,
     ];
@@ -91,12 +97,46 @@ class Product extends Component
 
     public function render()
     {
+        $this->getTransferStockToStore();
         return view('livewire.product.product', [
-            'products' =>ModelsProduct::orderBy($this->sortBy, $this->sortDirection)
-                    ->where('name', 'like', '%'.$this->query.'%')
-                    ->paginate($this->perPage)
+            'products' => ModelsProduct::withSum('productStocks', 'all_stock')
+                ->withSum('productStocks', 'home_stock')
+                ->withSum('productStocks', 'store_stock')
+                ->where('name', 'like', '%'.$this->query.'%')
+                ->orderBy(
+                    match ($this->sortBy) {
+                        'all_stock' => 'product_stocks_sum_all_stock',
+                        'home_stock' => 'product_stocks_sum_home_stock',
+                        'store_stock' => 'product_stocks_sum_store_stock',
+                        default => $this->sortBy,
+                    },
+                    $this->sortDirection
+                )
+                ->paginate($this->perPage)
         ]);
     }
+
+    public function getTransferStockToStore()
+    {
+        //reseller transfer data from home to store
+        $this->transferToStores = KeepProduct::whereHas('keep', function($query){
+            return $query->where('status', strtolower(KeepStatus::ACTIVE))
+                    ->whereHas('customer', function($query){
+                        return $query->where('group_id', 1);
+                    });
+        })->where('home_stock', '!=', 0)
+        ->get();
+
+        //reseller transfer data from store to home
+        $this->transferToHomes = KeepProduct::whereHas('keep', function($query){
+            return $query->where('status', strtolower(KeepStatus::ACTIVE))
+                    ->whereHas('customer', function($query){
+                        return $query->where('group_id', 2);
+                    });
+        })->where('store_stock', '!=', 0)
+        ->get();
+    }
+
 
     public function openModal()
     {

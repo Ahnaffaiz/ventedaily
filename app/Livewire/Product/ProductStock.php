@@ -29,9 +29,9 @@ class ProductStock extends Component
         'purchase_price' => true,
         'all_stock' => true,
         'home_stock' => true,
-        'qc_stock' => true,
         'store_stock' => true,
-        'vermak_stock' => true,
+        'qc_stock' => false,
+        'vermak_stock' => false,
         'created_at' => false,
         'updated_at' => false,
     ];

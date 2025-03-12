@@ -50,7 +50,7 @@
         </tr>
         <tr style="font-size: 12px;">
             <td colspan="3" style="text-align: left;">Bank</td>
-            <td style="text-align: right;">{{ $payment->bank->name }}</td>
+            <td style="text-align: right;">{{ $payment?->bank?->name }}</td>
         </tr>
         <?php }?>
         <tr style="font-size: 12px;">

@@ -10,7 +10,7 @@ return new class extends Migration {
         Schema::create('sale_shippings', function (Blueprint $table) {
             $table->id();
             $table->foreignId('sale_id')->constrained('sales')->onDelete('cascade');
-            $table->enum('status', ['siap kirim', 'expedisi']);
+            $table->enum('status', ['siap kirim', 'expedisi', 'selesai']);
             $table->dateTime('date');
             $table->integer('cost');
             $table->string('no_resi', 255);

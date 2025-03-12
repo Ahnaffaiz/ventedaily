@@ -15,7 +15,7 @@ use Livewire\WithPagination;
 class Shipping extends Component
 {
     use WithPagination, LivewireAlert;
-    public $shipping, $sales;
+    public $shipping, $sales, $shipping_id;
     public $isOpen = false;
     public $query = '', $perPage = 10, $sortBy = 'no_sale', $sortDirection = 'desc';
 
@@ -28,6 +28,10 @@ class Shipping extends Component
     public $phone;
 
     #[Title('Shipping')]
+
+    protected $listeners = [
+        'delete'
+    ];
 
     public $showColumns = [
         'sale_date' => true,
@@ -92,6 +96,7 @@ class Shipping extends Component
     {
         return view('livewire.sale.shipping', [
             'saleShippings' => SaleShipping::join('sales', 'sale_shippings.sale_id', '=', 'sales.id')
+                ->select('sale_shippings.*', 'sales.customer_id', 'sales.no_sale', 'total_price')
                 ->where('no_resi', 'like', '%' . $this->query . '%')
                 ->orWhere('order_id_marketplace', 'like', '%' . $this->query . '%')
                 ->orderBy($this->sortBy, $this->sortDirection)
@@ -143,8 +148,88 @@ class Shipping extends Component
         }
     }
 
+    public function edit($shipping_id)
+    {
+        $this->marketplace = Marketplace::all()->pluck('name','id')->toArray();
+        $this->shipping = SaleShipping::where('id', $shipping_id)->first();
+        if($this->shipping) {
+            $this->date = $this->shipping->date;
+            $this->cost = $this->shipping->cost;
+            $this->no_resi = $this->shipping->no_resi;
+            $this->order_id_marketplace = $this->shipping->order_id_marketplace;
+            $this->marketplace_id = $this->shipping->marketplace_id;
+            $this->status = $this->shipping->status;
+            $this->customer_name = $this->shipping->customer_name;
+            $this->city = $this->shipping->city;
+            $this->address = $this->shipping->address;
+            $this->sale_id = $this->shipping->sale_id;
+            $this->phone = $this->shipping->phone;
+            $this->isOpen = true;
+        }
+    }
+
+    public function update()
+    {
+        $this->validate();
+        try {
+            $this->shipping->update([
+                'date' => $this->date,
+                'cost' => $this->cost,
+                'no_resi' => $this->no_resi,
+                'order_id_marketplace' => $this->order_id_marketplace,
+                'marketplace_id' => $this->marketplace_id,
+                'status' => $this->status,
+                'customer_name' => $this->customer_name,
+                'city' => $this->city,
+                'address' => $this->address,
+                'sale_id' => $this->sale_id,
+                'phone' => $this->phone,
+            ]);
+            $this->shipping->sale->update([
+                'ship' => $this->cost
+            ]);
+            $this->alert('success', 'Shipping Succesfully Updated');
+            $this->isOpen = false;
+            $this->resetForm();
+        } catch (\Throwable $th) {
+            $this->alert('error', $th->getMessage());
+        }
+    }
+
+    public function deleteAlert($shipping_id)
+    {
+        $this->shipping_id = $shipping_id;
+        $shipping = SaleShipping::where('id', $this->shipping_id)->first();
+        $this->alert('question', 'Delete', [
+            'toast' => false,
+            'text' => 'Are you sure to delete shipping ' . $shipping->sale->no_sale .' ?',
+            'position' => 'center',
+            'showConfirmButton' => true,
+            'confirmButtonText' => 'Yes',
+            'showCancelButton' => true,
+            'cancelButtonText' => 'cancel',
+            'icon' => 'warning',
+            'onConfirmed' => 'delete',
+            'timer' => null,
+            'confirmButtonColor' => '#3085d6',
+            'cancelButtonColor' => '#d33'
+        ]);
+    }
+
+    public function delete()
+    {
+        $shipping = SaleShipping::where('id', $this->shipping_id)->first();
+        try {
+            $shipping->delete();
+            $this->alert('success','Shipping Successfully Deleted');
+        } catch (\Throwable $th) {
+            $this->alert('error',$th->getMessage());
+        }
+    }
+
     public function resetForm()
     {
+        $this->shipping = null;
         $this->date = null;
         $this->cost = null;
         $this->no_resi = null;

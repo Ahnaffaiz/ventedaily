@@ -2,10 +2,12 @@
     <x-modal wire:model="isOpen" title="{{ $shipping ? 'Edit ' . $shipping?->name : 'Create Shipping' }}"
         saveButton="{{ $shipping ? 'update' : 'save' }}" closeButton="closeModal">
         <form>
-            <x-input-select-search id="sale_id" name="sale_id" title="No Sale" placeholder="Type No Sale"
-                    :options="$sales" searchFunction="searchSale" />
+            @if (!$shipping)
+                <x-input-select-search id="sale_id" name="sale_id" title="No Sale" placeholder="Type No Sale"
+                :options="$sales" searchFunction="searchSale" />
+            @endif
             <div class="grid grid-cols-2 gap-2">
-                <x-input-text type="date" name="date" id="date" title="Date"/>
+                <x-input-text type="datetime-local" name="date" id="date" title="Date"/>
                 <x-input-text type="number" name="cost" id="cost" title="Shipping Cost" placeholder="Shipping Cost" prepend="Rp." />
                 <x-input-text name="no_resi" id="no_resi" title="No Resi" placeholder="No Resi"/>
                 <x-input-text name="order_id_marketplace" id="order_id_marketplace" title="Order ID" placeholder="Order ID Marketplace"/>
@@ -325,16 +327,9 @@
                                 @endif
                                 <td class="px-4 py-4">
                                     <div class="flex items-center justify-center pr-4 space-x-3">
-                                        <button wire:click="show({{ $shipping->id }})" class="text-primary">
-                                            <i class="ri-eye-line"></i>
-                                        </button>
-                                        <button wire:click="addPayment({{ $shipping->id }})" class="text-primary">
-                                            <i class="ri-bank-card-2-line"></i>
-                                        </button>
-                                        {{-- <a wire:navigate href="{{ route('create-shipping', ['sale' => $sale->id]) }}"
-                                            class="text-info">
+                                        <button wire:click="edit({{ $shipping->id }})" class="text-info">
                                             <i class="ri-edit-circle-line"></i>
-                                        </a> --}}
+                                        </button>
                                         <button wire:click="deleteAlert({{ $shipping->id }})" class="text-danger">
                                             <i class="text-base ri-delete-bin-2-line"></i>
                                         </button>

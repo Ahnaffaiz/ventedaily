@@ -1,5 +1,5 @@
 <div>
-    <x-modal wire:model="isOpen" title="{{ $shipping ? 'Edit ' . $shipping?->name : 'Create Shipping' }}"
+    <x-modal wire:model="isOpen" title="{{ $shipping ? 'Edit ' . $shipping?->sale->no_sale : 'Create Shipping' }}"
         saveButton="{{ $shipping ? 'update' : 'save' }}" closeButton="closeModal">
         <form>
             @if (!$shipping)
@@ -15,6 +15,11 @@
                     :options="$marketplace" />
                 <x-input-select id="status" name="status" title="Shipping Status" placeholder="Select Status"
                     :options="App\Enums\ShippingStatus::asSelectArray()" />
+                @if ($marketplace_id == 4 || $marketplace_id == 5)
+                    <x-input-select id="bank_id" name="bank_id" title="Bank" placeholder="Select Bank"
+                    :options="$banks" />
+                    <x-input-text type="number" name="transfer_amount" id="transfer_amount" title="Transfer Amount" placeholder="Transfer Amount"/>
+                @endif
                 <x-input-text name="customer_name" id="customer_name" title="Customer Name" placeholder="Customer Name"/>
                 <x-input-text id="phone" name="phone" title="Phone" type="tel" prepend="+62" />
             </div>

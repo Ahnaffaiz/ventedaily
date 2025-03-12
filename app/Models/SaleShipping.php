@@ -12,7 +12,7 @@ class SaleShipping extends Model
 
     protected $fillable = [
         'sale_id', 'status', 'date', 'cost', 'no_resi', 'marketplace_id',
-        'order_id_marketplace', 'customer_name', 'address', 'phone', 'city'
+        'order_id_marketplace', 'customer_name', 'address', 'phone', 'city', 'bank_id', 'transfer_amount'
     ];
 
     protected $cast = [

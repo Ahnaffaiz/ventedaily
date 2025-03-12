@@ -2,6 +2,7 @@
 
 namespace App\Livewire\Sale;
 
+use App\Models\Bank;
 use App\Models\Marketplace;
 use App\Models\Sale;
 use App\Models\SaleShipping;
@@ -15,7 +16,7 @@ use Livewire\WithPagination;
 class Shipping extends Component
 {
     use WithPagination, LivewireAlert;
-    public $shipping, $sales, $shipping_id;
+    public $shipping, $sales, $shipping_id, $banks;
     public $isOpen = false;
     public $query = '', $perPage = 10, $sortBy = 'no_sale', $sortDirection = 'desc';
 
@@ -23,6 +24,8 @@ class Shipping extends Component
 
     #[Validate('required')]
     public $date, $cost, $no_resi, $order_id_marketplace, $marketplace_id, $status, $customer_name, $city, $address, $sale_id;
+
+    public $bank_id, $transfer_amount;
 
     #[Validate('required|regex:/^8\d+$/')]
     public $phone;
@@ -64,6 +67,7 @@ class Shipping extends Component
 
     public function mount()
     {
+        $this->banks = Bank::all()->pluck('short_name', 'id')->toArray();
         $this->marketplace = Marketplace::all()->pluck('name','id')->toArray();
         $this->sales = Sale::whereHas('customer', function($query){
             $query->where('group_id', 2);
@@ -74,6 +78,16 @@ class Shipping extends Component
     {
         $sale = Sale::where('id', $this->sale_id)->first();
         $this->cost = $sale->ship;
+    }
+
+    public function updatedMarketplaceId()
+    {
+        if($this->shipping) {
+            if($this->marketplace_id === 4 || $this->marketplace_id === 5) {
+                $this->bank_id = $this->shipping->bank_id;
+                $this->transfer_amount = $this->shipping->transfer_amount;
+            }
+        }
     }
 
     public function searchSale($query)
@@ -134,6 +148,8 @@ class Shipping extends Component
                 'address' => $this->address,
                 'city' => $this->city,
                 'phone' => $this->phone,
+                'bank_id' => $this->bank_id,
+                'transfer_amount' => $this->transfer_amount,
             ]);
             $shipping->sale->update([
                 'ship' => $shipping->cost
@@ -164,6 +180,8 @@ class Shipping extends Component
             $this->address = $this->shipping->address;
             $this->sale_id = $this->shipping->sale_id;
             $this->phone = $this->shipping->phone;
+            $this->bank_id = $this->shipping->bank_id;
+            $this->transfer_amount = $this->shipping->transfer_amount;
             $this->isOpen = true;
         }
     }
@@ -184,6 +202,8 @@ class Shipping extends Component
                 'address' => $this->address,
                 'sale_id' => $this->sale_id,
                 'phone' => $this->phone,
+                'bank_id' => $this->bank_id,
+                'transfer_amount' => $this->transfer_amount,
             ]);
             $this->shipping->sale->update([
                 'ship' => $this->cost

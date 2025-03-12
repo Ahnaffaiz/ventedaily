@@ -18,6 +18,8 @@ return new class extends Migration {
             $table->foreignId('marketplace_id')->constrained('marketplaces')->onDelete('cascade');
             $table->string('order_id_marketplace', 255);
             $table->string('customer_name', 255);
+            $table->foreignId('bank_id')->nullable()->constrained()->onDelete('cascade');
+            $table->integer('transfer_amount');
             $table->string('address', 255);
             $table->string('phone', 25);
             $table->timestamps();

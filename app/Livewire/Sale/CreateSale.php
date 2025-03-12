@@ -125,6 +125,8 @@ class CreateSale extends Component
 
     public function updatedGroupId()
     {
+        $this->keep = null;
+        $this->keep_id = null;
         $this->cart = null;
         $this->customers = Customer::where('group_id', $this->group_id)->pluck('name', 'id')->toArray();
     }

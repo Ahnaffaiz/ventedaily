@@ -16,6 +16,9 @@ use App\Livewire\Purchase\ListPurchase;
 use App\Livewire\Purchase\PurchasePayment;
 use App\Livewire\Sale\CreateSale;
 use App\Livewire\Sale\ListSale;
+use App\Livewire\Sale\OnlineSales;
+use App\Livewire\Sale\Shipping;
+use App\Livewire\Sale\Withdrawal;
 use App\Livewire\Setting;
 use App\Livewire\StockManagement\Dashboard as StockManagementDashboard;
 use App\Livewire\StockManagement\ListStock;
@@ -70,6 +73,9 @@ Route::middleware([
         $setting = Session::get('setting');
         return view('print.sale-payment', compact('payment', 'setting'));
     })->name('print-sale-payment');
+    Route::get('/online-sales', OnlineSales::class)->name('online-sales');
+    Route::get('/shipping', Shipping::class)->name('shipping');
+    Route::get('/withdrawal', Withdrawal::class)->name('withdrawal');
 
     //discount
     Route::get('/discount', Discount::class)->name('discount');

@@ -113,7 +113,7 @@
             {{-- Sale --}}
             <li class="menu-item">
                 @php
-                    $activeRoutes = ['create-sale', 'sale'];
+                    $activeRoutes = ['create-sale', 'sale', 'shipping', 'withdrawal', 'online-sales'];
                     $isActive = in_array(request()->route()->getName(), $activeRoutes);
                 @endphp
                 <a href="javascript:void(0)" data-fc-type="collapse" class="menu-link">
@@ -127,6 +127,9 @@
                 <ul class="hidden sub-menu">
                     <x-menu-item activeRoute="create-sale" text="Cashier" />
                     <x-menu-item activeRoute="sale" text="Sale List" />
+                    <x-menu-item activeRoute="online-sales" text="Ventedaily" />
+                    <x-menu-item activeRoute="shipping" text="Shipping" />
+                    <x-menu-item activeRoute="withdrawal" text="Withdrawal" />
                 </ul>
             </li>
             {{-- end of Sale --}}

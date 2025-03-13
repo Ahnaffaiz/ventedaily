@@ -1,6 +1,19 @@
 <div>
+    @php
+    $saveButton = 'save';
+    if($modal == 'shipping') {
+        if ($shipping) {
+            $saveButton = 'update';
+        } else {
+            $saveButton = 'save';
+        }
+    } elseif($modal == 'status') {
+        $saveButton = 'updateStatus';
+    }
+    @endphp
     <x-modal wire:model="isOpen" title="{{ $shipping ? 'Edit ' . $shipping?->sale->no_sale : 'Create Shipping' }}"
-        saveButton="{{ $shipping ? 'update' : 'save' }}" closeButton="closeModal">
+        saveButton="{{ $saveButton }}" closeButton="closeModal">
+        @if ($modal == 'shipping')
         <form>
             @if (!$shipping)
                 <x-input-select-search id="sale_id" name="sale_id" title="No Sale" placeholder="Type No Sale"
@@ -28,6 +41,10 @@
                 <x-textarea-input id="address" name="address" title="Address" />
             </div>
         </form>
+        @elseif($modal == 'status')
+            <x-input-select id="status" name="status" title="Shipping Status" placeholder="Select Status"
+            :options="App\Enums\ShippingStatus::asSelectArray()" />
+        @endif
     </x-modal>
     <div class="relative mt-4 overflow-hidden bg-white shadow-md dark:bg-gray-800 sm:rounded-lg">
         <div class="flex items-center justify-between p-4 d">
@@ -290,19 +307,21 @@
                                 @endif
                                 @if ($showColumns['ship_status'])
                                     <td class="px-4 py-4 text-sm text-gray-500 whitespace-nowrap dark:text-gray-200">
-                                        @if ($shipping->status == strtolower(App\Enums\ShippingStatus::SIAPKIRIM))
-                                            <span class="inline-flex items-center gap-1.5 py-0.5 px-1.5 rounded-md text-xs font-medium bg-info/10 text-info">
-                                                {{ $shipping->status }}
-                                            </span>
-                                        @elseif ($shipping->status == strtolower(App\Enums\ShippingStatus::EKSPEDISI))
-                                            <span class="inline-flex items-center gap-1.5 py-0.5 px-1.5 rounded-md text-xs font-medium bg-warning/10 text-warning">
-                                                {{ $shipping->status }}
-                                            </span>
-                                        @elseif ($shipping->status == strtolower(App\Enums\ShippingStatus::SELESAI))
-                                            <span class="inline-flex items-center gap-1.5 py-0.5 px-1.5 rounded-md text-xs font-medium bg-success/10 text-success">
-                                                {{ $shipping->status }}
-                                            </span>
-                                        @endif
+                                        <button wire:click="changeStatus({{ $shipping->id }})">
+                                            @if ($shipping->status == strtolower(App\Enums\ShippingStatus::SIAPKIRIM))
+                                                <span class="inline-flex items-center gap-1.5 py-0.5 px-1.5 rounded-md text-xs font-medium bg-info/10 text-info">
+                                                    {{ $shipping->status }}
+                                                </span>
+                                            @elseif ($shipping->status == strtolower(App\Enums\ShippingStatus::EKSPEDISI))
+                                                <span class="inline-flex items-center gap-1.5 py-0.5 px-1.5 rounded-md text-xs font-medium bg-warning/10 text-warning">
+                                                    {{ $shipping->status }}
+                                                </span>
+                                            @elseif ($shipping->status == strtolower(App\Enums\ShippingStatus::SELESAI))
+                                                <span class="inline-flex items-center gap-1.5 py-0.5 px-1.5 rounded-md text-xs font-medium bg-success/10 text-success">
+                                                    {{ $shipping->status }}
+                                                </span>
+                                            @endif
+                                        </button>
                                     </td>
                                 @endif
                                 @if ($showColumns['no_resi'])

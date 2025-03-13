@@ -17,7 +17,7 @@ class Shipping extends Component
 {
     use WithPagination, LivewireAlert;
     public $shipping, $sales, $shipping_id, $banks;
-    public $isOpen = false;
+    public $isOpen = false, $modal;
     public $query = '', $perPage = 10, $sortBy = 'no_sale', $sortDirection = 'desc';
 
     public $marketplace;
@@ -121,6 +121,7 @@ class Shipping extends Component
     public function openModal()
     {
         $this->resetForm();
+        $this->modal = 'shipping';
         $this->marketplace = Marketplace::all()->pluck('name','id')->toArray();
         if (!$this->shipping) {
             $this->sales = Sale::whereHas('customer', function($query){
@@ -132,6 +133,7 @@ class Shipping extends Component
 
     public function closeModal()
     {
+        $this->modal = 'shipping';
         $this->isOpen = false;
     }
 
@@ -210,11 +212,38 @@ class Shipping extends Component
             $this->shipping->sale->update([
                 'ship' => $this->cost
             ]);
+            $this->shipping = null;
             $this->alert('success', 'Shipping Succesfully Updated');
             $this->isOpen = false;
             $this->resetForm();
         } catch (\Throwable $th) {
             $this->alert('error', $th->getMessage());
+        }
+    }
+
+    public function changeStatus($shipping_id)
+    {
+        $this->shipping = SaleShipping::where('id', $shipping_id)->first();
+        $this->status = $this->shipping->status;
+        $this->modal = 'status';
+        $this->isOpen = true;
+    }
+
+    public function updateStatus()
+    {
+        try {
+            if(!$this->shipping->sale->saleWithdrawal) {
+                $this->shipping->update([
+                    'status' => $this->status
+                ]);
+                $this->shipping = null;
+                $this->isOpen = false;
+                $this->alert('success','Status Successfully updated');
+            } else {
+                $this->alert('warning','Withdrawal is created, Can\'t change shipping status');
+            }
+        } catch (\Throwable $th) {
+            $this->alert('error',$th->getMessage());
         }
     }
 

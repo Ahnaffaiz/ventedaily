@@ -58,4 +58,9 @@ class Sale extends Model
     {
         return $this->hasOne(SaleShipping::class);
     }
+
+    public function saleWithdrawal()
+    {
+        return $this->hasOne(SaleWithdrawal::class);
+    }
 }

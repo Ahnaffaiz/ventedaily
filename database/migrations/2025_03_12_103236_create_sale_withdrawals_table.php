@@ -10,7 +10,6 @@ return new class extends Migration {
         Schema::create('sale_withdrawals', function (Blueprint $table) {
             $table->id();
             $table->foreignId('sale_id')->constrained('sales')->onDelete('cascade');
-            $table->integer('transfer_amount');
             $table->integer('marketplace_price');
             $table->integer('withdrawal_amount');
             $table->dateTime('date');

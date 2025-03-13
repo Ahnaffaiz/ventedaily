@@ -122,9 +122,11 @@ class Shipping extends Component
     {
         $this->resetForm();
         $this->marketplace = Marketplace::all()->pluck('name','id')->toArray();
-        $this->sales = Sale::whereHas('customer', function($query){
-            $query->where('group_id', 2);
-        })->doesntHave('saleShipping')->pluck('no_sale','id')->toArray();
+        if (!$this->shipping) {
+            $this->sales = Sale::whereHas('customer', function($query){
+                $query->where('group_id', 2);
+            })->doesntHave('saleShipping')->pluck('no_sale','id')->toArray();
+        }
         $this->isOpen = true;
     }
 
@@ -241,6 +243,7 @@ class Shipping extends Component
         $shipping = SaleShipping::where('id', $this->shipping_id)->first();
         try {
             $shipping->delete();
+            $this->shipping_id = null;
             $this->alert('success','Shipping Successfully Deleted');
         } catch (\Throwable $th) {
             $this->alert('error',$th->getMessage());
@@ -250,6 +253,7 @@ class Shipping extends Component
     public function resetForm()
     {
         $this->shipping = null;
+        $this->shipping_id = null;
         $this->date = null;
         $this->cost = null;
         $this->no_resi = null;

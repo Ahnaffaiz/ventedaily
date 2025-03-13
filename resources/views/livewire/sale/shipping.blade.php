@@ -310,15 +310,15 @@
                                         <button wire:click="changeStatus({{ $shipping->id }})">
                                             @if ($shipping->status == strtolower(App\Enums\ShippingStatus::SIAPKIRIM))
                                                 <span class="inline-flex items-center gap-1.5 py-0.5 px-1.5 rounded-md text-xs font-medium bg-info/10 text-info">
-                                                    {{ $shipping->status }}
+                                                    {{ ucfirst($shipping->status) }}
                                                 </span>
                                             @elseif ($shipping->status == strtolower(App\Enums\ShippingStatus::EKSPEDISI))
                                                 <span class="inline-flex items-center gap-1.5 py-0.5 px-1.5 rounded-md text-xs font-medium bg-warning/10 text-warning">
-                                                    {{ $shipping->status }}
+                                                    {{ ucfirst($shipping->status) }}
                                                 </span>
                                             @elseif ($shipping->status == strtolower(App\Enums\ShippingStatus::SELESAI))
                                                 <span class="inline-flex items-center gap-1.5 py-0.5 px-1.5 rounded-md text-xs font-medium bg-success/10 text-success">
-                                                    {{ $shipping->status }}
+                                                    {{ ucfirst($shipping->status) }}
                                                 </span>
                                             @endif
                                         </button>

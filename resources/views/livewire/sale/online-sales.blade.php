@@ -1,4 +1,7 @@
 <div>
+    <x-modal wire:model="isOpen" title="Detail Sale" closeButton="closeModal" large="true">
+        @include('livewire.sale.detail-sale')
+    </x-modal>
     <div class="relative mt-4 overflow-hidden bg-white shadow-md dark:bg-gray-800 sm:rounded-lg">
         <div class="flex items-center justify-between p-4 d">
             <div class="flex">
@@ -57,9 +60,9 @@
                                 @endif
                             </th>
                             <th scope="col" class="px-4 py-4 text-sm font-medium text-gray-500 text-start"
-                                wire:click="sortByColumn('customer_id')">
+                                wire:click="sortByColumn('customer_name')">
                                 Customer
-                                @if ($sortBy === 'customer_id')
+                                @if ($sortBy === 'customer_name')
                                     @if ($sortDirection === 'asc')
                                         <i class="ri-arrow-up-s-line"></i>
                                     @else
@@ -72,8 +75,23 @@
                             @if ($showColumns['no_keep'])
                                 <th scope="col" class="px-4 py-4 text-sm font-medium text-gray-500 text-start"
                                     wire:click="sortByColumn('no_keep')">
-                                    Term
+                                    No Keep
                                     @if ($sortBy === 'no_keep')
+                                        @if ($sortDirection === 'asc')
+                                            <i class="ri-arrow-up-s-line"></i>
+                                        @else
+                                            <i class="ri-arrow-down-s-line"></i>
+                                        @endif
+                                    @else
+                                        <i class="ri-expand-up-down-line"></i>
+                                    @endif
+                                </th>
+                            @endif
+                            @if ($showColumns['marketplace'])
+                                <th scope="col" class="px-4 py-4 text-sm font-medium text-gray-500 text-start"
+                                    wire:click="sortByColumn('marketplace_name')">
+                                    Marketplace
+                                    @if ($sortBy === 'marketplace_name')
                                         @if ($sortDirection === 'asc')
                                             <i class="ri-arrow-up-s-line"></i>
                                         @else
@@ -117,8 +135,53 @@
                             @if ($showColumns['ship_status'])
                                 <th scope="col" class="px-4 py-4 text-sm font-medium text-gray-500 text-start"
                                     wire:click="sortByColumn('ship_status')">
-                                    Status
+                                    Shipping Status
                                     @if ($sortBy === 'ship_status')
+                                        @if ($sortDirection === 'asc')
+                                            <i class="ri-arrow-up-s-line"></i>
+                                        @else
+                                            <i class="ri-arrow-down-s-line"></i>
+                                        @endif
+                                    @else
+                                        <i class="ri-expand-up-down-line"></i>
+                                    @endif
+                                </th>
+                            @endif
+                            @if ($showColumns['ship_cost'])
+                                <th scope="col" class="px-4 py-4 text-sm font-medium text-gray-500 text-start"
+                                    wire:click="sortByColumn('ship_cost')">
+                                    Shipping Cost
+                                    @if ($sortBy === 'ship_cost')
+                                        @if ($sortDirection === 'asc')
+                                            <i class="ri-arrow-up-s-line"></i>
+                                        @else
+                                            <i class="ri-arrow-down-s-line"></i>
+                                        @endif
+                                    @else
+                                        <i class="ri-expand-up-down-line"></i>
+                                    @endif
+                                </th>
+                            @endif
+                            @if ($showColumns['withdrawal_status'])
+                                <th scope="col" class="px-4 py-4 text-sm font-medium text-gray-500 text-start"
+                                    wire:click="sortByColumn('withdrawal_status')">
+                                    WD Status
+                                    @if ($sortBy === 'withdrawal_status')
+                                        @if ($sortDirection === 'asc')
+                                            <i class="ri-arrow-up-s-line"></i>
+                                        @else
+                                            <i class="ri-arrow-down-s-line"></i>
+                                        @endif
+                                    @else
+                                        <i class="ri-expand-up-down-line"></i>
+                                    @endif
+                                </th>
+                            @endif
+                            @if ($showColumns['withdrawal_amount'])
+                                <th scope="col" class="px-4 py-4 text-sm font-medium text-gray-500 text-start"
+                                    wire:click="sortByColumn('withdrawal_amount')">
+                                    WD Amount
+                                    @if ($sortBy === 'withdrawal_amount')
                                         @if ($sortDirection === 'asc')
                                             <i class="ri-arrow-up-s-line"></i>
                                         @else
@@ -173,11 +236,16 @@
                                     {{ $sale->no_sale }}
                                 </td>
                                 <td class="px-4 py-4 text-sm text-gray-500 whitespace-nowrap dark:text-gray-200">
-                                    {{ $sale->customer->name }}
+                                    {{ $sale->customer_name }}
                                 </td>
                                 @if ($showColumns['no_keep'])
                                     <td class="px-4 py-4 text-sm text-gray-500 whitespace-nowrap dark:text-gray-200">
                                         {{ $sale->no_keep }}
+                                    </td>
+                                @endif
+                                @if ($showColumns['marketplace'])
+                                    <td class="px-4 py-4 text-sm text-gray-500 whitespace-nowrap dark:text-gray-200">
+                                        {{ $sale->marketplace_name }}
                                     </td>
                                 @endif
                                 @if ($showColumns['total_items'])
@@ -191,12 +259,49 @@
                                     </td>
                                 @endif
                                 @if ($showColumns['ship_status'])
-                                <td class="px-4 py-4 text-sm text-gray-500 whitespace-nowrap dark:text-gray-200">
-                                        @if ($sale->saleShipping)
-                                            {{ $sale->saleShipping?->status }}
+                                    <td class="px-4 py-4 text-sm text-gray-500 whitespace-nowrap dark:text-gray-200">
+                                        @if ($sale->ship_status)
+                                            @if ($sale->ship_status == strtolower(App\Enums\ShippingStatus::SIAPKIRIM))
+                                                <span class="inline-flex items-center gap-1.5 py-0.5 px-1.5 rounded-md text-xs font-medium bg-info/10 text-info">
+                                                    {{ ucfirst($sale->ship_status) }}
+                                                </span>
+                                            @elseif ($sale->ship_status == strtolower(App\Enums\ShippingStatus::EKSPEDISI))
+                                                <span class="inline-flex items-center gap-1.5 py-0.5 px-1.5 rounded-md text-xs font-medium bg-warning/10 text-warning">
+                                                    {{ ucfirst($sale->ship_status) }}
+                                                </span>
+                                            @elseif ($sale->ship_status == strtolower(App\Enums\ShippingStatus::SELESAI))
+                                                <span class="inline-flex items-center gap-1.5 py-0.5 px-1.5 rounded-md text-xs font-medium bg-success/10 text-success">
+                                                    {{ ucfirst($sale->ship_status) }}
+                                                </span>
+                                            @endif
                                         @else
-                                            Cashier
+                                            <span class="inline-flex items-center gap-1.5 py-0.5 px-1.5 rounded-md text-xs font-medium bg-secondary/10 text-secondary">
+                                                Cashier
+                                            </span>
                                         @endif
+                                    </td>
+                                @endif
+                                @if ($showColumns['ship_cost'])
+                                    <td class="px-4 py-4 text-sm text-gray-500 whitespace-nowrap dark:text-gray-200">
+                                        Rp {{ number_format($sale->ship_cost ? $sale->ship_cost : 0, '0', ',', '.') }}
+                                    </td>
+                                @endif
+                                @if ($showColumns['withdrawal_status'])
+                                    <td class="px-4 py-4 text-sm text-gray-500 whitespace-nowrap dark:text-gray-200">
+                                        @if ($sale->withdrawal_amount != null)
+                                            <span class="inline-flex items-center gap-1.5 py-0.5 px-1.5 rounded-md text-xs font-medium bg-success/10 text-success">
+                                                Cair
+                                            </span>
+                                        @else
+                                            <span class="inline-flex items-center gap-1.5 py-0.5 px-1.5 rounded-md text-xs font-medium bg-secondary/10 text-secondary">
+                                                Belum Cair
+                                            </span>
+                                        @endif
+                                    </td>
+                                @endif
+                                @if ($showColumns['withdrawal_amount'])
+                                    <td class="px-4 py-4 text-sm text-gray-500 whitespace-nowrap dark:text-gray-200">
+                                        Rp {{ number_format($sale->withdrawal_amount ?  $sale->withdrawal_amount : 0, '0', ',', '.') }}
                                     </td>
                                 @endif
                                 @if ($showColumns['created_at'])
@@ -213,16 +318,6 @@
                                     <div class="flex items-center justify-center pr-4 space-x-3">
                                         <button wire:click="show({{ $sale->id }})" class="text-primary">
                                             <i class="ri-eye-line"></i>
-                                        </button>
-                                        <button wire:click="addPayment({{ $sale->id }})" class="text-primary">
-                                            <i class="ri-bank-card-2-line"></i>
-                                        </button>
-                                        <a wire:navigate href="{{ route('create-sale', ['sale' => $sale->id]) }}"
-                                            class="text-info">
-                                            <i class="ri-edit-circle-line"></i>
-                                        </a>
-                                        <button wire:click="deleteAlert({{ $sale->id }})" class="text-danger">
-                                            <i class="text-base ri-delete-bin-2-line"></i>
                                         </button>
                                     </div>
                                 </td>

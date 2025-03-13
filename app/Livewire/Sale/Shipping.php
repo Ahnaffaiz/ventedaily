@@ -187,6 +187,7 @@ class Shipping extends Component
             $this->bank_id = $this->shipping->bank_id;
             $this->transfer_amount = $this->shipping->transfer_amount;
             $this->isOpen = true;
+            $this->modal = 'shipping';
         }
     }
 

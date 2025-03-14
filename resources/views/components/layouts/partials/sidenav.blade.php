@@ -113,7 +113,7 @@
             {{-- Sale --}}
             <li class="menu-item">
                 @php
-                    $activeRoutes = ['create-sale', 'sale', 'shipping', 'withdrawal', 'online-sales'];
+                    $activeRoutes = ['create-sale', 'sale'];
                     $isActive = in_array(request()->route()->getName(), $activeRoutes);
                 @endphp
                 <a href="javascript:void(0)" data-fc-type="collapse" class="menu-link">
@@ -127,12 +127,31 @@
                 <ul class="hidden sub-menu">
                     <x-menu-item activeRoute="create-sale" text="Cashier" />
                     <x-menu-item activeRoute="sale" text="Sale List" />
-                    <x-menu-item activeRoute="online-sales" text="Ventedaily" />
+                </ul>
+            </li>
+            {{-- end of Sale --}}
+
+            {{-- Ventedaily --}}
+            <li class="menu-item">
+                @php
+                    $activeRoutes = ['shipping', 'withdrawal', 'online-sales'];
+                    $isActive = in_array(request()->route()->getName(), $activeRoutes);
+                @endphp
+                <a href="javascript:void(0)" data-fc-type="collapse" class="menu-link">
+                    <span class="menu-icon">
+                        <i class="ri-emotion-line {{ $isActive ? 'text-white font-bold' : 'text-gray-300' }}"></i>
+                    </span>
+                    <span class="menu-text {{ $isActive ? 'text-white font-bold' : 'text-gray-300' }}"> Ventedaily </span>
+                    <span class="menu-arrow"></span>
+                </a>
+
+                <ul class="hidden sub-menu">
+                    <x-menu-item activeRoute="online-sales" text="Online Sales" />
                     <x-menu-item activeRoute="shipping" text="Shipping" />
                     <x-menu-item activeRoute="withdrawal" text="Withdrawal" />
                 </ul>
             </li>
-            {{-- end of Sale --}}
+            {{-- end of Ventedaily --}}
 
             {{-- customer --}}
             <li class="menu-item">

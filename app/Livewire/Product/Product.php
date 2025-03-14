@@ -30,21 +30,17 @@ class Product extends Component
     public $desc='';
 
     #[Validate('required')]
-    public $category_id='';
-
-    #[Validate('required')]
-    public $is_favorite=false;
-    #[Validate('required')]
-    public $imei='';
-    #[Validate('required')]
-    public $status='';
+    public $category_id, $is_favorite=false, $imei, $status;
 
     #[Validate('max:512')]
     public $image;
     public $current_image;
 
+    public $stockFroms, $stockTos;
+    public $stockFrom='home_stock', $stockTo='store_stock';
+
     public $isOpen = false;
-    public $categories, $product, $isProductStock = false;
+    public $categories, $product, $isProductStock = false, $isStock = false;
 
     public $query = '', $perPage = 10, $sortBy = 'name', $sortDirection = 'asc';
 
@@ -58,6 +54,7 @@ class Product extends Component
         'all_stock' => true,
         'home_stock' => true,
         'store_stock' => true,
+        'pre_order_stock' => true,
         'is_favorite' => false,
         'created_at' => false,
         'updated_at' => false,
@@ -102,12 +99,14 @@ class Product extends Component
             'products' => ModelsProduct::withSum('productStocks', 'all_stock')
                 ->withSum('productStocks', 'home_stock')
                 ->withSum('productStocks', 'store_stock')
+                ->withSum('productStocks', 'pre_order_stock')
                 ->where('name', 'like', '%'.$this->query.'%')
                 ->orderBy(
                     match ($this->sortBy) {
                         'all_stock' => 'product_stocks_sum_all_stock',
                         'home_stock' => 'product_stocks_sum_home_stock',
                         'store_stock' => 'product_stocks_sum_store_stock',
+                        'pre_order_stock' => 'product_stocks_sum_pre_order_stock',
                         default => $this->sortBy,
                     },
                     $this->sortDirection
@@ -269,5 +268,19 @@ class Product extends Component
         $this->product = ModelsProduct::find($product);
         $this->isProductStock = true;
         $this->isOpen = true;
+    }
+
+    public function transferStock($product)
+    {
+        $this->product = ModelsProduct::find($product);
+        $this->stockFroms = ['home_stock' => 'Home Stock', 'store_stock' => 'Store Stock', 'pre_order_stock' => 'Pre Order Stock'];
+        $this->stockTos = ['home_stock' => 'Home Stock', 'store_stock' => 'Store Stock', 'pre_order_stock' => 'Pre Order Stock'];
+        $this->isStock = true;
+        $this->isOpen = true;
+    }
+
+    public function updatedStockTo()
+    {
+
     }
 }

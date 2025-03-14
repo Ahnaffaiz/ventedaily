@@ -1,55 +1,5 @@
 <div>
-    <x-modal wire:model="isOpen" title="{{ $product ? 'Edit ' . $product?->name : 'Create Product' }}"
-        saveButton="{{ $product ? 'update' : 'save' }}" closeButton="closeModal"
-        large="{{ $isProductStock ? true : false}}">
-        @if ($isProductStock)
-            @livewire('product.product-stock', ['product' => $product], key($product->id))
-        @else
-            <div>
-                <form>
-                    <x-input-text name="name" id="name" title="Name" placeholder="Input Product Name Here" />
-                    @if (!$image)
-                        <x-input-text name="image" id="image" title="Image" placeholder="Input Product Image" type="file" />
-                        <small class="text-muted">Image max. 512 kb </small>
-                    @endif
-                    <div wire:loading wire:target="image">
-                        <div class="card-body">
-                            <div>
-                                <div class="spinner-grow spinner-grow-sm" role="status">
-                                    <span class="sr-only"></span>
-                                </div>
-                                Uploading...
-                            </div>
-                        </div>
-                    </div>
-                    <div class="mb-3 text-center">
-                        @if ($image)
-                            <div class="flex justify-end">
-                                <a href="#" class="text-sm text-danger" wire:click="deleteImage">
-                                    <i class="inline ri-delete-bin-line"></i> Delete
-                                </a>
-                            </div>
-
-                            <div wire:ignore>
-                                <img id="image" src="{{ $image->temporaryUrl() }}" alt="Preview Image"
-                                    class="rounded w-[100%] h-[100%]">
-                            </div>
-
-                        @elseif ($current_image)
-                            <img src="{{ Storage::url($current_image) }}" alt="" class="rounded w-[100%] h-[100%]">
-                        @endif
-                    </div>
-                    <x-input-text name="imei" id="imei" title="Barcode Imei" placeholder="Input Imei Barcode Here" />
-                    <x-input-select id="category_id" name="category_id" title="Category" placeholder="Select Category"
-                        :options="App\Models\Category::all()->pluck('name', 'id')->toArray()" />
-                    <x-input-select id="status" name="status" title="Product Status"
-                        :options="App\Enums\ProductStatus::asSelectArray()" placeholder="Select status" />
-                    <x-input-switch id="is_favorite" name="is_favorite" title="Favorite" />
-                    <x-textarea-input id="desc" name="desc" title="Description" />
-                </form>
-            </div>
-        @endif
-    </x-modal>
+    @include('livewire.product.modal')
     @include('livewire.product.information')
     <div class="relative mt-4 overflow-hidden bg-white shadow-md dark:bg-gray-800 sm:rounded-lg">
         <div class="flex items-center justify-between p-4 d">
@@ -94,9 +44,9 @@
                 @if ($products->count() > 0)
                     <thead>
                         <tr>
-                            <th scope="col" class="px-4 py-4 text-sm font-medium text-center text-gray-500">No</th>
+                            <th scope="col" class="px-4 py-4 text-sm font-medium text-center text-gray-900 dark:text-gray-100">No</th>
                             @if ($showColumns['image'])
-                                <th scope="col" class="px-4 py-4 text-sm font-medium text-gray-500 text-start"
+                                <th scope="col" class="px-4 py-4 text-sm font-medium text-gray-900 dark:text-gray-100 text-start"
                                     wire:click="sortByColumn('image')">
                                     Image
                                     @if ($sortBy === 'image')
@@ -110,7 +60,7 @@
                                     @endif
                                 </th>
                             @endif
-                            <th scope="col" class="px-4 py-4 text-sm font-medium text-gray-500 text-start"
+                            <th scope="col" class="px-4 py-4 text-sm font-medium text-gray-900 dark:text-gray-100 text-start"
                                 wire:click="sortByColumn('name')">
                                 Name
                                 @if ($sortBy === 'name')
@@ -124,7 +74,7 @@
                                 @endif
                             </th>
                             @if ($showColumns['category_id'])
-                                <th scope="col" class="px-4 py-4 text-sm font-medium text-gray-500 text-start"
+                                <th scope="col" class="px-4 py-4 text-sm font-medium text-gray-900 dark:text-gray-100 text-start"
                                     wire:click="sortByColumn('category_id')">
                                     Category
                                     @if ($sortBy === 'category_id')
@@ -139,7 +89,7 @@
                                 </th>
                             @endif
                             @if ($showColumns['status'])
-                                <th scope="col" class="px-4 py-4 text-sm font-medium text-gray-500 text-start"
+                                <th scope="col" class="px-4 py-4 text-sm font-medium text-gray-900 dark:text-gray-100 text-start"
                                     wire:click="sortByColumn('status')">
                                     Status
                                     @if ($sortBy === 'status')
@@ -154,7 +104,7 @@
                                 </th>
                             @endif
                             @if ($showColumns['imei'])
-                                <th scope="col" class="px-4 py-4 text-sm font-medium text-gray-500 text-start"
+                                <th scope="col" class="px-4 py-4 text-sm font-medium text-gray-900 dark:text-gray-100 text-start"
                                     wire:click="sortByColumn('imei')">
                                     Barcode Imei
                                     @if ($sortBy === 'imei')
@@ -169,12 +119,12 @@
                                 </th>
                             @endif
                             @if ($showColumns['is_favorite'])
-                                <th scope="col" class="px-4 py-4 text-sm font-medium text-gray-500 text-start">
+                                <th scope="col" class="px-4 py-4 text-sm font-medium text-gray-900 dark:text-gray-100 text-start">
                                     Favorite
                                 </th>
                             @endif
                             @if ($showColumns['code'])
-                                <th scope="col" class="px-4 py-4 text-sm font-medium text-gray-500 text-start"
+                                <th scope="col" class="px-4 py-4 text-sm font-medium text-gray-900 dark:text-gray-100 text-start"
                                     wire:click="sortByColumn('code')">
                                     Code
                                     @if ($sortBy === 'code')
@@ -189,7 +139,7 @@
                                 </th>
                             @endif
                             @if ($showColumns['all_stock'])
-                                <th scope="col" class="px-4 py-4 text-sm font-medium text-gray-500 text-start"
+                                <th scope="col" class="px-4 py-4 text-sm font-medium text-center text-gray-900 dark:text-gray-100"
                                     wire:click="sortByColumn('product_stocks_sum_all_stock')">
                                     All Stock
                                     @if ($sortBy === 'product_stocks_sum_all_stock')
@@ -204,7 +154,7 @@
                                 </th>
                             @endif
                             @if ($showColumns['home_stock'])
-                                <th scope="col" class="px-4 py-4 text-sm font-medium text-gray-500 text-start"
+                                <th scope="col" class="px-4 py-4 text-sm font-medium text-center text-gray-900 dark:text-gray-100"
                                     wire:click="sortByColumn('product_stocks_sum_home_stock')">
                                     Home Stock
                                     @if ($sortBy === 'product_stocks_sum_home_stock')
@@ -219,7 +169,7 @@
                                 </th>
                             @endif
                             @if ($showColumns['store_stock'])
-                                <th scope="col" class="px-4 py-4 text-sm font-medium text-gray-500 text-start"
+                                <th scope="col" class="px-4 py-4 text-sm font-medium text-center text-gray-900 dark:text-gray-100"
                                     wire:click="sortByColumn('product_stocks_sum_store_stock')">
                                     Store Stock
                                     @if ($sortBy === 'product_stocks_sum_store_stock')
@@ -233,8 +183,23 @@
                                     @endif
                                 </th>
                             @endif
+                            @if ($showColumns['pre_order_stock'])
+                                <th scope="col" class="px-4 py-4 text-sm font-medium text-center text-gray-900 dark:text-gray-100"
+                                    wire:click="sortByColumn('product_stocks_sum_pre_order_stock')">
+                                    Store Stock
+                                    @if ($sortBy === 'product_stocks_sum_pre_order_stock')
+                                        @if ($sortDirection === 'asc')
+                                            <i class="ri-arrow-up-s-line"></i>
+                                        @else
+                                            <i class="ri-arrow-down-s-line"></i>
+                                        @endif
+                                    @else
+                                        <i class="ri-expand-up-down-line"></i>
+                                    @endif
+                                </th>
+                            @endif
                             @if ($showColumns['created_at'])
-                                <th scope="col" class="px-4 py-4 text-sm font-medium text-gray-500 text-start"
+                                <th scope="col" class="px-4 py-4 text-sm font-medium text-gray-900 dark:text-gray-100 text-start"
                                     wire:click="sortByColumn('created_at')">
                                     Created at
                                     @if ($sortBy === 'created_at')
@@ -249,7 +214,7 @@
                                 </th>
                             @endif
                             @if ($showColumns['updated_at'])
-                                <th scope="col" class="px-4 py-4 text-sm font-medium text-gray-500 text-start"
+                                <th scope="col" class="px-4 py-4 text-sm font-medium text-gray-900 dark:text-gray-100 text-start"
                                     wire:click="sortByColumn('updated_at')">
                                     Updated at
                                     @if ($sortBy === 'updated_at')
@@ -263,13 +228,14 @@
                                     @endif
                                 </th>
                             @endif
-                            <th scope="col" class="justify-end px-4 py-4 pr-3 text-sm font-medium text-gray-500">
-                                Action</th>
+                            <th scope="col" class="justify-end px-4 py-4 pr-3 text-sm font-medium text-center text-gray-900 dark:text-gray-100">
+                                Action
+                            </th>
                         </tr>
                     </thead>
                     <tbody class="divide-y divide-gray-200 dark:divide-gray-700">
                         @foreach ($products as $product)
-                            <tr class="bg-gray-50 dark:bg-gray-900">
+                            <tr class="{{ $loop->index % 2 === 0 ? 'bg-gray-100 dark:bg-gray-900' : '' }}">
                                 <th class="px-4 py-4 text-sm text-gray-500 whitespace-nowrap dark:text-gray-200">
                                     {{($products->currentpage() - 1) * $products->perpage() + $loop->index + 1}}
                                 </th>
@@ -313,7 +279,7 @@
                                     </td>
                                 @endif
                                 @if ($showColumns['all_stock'])
-                                    <td class="px-4 py-4 text-sm text-gray-500 whitespace-nowrap dark:text-gray-200">
+                                    <td class="px-4 py-4 text-sm text-center text-gray-500 whitespace-nowrap dark:text-gray-200">
                                         {{ $product->totalStock() }}
                                         @if ($product->allStockInKeep() > 0)
                                             <span
@@ -322,7 +288,7 @@
                                     </td>
                                 @endif
                                 @if ($showColumns['home_stock'])
-                                    <td class="px-4 py-4 text-sm text-gray-500 whitespace-nowrap dark:text-gray-200">
+                                    <td class="px-4 py-4 text-sm text-center text-gray-500 whitespace-nowrap dark:text-gray-200">
                                         {{ $product->homeStock() }}
                                         @if ($product->homeStockInKeep() > 0)
                                             <span
@@ -331,12 +297,17 @@
                                     </td>
                                 @endif
                                 @if ($showColumns['store_stock'])
-                                    <td class="px-4 py-4 text-sm text-gray-500 whitespace-nowrap dark:text-gray-200">
+                                    <td class="px-4 py-4 text-sm text-center text-gray-500 whitespace-nowrap dark:text-gray-200">
                                         {{ $product->storeStock() }}
                                         @if ($product->storeStockInKeep() > 0)
                                             <span
                                                 class="inline-flex items-center gap-1.5 py-0.5 px-1.5 rounded-full text-xs font-medium bg-warning text-white">{{ $product->storeStockInKeep() }}</span>
                                         @endif
+                                    </td>
+                                @endif
+                                @if ($showColumns['pre_order_stock'])
+                                    <td class="px-4 py-4 text-sm text-center text-gray-500 whitespace-nowrap dark:text-gray-200">
+                                        {{ $product->preOrderStock() }}
                                     </td>
                                 @endif
                                 @if ($showColumns['created_at'])
@@ -350,7 +321,10 @@
                                     </td>
                                 @endif
                                 <td class="px-4 py-4">
-                                    <div class="flex items-center justify-center pr-4 space-x-3">
+                                    <div class="flex items-center justify-center space-x-3">
+                                        <button wire:click="transferStock({{ $product->id }})" class="text-primary">
+                                            <i class="ri-arrow-left-right-line"></i>
+                                        </button>
                                         <button wire:click="addProductStock({{ $product->id }})" class="text-primary">
                                             <i class="ri-archive-line"></i>
                                         </button>

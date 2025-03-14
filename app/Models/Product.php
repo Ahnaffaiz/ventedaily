@@ -51,6 +51,11 @@ class Product extends Model
         return $this->productStocks()->sum('store_stock');
     }
 
+    public function preOrderStock()
+    {
+        return $this->productStocks()->sum('pre_order_stock');
+    }
+
     public function homeStockInKeep()
     {
         return KeepProduct::whereHas('keep', function($query){

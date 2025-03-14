@@ -19,6 +19,7 @@ return new class extends Migration
             $table->integer('all_stock');
             $table->integer('home_stock');
             $table->integer('store_stock');
+            $table->integer('pre_order_stock');
             $table->integer('qc_stock');
             $table->integer('vermak_stock');
             $table->integer('selling_price');

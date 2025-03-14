@@ -47,7 +47,7 @@
                     <tbody class="divide-y divide-gray-200 dark:divide-gray-700">
                         @if ($cart != null)
                             @foreach ($cart as $productStock)
-                                <tr>
+                                <tr class="{{ $loop->index % 2 === 0 ? 'bg-gray-100 dark:bg-gray-900' : '' }}">
                                     <td class="px-4 py-4 text-sm text-center text-gray-500 whitespace-nowrap">
                                         {{ $loop->iteration }}
                                     </td>

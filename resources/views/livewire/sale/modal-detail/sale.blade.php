@@ -32,7 +32,7 @@
         <tbody class="divide-y divide-gray-200 dark:divide-gray-700">
             @if ($sale?->saleItems)
                 @foreach ($sale?->saleItems as $saleItem)
-                    <tr class="bg-gray-50 dark:bg-gray-900">
+                    <tr class="{{ $loop->index % 2 === 0 ? 'bg-gray-100 dark:bg-gray-900' : '' }}">
                         <td class="px-2 py-2 text-sm text-gray-500 whitespace-nowrap dark:text-gray-200">
                             {{ $loop->iteration }}
                         </td>

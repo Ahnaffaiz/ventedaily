@@ -73,6 +73,8 @@ Route::middleware([
         $setting = Session::get('setting');
         return view('print.sale-payment', compact('payment', 'setting'));
     })->name('print-sale-payment');
+
+    //ventedaily
     Route::get('/online-sales', OnlineSales::class)->name('online-sales');
     Route::get('/shipping', Shipping::class)->name('shipping');
     Route::get('/withdrawal', Withdrawal::class)->name('withdrawal');

@@ -19,7 +19,7 @@
                                 </thead>
                                 <tbody>
                                     @foreach ($productStockList as $productStock)
-                                        <tr>
+                                        <tr class="{{ $loop->index % 2 === 0 ? 'bg-gray-100 dark:bg-gray-900' : '' }}">
                                             <td class="px-4 py-4 text-sm text-gray-500 whitespace-nowrap">
                                                 {{ $productStock->color->name }}
                                             </td>
@@ -95,21 +95,18 @@
                     <thead>
                         <tr>
                             <th scope="col" class="px-4 py-4 text-sm font-medium text-center text-gray-500">No</th>
-                            <th scope="col" class="px-4 py-4 text-sm font-medium text-gray-500 text-start">Product Name
-                            </th>
+                            <th scope="col" class="px-4 py-4 text-sm font-medium text-gray-500 text-start">Product Name</th>
                             <th scope="col" class="px-4 py-4 text-sm font-medium text-gray-500 text-start">Color</th>
                             <th scope="col" class="px-4 py-4 text-sm font-medium text-gray-500 text-start">Size</th>
                             <th scope="col" class="px-4 py-4 text-sm font-medium text-gray-500 text-start">Price (@)
-                            <th scope="col" class="px-4 py-4 text-sm font-medium text-center text-gray-500">Qty</th>
-                            </th>
+                            <th scope="col" class="px-4 py-4 text-sm font-medium text-center text-gray-500">Qty</th></th>
                             <th scope="col" class="px-4 py-4 text-sm font-medium text-gray-500 text-start">Total</th>
-                            <th scope="col" class="justify-end px-4 py-4 pr-3 text-sm font-medium text-gray-500"></th>
                         </tr>
                     </thead>
                     <tbody class="divide-y divide-gray-200 dark:divide-gray-700">
                         @if ($cart != null)
                             @foreach ($cart as $productStock)
-                                <tr>
+                                <tr class="{{ $loop->index % 2 === 0 ? 'bg-gray-100 dark:bg-gray-900' : '' }}">
                                     <td class="px-4 py-4 text-sm text-center text-gray-500 whitespace-nowrap">
                                         {{ $loop->iteration }}
                                     </td>
@@ -159,7 +156,7 @@
                                 </td>
                             </tr>
                             <tr>
-                                <td colspan="5" class="py-4 text-end"></td>
+                                <td colspan="5" class="px-4 py-4 text-end"></td>
                                 <td class="py-4 text-end">
                                     <p class="mt-2 mb-2 text-lg font-semibold">Sub Total :</p>
                                     <div class="mb-2">
@@ -184,7 +181,7 @@
                                         </a> :
                                     </div>
                                 </td>
-                                <td class="py-4 font-semibold text-md text-start ps-4">
+                                <td class="px-4 py-4 font-semibold text-md text-start ps-4">
                                     <p class="mt-2 text-lg font-semibold text-end">Rp
                                         {{ number_format($sub_total, 0, ',', '.') }}
                                     </p>
@@ -200,10 +197,10 @@
                                     </p>
                                 </td>
                             </tr>
-                            <tr class="border-none">
+                            <tr class="px-4 border-none">
                                 <td colspan="5" class="py-4 text-end"></td>
                                 <td class="py-4 text-xl font-bold text-end">Total Price:</td>
-                                <td class="py-4 text-xl font-bold text-end"> Rp.
+                                <td class="px-4 py-4 text-xl font-bold text-end"> Rp.
                                     {{ number_format($total_price, 0, ',', '.') }}
                                 </td>
                             </tr>

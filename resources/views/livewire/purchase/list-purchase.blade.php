@@ -190,71 +190,71 @@
                             </thead>
                             <tbody class="divide-y divide-gray-200 dark:divide-gray-700">
                                 @foreach ($purchases as $purchase)
-                                                <tr class="bg-gray-50 dark:bg-gray-900">
-                                                    <th class="px-4 py-4 text-sm text-gray-500 whitespace-nowrap dark:text-gray-200">
-                                                        {{($purchases->currentpage() - 1) * $purchases->perpage() + $loop->index + 1}}
-                                                    </th>
-                                                    <td class="px-4 py-4 text-sm text-gray-500 whitespace-nowrap dark:text-gray-200">
-                                                        {{ $purchase->supplier->name }}
-                                                    </td>
-                                                    @if ($showColumns['term_of_payment_id'])
-                                                        <td class="px-4 py-4 text-sm text-gray-500 whitespace-nowrap dark:text-gray-200">
-                                                            {{ $purchase->termOfPayment->name }}
-                                                        </td>
-                                                    @endif
-                                                    @if ($showColumns['sub_total'])
-                                                        <td class="px-4 py-4 text-sm text-gray-500 whitespace-nowrap dark:text-gray-200">
-                                                            {{ 'Rp.' . number_format($purchase->sub_total, 0, ',', '.') }}
-                                                        </td>
-                                                    @endif
-                                                    @php
-                                                        $discount = $purchase->discount_type === App\Enums\DiscountType::PERSEN ? $purchase->sub_total * (int) $purchase->discount / 100 : $purchase->discount;
-                                                    @endphp
-                                                    @if ($showColumns['discount'])
-                                                        <td class="px-4 py-4 text-sm text-gray-500 whitespace-nowrap dark:text-gray-200">
-                                                            Rp. {{ number_format($discount, 0, ',', '.')}}
-                                                        </td>
-                                                    @endif
-                                                    @if ($showColumns['tax'])
-                                                        <td class="px-4 py-4 text-sm text-gray-500 whitespace-nowrap dark:text-gray-200">
-                                                            Rp. {{ $purchase->tax / 100 * ($purchase->sub_total - $discount)}}
-                                                        </td>
-                                                    @endif
-                                                    @if ($showColumns['total_price'])
-                                                        <td class="px-4 py-4 text-sm text-gray-500 whitespace-nowrap dark:text-gray-200">
-                                                            Rp. {{ number_format($purchase->total_price, 0, ',', '.') }}
-                                                        </td>
-                                                    @endif
-                                                    @if ($showColumns['outstanding_balance'])
-                                                        <td class="px-4 py-4 text-sm text-gray-500 whitespace-nowrap dark:text-gray-200">
-                                                            Rp. {{ number_format($purchase->outstanding_balance, 0, ',', '.') }}
-                                                        </td>
-                                                    @endif
-                                                    @if ($showColumns['created_at'])
-                                                        <td class="px-4 py-4 text-sm text-gray-500 whitespace-nowrap dark:text-gray-200">
-                                                            {{ $purchase->created_at }}
-                                                        </td>
-                                                    @endif
-                                                    @if ($showColumns['updated_at'])
-                                                        <td class="px-4 py-4 text-sm text-gray-500 whitespace-nowrap dark:text-gray-200">
-                                                            {{ $purchase->updated_at }}
-                                                        </td>
-                                                    @endif
-                                                    <td class="px-4 py-4">
-                                                        <div class="flex items-center justify-center pr-4 space-x-3">
-                                                            <button wire:click="addPayment({{ $purchase->id }})" class="text-primary">
-                                                                <i class="ri-bank-card-2-line"></i>
-                                                            </button>
-                                                            <a wire:navigate href="{{ route('create-purchase', ['purchase' => $purchase->id]) }}"
-                                                                class="text-info">
-                                                                <i class="ri-edit-circle-line"></i>
-                                                            </a>
-                                                            <button wire:click="deleteAlert({{ $purchase->id }})" class="text-danger">
-                                                                <i class="text-base ri-delete-bin-2-line"></i>
-                                                            </button>
-                                                        </div>
-                                                    </td>
-                                                </tr>
+                                    <tr class="{{ $loop->index % 2 === 0 ? 'bg-gray-100 dark:bg-gray-900' : '' }}">
+                                        <th class="px-4 py-4 text-sm text-gray-500 whitespace-nowrap dark:text-gray-200">
+                                            {{($purchases->currentpage() - 1) * $purchases->perpage() + $loop->index + 1}}
+                                        </th>
+                                        <td class="px-4 py-4 text-sm text-gray-500 whitespace-nowrap dark:text-gray-200">
+                                            {{ $purchase->supplier->name }}
+                                        </td>
+                                        @if ($showColumns['term_of_payment_id'])
+                                            <td class="px-4 py-4 text-sm text-gray-500 whitespace-nowrap dark:text-gray-200">
+                                                {{ $purchase->termOfPayment->name }}
+                                            </td>
+                                        @endif
+                                        @if ($showColumns['sub_total'])
+                                            <td class="px-4 py-4 text-sm text-gray-500 whitespace-nowrap dark:text-gray-200">
+                                                {{ 'Rp.' . number_format($purchase->sub_total, 0, ',', '.') }}
+                                            </td>
+                                        @endif
+                                        @php
+                                            $discount = $purchase->discount_type === App\Enums\DiscountType::PERSEN ? $purchase->sub_total * (int) $purchase->discount / 100 : $purchase->discount;
+                                        @endphp
+                                        @if ($showColumns['discount'])
+                                            <td class="px-4 py-4 text-sm text-gray-500 whitespace-nowrap dark:text-gray-200">
+                                                Rp. {{ number_format($discount, 0, ',', '.')}}
+                                            </td>
+                                        @endif
+                                        @if ($showColumns['tax'])
+                                            <td class="px-4 py-4 text-sm text-gray-500 whitespace-nowrap dark:text-gray-200">
+                                                Rp. {{ $purchase->tax / 100 * ($purchase->sub_total - $discount)}}
+                                            </td>
+                                        @endif
+                                        @if ($showColumns['total_price'])
+                                            <td class="px-4 py-4 text-sm text-gray-500 whitespace-nowrap dark:text-gray-200">
+                                                Rp. {{ number_format($purchase->total_price, 0, ',', '.') }}
+                                            </td>
+                                        @endif
+                                        @if ($showColumns['outstanding_balance'])
+                                            <td class="px-4 py-4 text-sm text-gray-500 whitespace-nowrap dark:text-gray-200">
+                                                Rp. {{ number_format($purchase->outstanding_balance, 0, ',', '.') }}
+                                            </td>
+                                        @endif
+                                        @if ($showColumns['created_at'])
+                                            <td class="px-4 py-4 text-sm text-gray-500 whitespace-nowrap dark:text-gray-200">
+                                                {{ $purchase->created_at }}
+                                            </td>
+                                        @endif
+                                        @if ($showColumns['updated_at'])
+                                            <td class="px-4 py-4 text-sm text-gray-500 whitespace-nowrap dark:text-gray-200">
+                                                {{ $purchase->updated_at }}
+                                            </td>
+                                        @endif
+                                        <td class="px-4 py-4">
+                                            <div class="flex items-center justify-center space-x-3">
+                                                <button wire:click="addPayment({{ $purchase->id }})" class="text-primary">
+                                                    <i class="ri-bank-card-2-line"></i>
+                                                </button>
+                                                <a wire:navigate href="{{ route('create-purchase', ['purchase' => $purchase->id]) }}"
+                                                    class="text-info">
+                                                    <i class="ri-edit-circle-line"></i>
+                                                </a>
+                                                <button wire:click="deleteAlert({{ $purchase->id }})" class="text-danger">
+                                                    <i class="text-base ri-delete-bin-2-line"></i>
+                                                </button>
+                                            </div>
+                                        </td>
+                                    </tr>
                                 @endforeach
                             </tbody>
                 @else

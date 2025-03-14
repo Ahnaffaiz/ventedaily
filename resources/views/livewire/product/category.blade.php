@@ -102,7 +102,7 @@
                     </thead>
                     <tbody class="divide-y divide-gray-200 dark:divide-gray-700">
                         @foreach ($categories as $category)
-                            <tr class="bg-gray-50 dark:bg-gray-900">
+                            <tr class="{{ $loop->index % 2 === 0 ? 'bg-gray-100 dark:bg-gray-900' : '' }}">
                                 <th class="px-4 py-4 text-sm text-gray-500 whitespace-nowrap dark:text-gray-200">
                                     {{($categories->currentpage() - 1) * $categories->perpage() + $loop->index + 1}}
                                 </th>
@@ -125,11 +125,11 @@
                                     </td>
                                 @endif
                                 <td class="px-4 py-4">
-                                    <div class="flex items-center justify-center pr-4 space-x-3">
+                                    <div class="flex items-center justify-center space-x-3">
                                         <button wire:click="edit({{ $category->id }})"><i
-                                                class="ri-edit-circle-line"></i></button>
+                                                class="ri-edit-circle-line text-primary"></i></button>
                                         <button wire:click="deleteAlert({{ $category->id }})"><i
-                                                class="text-base ri-delete-bin-2-line"></i></button>
+                                                class="text-base ri-delete-bin-2-line text-danger"></i></button>
                                     </div>
                                 </td>
                             </tr>

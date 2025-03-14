@@ -22,11 +22,11 @@
                     </thead>
                     <tbody>
                         @foreach ($transferToStores as $keepProduct)
-                            <tr>
+                            <tr class="{{ $loop->index % 2 === 0 ? 'bg-gray-50 dark:bg-gray-900' : '' }}">
                                 <td class="p-2">{{ $keepProduct->productStock->product->name }}</td>
                                 <td class="p-2">{{ $keepProduct->productStock->size->name }}</td>
                                 <td class="p-2">{{ $keepProduct->productStock->color->name }}</td>
-                                <td class="p-2">{{ $keepProduct->productStock->home_stock }}</td>
+                                <td class="p-2">{{ $keepProduct->home_stock }}</td>
                             </tr>
                         @endforeach
                     </tbody>
@@ -62,11 +62,11 @@
                     </thead>
                     <tbody>
                         @foreach ($transferToHomes as $keepProduct)
-                            <tr>
+                            <tr class="{{ $loop->index % 2 === 0 ? 'bg-gray-50 dark:bg-gray-900' : '' }}">
                                 <td class="p-2">{{ $keepProduct->productStock->product->name }}</td>
                                 <td class="p-2">{{ $keepProduct->productStock->size->name }}</td>
                                 <td class="p-2">{{ $keepProduct->productStock->color->name }}</td>
-                                <td class="p-2">{{ $keepProduct->productStock->store_stock }}</td>
+                                <td class="p-2">{{ $keepProduct->store_stock }}</td>
                             </tr>
                         @endforeach
                     </tbody>

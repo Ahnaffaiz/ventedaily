@@ -275,7 +275,7 @@
                     </thead>
                     <tbody class="divide-y divide-gray-200 dark:divide-gray-700">
                         @foreach ($saleShippings as $shipping)
-                            <tr class="bg-gray-50 dark:bg-gray-900">
+                            <tr class="{{ $loop->index % 2 === 0 ? 'bg-gray-100 dark:bg-gray-900' : '' }}">
                                 <th class="px-4 py-4 text-sm text-gray-500 whitespace-nowrap dark:text-gray-200">
                                     {{($saleShippings->currentpage() - 1) * $saleShippings->perpage() + $loop->index + 1}}
                                 </th>
@@ -350,7 +350,7 @@
                                     </td>
                                 @endif
                                 <td class="px-4 py-4">
-                                    <div class="flex items-center justify-center pr-4 space-x-3">
+                                    <div class="flex items-center justify-center space-x-3">
                                         <button wire:click="edit({{ $shipping->id }})" class="text-info">
                                             <i class="ri-edit-circle-line"></i>
                                         </button>

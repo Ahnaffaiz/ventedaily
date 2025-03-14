@@ -118,7 +118,7 @@
                     </thead>
                     <tbody class="divide-y divide-gray-200 dark:divide-gray-700">
                         @foreach ($suppliers as $supplier)
-                            <tr class="bg-gray-50 dark:bg-gray-900">
+                            <tr class="{{ $loop->index % 2 === 0 ? 'bg-gray-100 dark:bg-gray-900' : '' }}">
                                 <th class="px-4 py-4 text-sm text-gray-500 whitespace-nowrap dark:text-gray-200">
                                     {{($suppliers->currentpage() - 1) * $suppliers->perpage() + $loop->index + 1}}
                                 </th>
@@ -146,7 +146,7 @@
                                     </td>
                                 @endif
                                 <td class="px-4 py-4">
-                                    <div class="flex items-center justify-center pr-4 space-x-3">
+                                    <div class="flex items-center justify-center space-x-3">
                                         <button wire:click="edit({{ $supplier->id }})"><i
                                                 class="ri-edit-circle-line"></i></button>
                                         <button wire:click="deleteAlert({{ $supplier->id }})"><i

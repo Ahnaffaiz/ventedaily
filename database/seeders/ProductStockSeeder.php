@@ -29,17 +29,19 @@ class ProductStockSeeder extends Seeder
 
                 $homeStock = rand(5, 50);
                 $storeStock = rand(5, 50);
-                $allStock = $homeStock + $storeStock; // Perbaikan: Total stok = home + store
+                $perOrderStock = rand(5, 50);
+                $allStock = $homeStock + $storeStock + $perOrderStock; // Perbaikan: Total stok = home + store
 
                 DB::table('product_stocks')->insert([
                     'product_id'     => $productId,
                     'size_id'        => $faker->randomElement($sizeIds),
                     'color_id'       => $faker->randomElement($colorIds),
-                    'all_stock'      => $allStock,  // Fix: all_stock adalah home + store
+                    'all_stock'      => $allStock,  // Fix: all_stock adalah home + store + pre order
                     'home_stock'     => $homeStock,
                     'store_stock'    => $storeStock,
-                    'qc_stock'       => rand(0, 20),
-                    'vermak_stock'   => rand(0, 10),
+                    'pre_order_stock'=> $perOrderStock,
+                    'qc_stock'       => 0,
+                    'vermak_stock'   => 0,
                     'purchase_price' => $purchasePrice,
                     'selling_price'  => $sellingPrice, // Harga jual harus lebih tinggi dari harga beli
                 ]);

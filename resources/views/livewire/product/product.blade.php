@@ -1,3 +1,4 @@
+
 <div>
     @include('livewire.product.modal')
     @include('livewire.product.information')
@@ -15,28 +16,6 @@
                         placeholder="Search...">
                     <span class="absolute z-10 text-base -translate-y-1/2 ri-search-line start-2 top-1/2"></span>
                 </div>
-                <div class="relative ms-auto">
-                    <button data-fc-type="dropdown" data-fc-placement="bottom-end" type="button"
-                        class="flex items-center py-2 pl-3 pr-2 text-sm font-medium text-gray-500 bg-white border border-gray-300 rounded-md shadow-sm dark:border-gray-500 dark:bg-gray-700 hover:bg-gray-50 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-indigo-500"
-                        id="menu-button" aria-expanded="true" aria-haspopup="true">
-                        <i class="mr-2 ri-filter-line"></i>
-                    </button>
-                    <div class="absolute right-0 z-10 hidden w-56 mt-2 origin-top-right bg-white divide-y divide-gray-100 rounded-md shadow-lg dark:divide-gray-600 dark:bg-gray-700 ring-1 ring-black ring-opacity-5 focus:outline-none"
-                        role="menu" aria-orientation="vertical" aria-labelledby="menu-button" tabindex="-1">
-                        <div class="py-1" role="none">
-                            @foreach ($showColumns as $column => $isVisible)
-                                <div class="flex items-center px-4 py-2 text-sm text-gray-700 hover:bg-gray-100 dark:hover:bg-gray-900 hover:text-gray-900"
-                                    role="menuitem" tabindex="-1" id="menu-item-0">
-                                    <input type="checkbox" class="w-4 h-4 text-indigo-600 form-checkbox"
-                                        wire:model.live="showColumns.{{ $column }}">
-                                    <label class="block ml-3 text-sm font-medium text-gray-700" for="comments">
-                                        {{ ucfirst(str_replace('_', ' ', $column)) }}
-                                    </label>
-                                </div>
-                            @endforeach
-                        </div>
-                    </div>
-                </div>
             </div>
         </div>
         <div class="overflow-x-auto">
@@ -44,23 +23,8 @@
                 @if ($products->count() > 0)
                     <thead>
                         <tr>
-                            <th scope="col" class="px-4 py-4 text-sm font-medium text-center text-gray-900 dark:text-gray-100">No</th>
-                            @if ($showColumns['image'])
-                                <th scope="col" class="px-4 py-4 text-sm font-medium text-gray-900 dark:text-gray-100 text-start"
-                                    wire:click="sortByColumn('image')">
-                                    Image
-                                    @if ($sortBy === 'image')
-                                        @if ($sortDirection === 'asc')
-                                            <i class="ri-arrow-up-s-line"></i>
-                                        @else
-                                            <i class="ri-arrow-down-s-line"></i>
-                                        @endif
-                                    @else
-                                        <i class="ri-expand-up-down-line"></i>
-                                    @endif
-                                </th>
-                            @endif
-                            <th scope="col" class="px-4 py-4 text-sm font-medium text-gray-900 dark:text-gray-100 text-start"
+                            <th scope="col" class="w-2/12 px-4 py-4 text-sm font-medium text-center text-gray-900 dark:text-gray-100">No</th>
+                            <th scope="col" class="w-2/12 px-4 py-4 text-sm font-medium text-gray-900 dark:text-gray-100 text-start"
                                 wire:click="sortByColumn('name')">
                                 Name
                                 @if ($sortBy === 'name')
@@ -74,7 +38,7 @@
                                 @endif
                             </th>
                             @if ($showColumns['category_id'])
-                                <th scope="col" class="px-4 py-4 text-sm font-medium text-gray-900 dark:text-gray-100 text-start"
+                                <th scope="col" class="w-2/12 px-4 py-4 text-sm font-medium text-gray-900 dark:text-gray-100 text-start"
                                     wire:click="sortByColumn('category_id')">
                                     Category
                                     @if ($sortBy === 'category_id')
@@ -88,58 +52,8 @@
                                     @endif
                                 </th>
                             @endif
-                            @if ($showColumns['status'])
-                                <th scope="col" class="px-4 py-4 text-sm font-medium text-gray-900 dark:text-gray-100 text-start"
-                                    wire:click="sortByColumn('status')">
-                                    Status
-                                    @if ($sortBy === 'status')
-                                        @if ($sortDirection === 'asc')
-                                            <i class="ri-arrow-up-s-line"></i>
-                                        @else
-                                            <i class="ri-arrow-down-s-line"></i>
-                                        @endif
-                                    @else
-                                        <i class="ri-expand-up-down-line"></i>
-                                    @endif
-                                </th>
-                            @endif
-                            @if ($showColumns['imei'])
-                                <th scope="col" class="px-4 py-4 text-sm font-medium text-gray-900 dark:text-gray-100 text-start"
-                                    wire:click="sortByColumn('imei')">
-                                    Barcode Imei
-                                    @if ($sortBy === 'imei')
-                                        @if ($sortDirection === 'asc')
-                                            <i class="ri-arrow-up-s-line"></i>
-                                        @else
-                                            <i class="ri-arrow-down-s-line"></i>
-                                        @endif
-                                    @else
-                                        <i class="ri-expand-up-down-line"></i>
-                                    @endif
-                                </th>
-                            @endif
-                            @if ($showColumns['is_favorite'])
-                                <th scope="col" class="px-4 py-4 text-sm font-medium text-gray-900 dark:text-gray-100 text-start">
-                                    Favorite
-                                </th>
-                            @endif
-                            @if ($showColumns['code'])
-                                <th scope="col" class="px-4 py-4 text-sm font-medium text-gray-900 dark:text-gray-100 text-start"
-                                    wire:click="sortByColumn('code')">
-                                    Code
-                                    @if ($sortBy === 'code')
-                                        @if ($sortDirection === 'asc')
-                                            <i class="ri-arrow-up-s-line"></i>
-                                        @else
-                                            <i class="ri-arrow-down-s-line"></i>
-                                        @endif
-                                    @else
-                                        <i class="ri-expand-up-down-line"></i>
-                                    @endif
-                                </th>
-                            @endif
                             @if ($showColumns['all_stock'])
-                                <th scope="col" class="px-4 py-4 text-sm font-medium text-center text-gray-900 dark:text-gray-100"
+                                <th scope="col" class="w-1/12 px-4 py-4 text-sm font-medium text-center text-gray-900 dark:text-gray-100"
                                     wire:click="sortByColumn('product_stocks_sum_all_stock')">
                                     All Stock
                                     @if ($sortBy === 'product_stocks_sum_all_stock')
@@ -154,7 +68,7 @@
                                 </th>
                             @endif
                             @if ($showColumns['home_stock'])
-                                <th scope="col" class="px-4 py-4 text-sm font-medium text-center text-gray-900 dark:text-gray-100"
+                                <th scope="col" class="w-1/12 px-4 py-4 text-sm font-medium text-center text-gray-900 dark:text-gray-100"
                                     wire:click="sortByColumn('product_stocks_sum_home_stock')">
                                     Home Stock
                                     @if ($sortBy === 'product_stocks_sum_home_stock')
@@ -169,7 +83,7 @@
                                 </th>
                             @endif
                             @if ($showColumns['store_stock'])
-                                <th scope="col" class="px-4 py-4 text-sm font-medium text-center text-gray-900 dark:text-gray-100"
+                                <th scope="col" class="w-1/12 px-4 py-4 text-sm font-medium text-center text-gray-900 dark:text-gray-100"
                                     wire:click="sortByColumn('product_stocks_sum_store_stock')">
                                     Store Stock
                                     @if ($sortBy === 'product_stocks_sum_store_stock')
@@ -184,9 +98,9 @@
                                 </th>
                             @endif
                             @if ($showColumns['pre_order_stock'])
-                                <th scope="col" class="px-4 py-4 text-sm font-medium text-center text-gray-900 dark:text-gray-100"
+                                <th scope="col" class="w-1/12 px-4 py-4 text-sm font-medium text-center text-gray-900 dark:text-gray-100"
                                     wire:click="sortByColumn('product_stocks_sum_pre_order_stock')">
-                                    Store Stock
+                                    Pre Order Stock
                                     @if ($sortBy === 'product_stocks_sum_pre_order_stock')
                                         @if ($sortDirection === 'asc')
                                             <i class="ri-arrow-up-s-line"></i>
@@ -198,88 +112,27 @@
                                     @endif
                                 </th>
                             @endif
-                            @if ($showColumns['created_at'])
-                                <th scope="col" class="px-4 py-4 text-sm font-medium text-gray-900 dark:text-gray-100 text-start"
-                                    wire:click="sortByColumn('created_at')">
-                                    Created at
-                                    @if ($sortBy === 'created_at')
-                                        @if ($sortDirection === 'asc')
-                                            <i class="ri-arrow-up-s-line"></i>
-                                        @else
-                                            <i class="ri-arrow-down-s-line"></i>
-                                        @endif
-                                    @else
-                                        <i class="ri-expand-up-down-line"></i>
-                                    @endif
-                                </th>
-                            @endif
-                            @if ($showColumns['updated_at'])
-                                <th scope="col" class="px-4 py-4 text-sm font-medium text-gray-900 dark:text-gray-100 text-start"
-                                    wire:click="sortByColumn('updated_at')">
-                                    Updated at
-                                    @if ($sortBy === 'updated_at')
-                                        @if ($sortDirection === 'asc')
-                                            <i class="ri-arrow-up-s-line"></i>
-                                        @else
-                                            <i class="ri-arrow-down-s-line"></i>
-                                        @endif
-                                    @else
-                                        <i class="ri-expand-up-down-line"></i>
-                                    @endif
-                                </th>
-                            @endif
-                            <th scope="col" class="justify-end px-4 py-4 pr-3 text-sm font-medium text-center text-gray-900 dark:text-gray-100">
+                            <th scope="col" class="justify-end w-2/12 px-4 py-4 pr-3 text-sm font-medium text-center text-gray-900 dark:text-gray-100">
                                 Action
                             </th>
                         </tr>
                     </thead>
                     <tbody class="divide-y divide-gray-200 dark:divide-gray-700">
                         @foreach ($products as $product)
-                            <tr class="{{ $loop->index % 2 === 0 ? 'bg-gray-100 dark:bg-gray-900' : '' }}">
-                                <th class="px-4 py-4 text-sm text-gray-500 whitespace-nowrap dark:text-gray-200">
+                            <tr>
+                                <th class="px-4 py-4 text-sm text-gray-800 whitespace-nowrap dark:text-gray-200">
                                     {{($products->currentpage() - 1) * $products->perpage() + $loop->index + 1}}
                                 </th>
-                                @if ($showColumns['image'])
-                                    <td class="px-4 py-4 text-sm text-gray-500 whitespace-nowrap dark:text-gray-200">
-                                        @if ($product->image)
-                                            <img src="{{ Storage::url($product->image) }}" alt="" srcset="" height="50" width="50">
-                                        @endif
-                                    </td>
-                                @endif
-                                <td class="px-4 py-4 text-sm text-gray-500 whitespace-nowrap dark:text-gray-200">
+                                <td class="px-4 py-4 text-sm text-gray-800 whitespace-nowrap dark:text-gray-200">
                                     {{ $product->name }}
                                 </td>
                                 @if ($showColumns['category_id'])
-                                    <td class="px-4 py-4 text-sm text-gray-500 whitespace-nowrap dark:text-gray-200">
+                                    <td class="px-4 py-4 text-sm text-gray-800 whitespace-nowrap dark:text-gray-200">
                                         {{ $product->category->name }}
                                     </td>
                                 @endif
-                                @if ($showColumns['status'])
-                                    <td class="px-4 py-4 text-sm text-gray-500 whitespace-nowrap dark:text-gray-200">
-                                        {{ $product->status }}
-                                    </td>
-                                @endif
-                                @if ($showColumns['imei'])
-                                    <td class="px-4 py-4 text-sm text-gray-500 whitespace-nowrap dark:text-gray-200">
-                                        {{ $product->imei }}
-                                    </td>
-                                @endif
-                                @if ($showColumns['is_favorite'])
-                                    <td class="px-4 py-4 text-sm text-gray-500 whitespace-nowrap dark:text-gray-200">
-                                        @if ($product->is_favorite)
-                                            <i class="text-xl text-center ri-check-double-line text-success"></i>
-                                        @else
-                                            <i class="text-xl text-center text-gray-400 ri-close-line"></i>
-                                        @endif
-                                    </td>
-                                @endif
-                                @if ($showColumns['code'])
-                                    <td class="px-4 py-4 text-sm text-gray-500 whitespace-nowrap dark:text-gray-200">
-                                        {{ $product->code }}
-                                    </td>
-                                @endif
                                 @if ($showColumns['all_stock'])
-                                    <td class="px-4 py-4 text-sm text-center text-gray-500 whitespace-nowrap dark:text-gray-200">
+                                    <td class="px-4 py-4 text-sm text-center text-gray-800 whitespace-nowrap dark:text-gray-200">
                                         {{ $product->totalStock() }}
                                         @if ($product->allStockInKeep() > 0)
                                             <span
@@ -288,7 +141,7 @@
                                     </td>
                                 @endif
                                 @if ($showColumns['home_stock'])
-                                    <td class="px-4 py-4 text-sm text-center text-gray-500 whitespace-nowrap dark:text-gray-200">
+                                    <td class="px-4 py-4 text-sm text-center text-gray-800 whitespace-nowrap dark:text-gray-200">
                                         {{ $product->homeStock() }}
                                         @if ($product->homeStockInKeep() > 0)
                                             <span
@@ -297,7 +150,7 @@
                                     </td>
                                 @endif
                                 @if ($showColumns['store_stock'])
-                                    <td class="px-4 py-4 text-sm text-center text-gray-500 whitespace-nowrap dark:text-gray-200">
+                                    <td class="px-4 py-4 text-sm text-center text-gray-800 whitespace-nowrap dark:text-gray-200">
                                         {{ $product->storeStock() }}
                                         @if ($product->storeStockInKeep() > 0)
                                             <span
@@ -306,25 +159,12 @@
                                     </td>
                                 @endif
                                 @if ($showColumns['pre_order_stock'])
-                                    <td class="px-4 py-4 text-sm text-center text-gray-500 whitespace-nowrap dark:text-gray-200">
+                                    <td class="px-4 py-4 text-sm text-center text-gray-800 whitespace-nowrap dark:text-gray-200">
                                         {{ $product->preOrderStock() }}
-                                    </td>
-                                @endif
-                                @if ($showColumns['created_at'])
-                                    <td class="px-4 py-4 text-sm text-gray-500 whitespace-nowrap dark:text-gray-200">
-                                        {{ $product->created_at }}
-                                    </td>
-                                @endif
-                                @if ($showColumns['updated_at'])
-                                    <td class="px-4 py-4 text-sm text-gray-500 whitespace-nowrap dark:text-gray-200">
-                                        {{ $product->updated_at }}
                                     </td>
                                 @endif
                                 <td class="px-4 py-4">
                                     <div class="flex items-center justify-center space-x-3">
-                                        <button wire:click="transferStock({{ $product->id }})" class="text-primary">
-                                            <i class="ri-arrow-left-right-line"></i>
-                                        </button>
                                         <button wire:click="addProductStock({{ $product->id }})" class="text-primary">
                                             <i class="ri-archive-line"></i>
                                         </button>
@@ -334,7 +174,36 @@
                                         <button wire:click="deleteAlert({{ $product->id }})" class="text-danger">
                                             <i class="text-base ri-delete-bin-2-line"></i>
                                         </button>
+                                        <button data-fc-type="collapse" data-fc-target="openStock{{ $product->id }}" type="button" class="inline-flex transition-all duration-300">
+                                            <i class="text-xl transition-all text-warning ri-arrow-down-s-line fc-collapse-open:rotate-180"></i>
+                                        </button>
                                     </div>
+                                </td>
+                            </tr>
+                            <tr id="openStock{{ $product->id }}" class="hidden w-full overflow-hidden transition-[height] duration-300">
+                                <td colspan="8" class="py-2">
+                                    <table class="min-w-full divide-gray-200 divide-b dark:divide-gray-700">
+                                        <tbody>
+                                            @foreach ($product->productStocks as $productStock)
+                                            <tr class="bg-gray-100 border-gray-200 dark:bg-gray-900 border-y dark:border-gray-700">
+                                                <td class="w-2/12 py-2"></td>
+                                                <td class="w-2/12 px-4 py-2 text-sm text-gray-800 text-start whitespace-nowrap dark:text-gray-200">{{ $productStock->color->name }}</td>
+                                                <td class="w-2/12 px-4 py-2 text-sm text-gray-800 text-start whitespace-nowrap dark:text-gray-200">{{ $productStock->size->name }}</td>
+                                                <td class="w-1/12 px-4 py-2 text-sm text-center text-gray-800 whitespace-nowrap dark:text-gray-200">{{ $productStock->all_stock }}</td>
+                                                <td class="w-1/12 px-4 py-2 text-sm text-center text-gray-800 whitespace-nowrap dark:text-gray-200">{{ $productStock->home_stock }}</td>
+                                                <td class="w-1/12 px-4 py-2 text-sm text-center text-gray-800 whitespace-nowrap dark:text-gray-200">{{ $productStock->store_stock }}</td>
+                                                <td class="w-1/12 px-4 py-2 text-sm text-center text-gray-800 whitespace-nowrap dark:text-gray-200">{{ $productStock->pre_order_stock }}</td>
+                                                <td class="w-2/12 px-4 py-2 text-sm text-center text-gray-800 whitespace-nowrap dark:text-gray-200">
+                                                    <div class="flex items-center justify-center space-x-3">
+                                                        <button wire:click="transferStock({{ $productStock->id }})" class="text-primary">
+                                                            <i class="ri-arrow-left-right-line"></i>
+                                                        </button>
+                                                    </div>
+                                                </td>
+                                            </tr>
+                                            @endforeach
+                                        </tbody>
+                                    </table>
                                 </td>
                             </tr>
                         @endforeach

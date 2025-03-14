@@ -7,6 +7,7 @@ use App\Enums\ProductStatus;
 use App\Models\Category;
 use App\Models\KeepProduct;
 use App\Models\Product as ModelsProduct;
+use App\Models\ProductStock;
 use Carbon\Carbon;
 use Exception;
 use Illuminate\Support\Facades\Storage;
@@ -36,28 +37,22 @@ class Product extends Component
     public $image;
     public $current_image;
 
-    public $stockFroms, $stockTos;
-    public $stockFrom='home_stock', $stockTo='store_stock';
+    public $productStock;
+    public $stockTypes = ['home_stock' => 'Home Stock', 'store_stock' => 'Store Stock', 'pre_order_stock' => 'Pre Order Stock'];
+    public $stockFrom='home_stock', $stockTo='store_stock', $stockAmount, $stockTotal;
 
     public $isOpen = false;
     public $categories, $product, $isProductStock = false, $isStock = false;
 
     public $query = '', $perPage = 10, $sortBy = 'name', $sortDirection = 'asc';
-
     public $transferToStores, $transferToHomes;
+
     public $showColumns = [
-        'image' => false,
         'category_id' => true,
-        'imei' => false,
-        'status' => false,
-        'code' => false,
         'all_stock' => true,
         'home_stock' => true,
         'store_stock' => true,
         'pre_order_stock' => true,
-        'is_favorite' => false,
-        'created_at' => false,
-        'updated_at' => false,
     ];
 
     #[Title('Product')]
@@ -270,17 +265,61 @@ class Product extends Component
         $this->isOpen = true;
     }
 
-    public function transferStock($product)
+    public function transferStock($productStock)
     {
-        $this->product = ModelsProduct::find($product);
-        $this->stockFroms = ['home_stock' => 'Home Stock', 'store_stock' => 'Store Stock', 'pre_order_stock' => 'Pre Order Stock'];
-        $this->stockTos = ['home_stock' => 'Home Stock', 'store_stock' => 'Store Stock', 'pre_order_stock' => 'Pre Order Stock'];
+        $this->productStock = ProductStock::find($productStock);
+        $this->stockAmount = $this->productStock->home_stock;
+        $this->stockTotal = $this->productStock->home_stock;
         $this->isStock = true;
         $this->isOpen = true;
     }
 
+    public function updatedStockFrom()
+    {
+        if($this->stockFrom == 'home_stock') {
+            $this->stockTotal = $this->productStock->home_stock;
+            $this->stockAmount = $this->productStock->home_stock;
+            $this->stockTo = 'store_stock';
+        } elseif( $this->stockFrom == 'store_stock') {
+            $this->stockAmount = $this->productStock->store_stock;
+            $this->stockTotal = $this->productStock->store_stock;
+            $this->stockTo = 'home_stock';
+        } elseif ($this->stockFrom == 'pre_order_stock') {
+            $this->stockAmount = $this->productStock->pre_order_stock;
+            $this->stockTotal = $this->productStock->pre_order_stock;
+            $this->stockTo = 'home_stock';
+        }
+    }
+
     public function updatedStockTo()
     {
+        if($this->stockTo == $this->stockFrom && $this->stockTo == 'home_stock') {
+            $this->stockFrom = 'store_stock';
+        } elseif( $this->stockTo == $this->stockFrom && $this->stockTo == 'store_stock') {
+            $this->stockFrom = 'home_stock';
+        } elseif ($this->stockTo == $this->stockFrom && $this->stockTo == 'pre_order_stock') {
+            $this->stockFrom = 'home_stock';
+        }
+    }
+
+    public function saveStock()
+    {
+        if($this->stockAmount < 1) {
+            $this->alert('warning', 'Stock amount invalid');
+        } elseif($this->stockAmount > $this->stockTotal) {
+            $this->alert('warning', 'Insufficient stock');
+        } else {
+            $stockTo = $this->stockTo;
+            $stockFrom = $this->stockFrom;
+            $this->productStock->update([
+                $this->stockTo => $this->productStock->$stockTo + $this->stockAmount,
+                $this->stockFrom => $this->productStock->$stockFrom - $this->stockAmount,
+            ]);
+            $this->alert('success','Stock successfully transfered');
+            $this->stockAmount = null;
+            $this->stockTotal = null;
+            $this->isOpen = false;
+        }
 
     }
 }

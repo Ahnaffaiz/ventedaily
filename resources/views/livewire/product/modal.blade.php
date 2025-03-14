@@ -1,14 +1,23 @@
+@php
+    $saveButton = null;
+    if ($isStock) {
+        $saveButton = 'saveStock';
+    } else {
+        $saveButton = $product ? 'update' : 'save';
+    }
+@endphp
 <x-modal wire:model="isOpen" title="{{ $product ? 'Edit ' . $product?->name : 'Create Product' }}"
-    saveButton="{{ $product ? 'update' : 'save' }}" closeButton="closeModal"
+    saveButton="{{ $saveButton }}" closeButton="closeModal"
     large="{{ $isProductStock ? true : false}}">
     @if ($isProductStock)
         @livewire('product.product-stock', ['product' => $product], key($product->id))
     @elseif($isStock)
         <h1 class="text-xl">Stock Transfer</h1>
         <div class="grid grid-cols-2 gap-2">
-            <x-input-text type="number" name="amount" id="amount" title="Withdrawal Amount" placeholder="Withdrawal Amount" prepend="Rp." />
-            <x-input-text type="number" name="marketplace_price" id="marketplace_price" title="Marketplace Price" placeholder="Marketplace Price" prepend="Rp." />
+            <x-input-select id="stockFrom" name="stockFrom" title="Transfer From" :options="$stockTypes" />
+            <x-input-select id="stockTo" name="stockTo" title="Transfer To" :options="$stockTypes" />
         </div>
+        <x-input-text type="number" name="stockAmount" id="stockAmount" title="Stock" prepend="Max Stock: {{ $stockTotal }} "/>
     @else
         <div>
             <form>

@@ -41,12 +41,11 @@
                             @endif
                         </div>
                     </div>
-                    <x-input-text type="text" name="owner" id="owner" title="Owner"
-                        placeholder="Your Owner Name Here" />
+                    <x-input-text type="text" name="owner" id="owner" title="Owner" placeholder="Your Owner Name Here" />
                     <x-input-text id="telp" name="telp" title="Phone" type="tel" prepend="+62" />
                     <x-textarea-input id="address" name="address" title="Address" />
-                    <x-input-text type="time" name="keep_timeout" id="keep_timeout" title="Keep Timeout"
-                        placeholder="Keep Timeout" />
+                    <x-input-text type="time" name="keep_timeout" id="keep_timeout" title="Keep Timeout" placeholder="Keep Timeout" />
+                    <x-input-text type="time" name="pre_order_timeout" id="pre_order_timeout" title="Pre Order Timeout" placeholder="Pre Order Timeout" />
                 </div>
             </div>
         </div>
@@ -64,8 +63,12 @@
                 <x-input-text type="number" name="sale_increment" id="sale_increment" title="Sale Increment"
                     placeholder="Sale Increment" />
             </div>
-            <button class="flex justify-end m-6 mt-5 text-white btn bg-primary" wire:click="save">Save
-                Change</button>
+            <div class="p-6 section">
+                <x-input-text type="text" name="pre_order_code" id="pre_order_code" title="Pre Order Code" placeholder="Sale Code" />
+                <x-input-text type="number" name="pre_order_increment" id="sale_increment" title="Pre Order Increment"
+                    placeholder="Pre Order Increment" />
+            </div>
+            <button class="flex justify-end m-6 mt-5 text-white btn bg-primary" wire:click="save">Save Change</button>
         </div>
     </div>
 </div>

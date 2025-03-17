@@ -6,6 +6,8 @@ use App\Livewire\Dashboard;
 use App\Livewire\Discount;
 use App\Livewire\Keep\CreateKeep;
 use App\Livewire\Keep\ListKeep;
+use App\Livewire\PreOrder\CreatePreOrder;
+use App\Livewire\PreOrder\ListPreOrder;
 use App\Livewire\Product\Category;
 use App\Livewire\Product\Color;
 use App\Livewire\Product\CreateProduct;
@@ -64,6 +66,10 @@ Route::middleware([
     //keep
     Route::get('/keep', ListKeep::class)->name('keep');
     Route::get('/create-keep/{keep?}', CreateKeep::class)->name('create-keep');
+
+    //pre order
+    Route::get('/pre-order', ListPreOrder::class)->name('pre-order');
+    Route::get('/create-pre-order/{preorder?}', CreatePreOrder::class)->name('create-pre-order');
 
     //sale
     Route::get('/sale', ListSale::class)->name('sale');

@@ -152,7 +152,6 @@ class Product extends Component
     public function closeModal()
     {
         $this->isOpen = false;
-        $this->reset();
     }
 
     public function save()

@@ -110,6 +110,27 @@
             </li>
             {{-- end of Keep Booking --}}
 
+            {{-- Keep Booking --}}
+            <li class="menu-item">
+                @php
+                    $activeRoutes = ['create-pre-order', 'pre-order'];
+                    $isActive = in_array(request()->route()->getName(), $activeRoutes);
+                @endphp
+                <a href="javascript:void(0)" data-fc-type="collapse" class="menu-link">
+                    <span class="menu-icon">
+                        <i class="ri-gift-line {{ $isActive ? 'text-white font-bold' : 'text-gray-300' }}"></i>
+                    </span>
+                    <span class="menu-text {{ $isActive ? 'text-white font-bold' : 'text-gray-300' }}"> Pre Order </span>
+                    <span class="menu-arrow"></span>
+                </a>
+
+                <ul class="hidden sub-menu">
+                    <x-menu-item activeRoute="create-pre-order" text="Create Pre Order" />
+                    <x-menu-item activeRoute="pre-order" text="Pre Order List" />
+                </ul>
+            </li>
+            {{-- end of Keep Booking --}}
+
             {{-- Sale --}}
             <li class="menu-item">
                 @php

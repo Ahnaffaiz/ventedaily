@@ -20,8 +20,11 @@ class SettingSeeder extends Seeder
                 'owner' => 'Ardhyan Zulfikar Malik',
                 'keep_timeout' => '08:00',
                 'keep_code' => 'K',
-                'sale_code' => 'A',
                 'keep_increment' => 0,
+                'pre_order_timeout' => '08:00',
+                'pre_order_code' => 'P',
+                'pre_order_increment' => 0,
+                'sale_code' => 'A',
                 'sale_increment' => 0,
                 'logo' => null
             ]);

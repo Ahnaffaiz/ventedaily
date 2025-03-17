@@ -11,10 +11,13 @@ class Setting extends Model
         'telp',
         'owner',
         'keep_timeout',
+        'pre_order_timeout',
         'logo',
         'name',
         'keep_code',
         'keep_increment',
+        'pre_order_code',
+        'pre_order_increment',
         'sale_code',
         'sale_increment'
     ];

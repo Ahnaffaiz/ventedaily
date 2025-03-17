@@ -100,7 +100,7 @@
                             @if ($showColumns['pre_order_stock'])
                                 <th scope="col" class="w-1/12 px-4 py-4 text-sm font-medium text-center text-gray-900 dark:text-gray-100"
                                     wire:click="sortByColumn('product_stocks_sum_pre_order_stock')">
-                                    Pre Order Stock
+                                    PO Stock
                                     @if ($sortBy === 'product_stocks_sum_pre_order_stock')
                                         @if ($sortDirection === 'asc')
                                             <i class="ri-arrow-up-s-line"></i>

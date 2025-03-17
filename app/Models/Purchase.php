@@ -18,6 +18,7 @@ class Purchase extends Model
         'outstanding_balance',
         'discount',
         'tax',
+        'ship',
         'total_price',
         'sub_total',
         'total_items',

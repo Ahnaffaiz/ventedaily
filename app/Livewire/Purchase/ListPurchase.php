@@ -2,6 +2,7 @@
 
 namespace App\Livewire\Purchase;
 
+use App\Enums\DiscountType;
 use App\Models\Purchase;
 use Exception;
 use Jantinnerezo\LivewireAlert\LivewireAlert;
@@ -15,7 +16,7 @@ class ListPurchase extends Component
     use LivewireAlert;
     use WithPagination, WithoutUrlPagination;
 
-    public $purchase;
+    public $purchase, $sub_total_after_discount;
     public $isOpen = false, $isPayment = false;
     public $query = '', $perPage = 10, $sortBy = 'name', $sortDirection = 'asc';
     public $showColumns = [
@@ -62,6 +63,17 @@ class ListPurchase extends Component
         ]);
     }
 
+    public function getTotalPrice()
+    {
+        if(strtolower($this->purchase->discount_type) === strtolower(DiscountType::PERSEN) ) {
+            $this->sub_total_after_discount = $this->purchase->sub_total - round($this->purchase->sub_total* (int) $this->purchase->discount/100);
+        } elseif(strtolower($this->purchase->discount_type) === strtolower(DiscountType::RUPIAH)) {
+            $this->sub_total_after_discount = $this->purchase->sub_total - $this->purchase->discount;
+        } else {
+            $this->sub_total_after_discount = $this->purchase->total_price;
+        }
+    }
+
     public function addPayment($purchase)
     {
         $this->isPayment = true;
@@ -73,6 +85,12 @@ class ListPurchase extends Component
     {
         $this->reset();
         $this->isOpen = false;
+    }
+
+    public function show($purchase_id) {
+        $this->purchase = Purchase::find($purchase_id);
+        $this->getTotalPrice();
+        $this->isOpen = true;
     }
 
     public function deleteAlert($purchase)

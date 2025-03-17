@@ -104,10 +104,10 @@ class CreatePurchase extends Component
         $this->total_items = array_sum(array_column($this->cart, 'quantity'));
         $this->sub_total = array_sum(array_column($this->cart, 'total_price'));
         $this->total_price = $this->sub_total;
-        if($this->discount_type === DiscountType::PERSEN) {
+        if(strtolower($this->discount_type) === strtolower(DiscountType::PERSEN) ) {
             $this->sub_total_after_discount = $this->sub_total - round($this->sub_total* (int) $this->discount/100);
             $this->total_price = $this->sub_total_after_discount;
-        } elseif($this->discount_type === DiscountType::RUPIAH) {
+        } elseif(strtolower($this->discount_type) === strtolower(DiscountType::RUPIAH)) {
             $this->sub_total_after_discount = $this->sub_total - $this->discount;
             $this->total_price = $this->sub_total_after_discount;
         } else {

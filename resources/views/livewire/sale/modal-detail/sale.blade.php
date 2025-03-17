@@ -62,7 +62,7 @@
                         <p class="mt-2 mb-2 text-lg font-semibold">Sub Total :</p>
                         <div class="mb-2">
                             <span class="text-base font-bold text-success">
-                                Tax
+                                Discount
                             </span>
                             @if (strtolower($sale->discount_type) === App\Enums\DiscountType::PERSEN)
                                 <span

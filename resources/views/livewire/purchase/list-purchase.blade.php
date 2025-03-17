@@ -3,7 +3,7 @@
         @if ($isPayment)
             @livewire('purchase.purchase-payment', ['purchase' => $purchase], key($purchase->id))
         @else
-
+            @include('livewire.purchase.detail-purchase')
         @endif
     </x-modal>
     <div class="relative mt-4 overflow-hidden bg-white shadow-md dark:bg-gray-800 sm:rounded-lg">
@@ -242,6 +242,9 @@
                                         @endif
                                         <td class="px-4 py-4">
                                             <div class="flex items-center justify-center space-x-3">
+                                                <button wire:click="show({{ $purchase->id }})" class="text-primary">
+                                                    <i class="ri-eye-line"></i>
+                                                </button>
                                                 <button wire:click="addPayment({{ $purchase->id }})" class="text-primary">
                                                     <i class="ri-bank-card-2-line"></i>
                                                 </button>

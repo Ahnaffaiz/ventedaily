@@ -119,12 +119,12 @@ class ProductStock extends Component
                     'all_stock' => 0,
                     'home_stock' => 0,
                     'qc_stock' => 0,
+                    'pre_order_stock' => 0,
                     'store_stock' => 0,
                     'vermak_stock' => 0,
                 ]);
                 $this->alert('success', 'Product Successfully Created');
             } catch (Exception $th) {
-                dd($th);
                 $this->alert('error', 'Can\'t Create Product', ['text'=>$th]);
             }
         }

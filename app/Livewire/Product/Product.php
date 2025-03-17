@@ -46,6 +46,7 @@ class Product extends Component
 
     public $query = '', $perPage = 10, $sortBy = 'name', $sortDirection = 'asc';
     public $transferToStores, $transferToHomes;
+    public $openRows = [];
 
     public $showColumns = [
         'category_id' => true,
@@ -81,6 +82,16 @@ class Product extends Component
     {
         $this->resetPage();
     }
+
+    public function toggleRow($productId)
+    {
+        if (in_array($productId, $this->openRows)) {
+            $this->openRows = array_diff($this->openRows, [$productId]);
+        } else {
+            $this->openRows[] = $productId;
+        }
+    }
+
 
     public function mount()
     {

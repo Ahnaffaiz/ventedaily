@@ -174,38 +174,42 @@
                                         <button wire:click="deleteAlert({{ $product->id }})" class="text-danger">
                                             <i class="text-base ri-delete-bin-2-line"></i>
                                         </button>
-                                        <button data-fc-type="collapse" data-fc-target="openStock{{ $product->id }}" type="button" class="inline-flex transition-all duration-300">
-                                            <i class="text-xl transition-all text-warning ri-arrow-down-s-line fc-collapse-open:rotate-180"></i>
+                                        <button wire:click="toggleRow({{ $product->id }})" type="button"
+                                            class="inline-flex transition-all duration-300">
+                                            <i class="text-xl transition-all text-warning ri-arrow-down-s-line
+                                                {{ in_array($product->id, $openRows) ? 'rotate-180' : '' }}"></i>
                                         </button>
                                     </div>
                                 </td>
                             </tr>
-                            <tr id="openStock{{ $product->id }}" class="hidden w-full overflow-hidden transition-[height] duration-300">
-                                <td colspan="8" class="py-2">
-                                    <table class="min-w-full divide-gray-200 divide-b dark:divide-gray-700">
-                                        <tbody>
-                                            @foreach ($product->productStocks as $productStock)
-                                            <tr class="bg-gray-100 border-gray-200 dark:bg-gray-900 border-y dark:border-gray-700">
-                                                <td class="w-2/12 py-2"></td>
-                                                <td class="w-2/12 px-4 py-2 text-sm text-gray-800 text-start whitespace-nowrap dark:text-gray-200">{{ $productStock->color->name }}</td>
-                                                <td class="w-2/12 px-4 py-2 text-sm text-gray-800 text-start whitespace-nowrap dark:text-gray-200">{{ $productStock->size->name }}</td>
-                                                <td class="w-1/12 px-4 py-2 text-sm text-center text-gray-800 whitespace-nowrap dark:text-gray-200">{{ $productStock->all_stock }}</td>
-                                                <td class="w-1/12 px-4 py-2 text-sm text-center text-gray-800 whitespace-nowrap dark:text-gray-200">{{ $productStock->home_stock }}</td>
-                                                <td class="w-1/12 px-4 py-2 text-sm text-center text-gray-800 whitespace-nowrap dark:text-gray-200">{{ $productStock->store_stock }}</td>
-                                                <td class="w-1/12 px-4 py-2 text-sm text-center text-gray-800 whitespace-nowrap dark:text-gray-200">{{ $productStock->pre_order_stock }}</td>
-                                                <td class="w-2/12 px-4 py-2 text-sm text-center text-gray-800 whitespace-nowrap dark:text-gray-200">
-                                                    <div class="flex items-center justify-center space-x-3">
-                                                        <button wire:click="transferStock({{ $productStock->id }})" class="text-primary">
-                                                            <i class="ri-arrow-left-right-line"></i>
-                                                        </button>
-                                                    </div>
-                                                </td>
-                                            </tr>
-                                            @endforeach
-                                        </tbody>
-                                    </table>
-                                </td>
-                            </tr>
+                            @if (in_array($product->id, $openRows))
+                                <tr class="w-full overflow-hidden transition-[height] duration-300">
+                                    <td colspan="8" class="py-2">
+                                        <table class="min-w-full divide-gray-200 divide-b dark:divide-gray-700">
+                                            <tbody>
+                                                @foreach ($product->productStocks as $productStock)
+                                                <tr class="bg-gray-100 border-gray-200 dark:bg-gray-900 border-y dark:border-gray-700">
+                                                    <td class="w-2/12 py-2"></td>
+                                                    <td class="w-2/12 px-4 py-2 text-sm text-gray-800 text-start whitespace-nowrap dark:text-gray-200">{{ $productStock->color->name }}</td>
+                                                    <td class="w-2/12 px-4 py-2 text-sm text-gray-800 text-start whitespace-nowrap dark:text-gray-200">{{ $productStock->size->name }}</td>
+                                                    <td class="w-1/12 px-4 py-2 text-sm text-center text-gray-800 whitespace-nowrap dark:text-gray-200">{{ $productStock->all_stock }}</td>
+                                                    <td class="w-1/12 px-4 py-2 text-sm text-center text-gray-800 whitespace-nowrap dark:text-gray-200">{{ $productStock->home_stock }}</td>
+                                                    <td class="w-1/12 px-4 py-2 text-sm text-center text-gray-800 whitespace-nowrap dark:text-gray-200">{{ $productStock->store_stock }}</td>
+                                                    <td class="w-1/12 px-4 py-2 text-sm text-center text-gray-800 whitespace-nowrap dark:text-gray-200">{{ $productStock->pre_order_stock }}</td>
+                                                    <td class="w-2/12 px-4 py-2 text-sm text-center text-gray-800 whitespace-nowrap dark:text-gray-200">
+                                                        <div class="flex items-center justify-center space-x-3">
+                                                            <button wire:click="transferStock({{ $productStock->id }})" class="text-primary">
+                                                                <i class="ri-arrow-left-right-line"></i>
+                                                            </button>
+                                                        </div>
+                                                    </td>
+                                                </tr>
+                                                @endforeach
+                                            </tbody>
+                                        </table>
+                                    </td>
+                                </tr>
+                            @endif
                         @endforeach
                     </tbody>
                 @else

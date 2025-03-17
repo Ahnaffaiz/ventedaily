@@ -20,16 +20,7 @@ class PurchasePayment extends Component
     public $purchase, $payment;
 
     #[Validate('required')]
-    public $payment_type;
-
-    #[Validate('required')]
-    public $cash_received;
-
-    #[Validate('required')]
-    public $cash_change, $total_price, $out_balance, $sub_total_after_discount;
-
-    #[Validate('required')]
-    public $reference;
+    public $payment_type, $cash_received, $cash_change, $total_price, $out_balance, $sub_total_after_discount, $reference;
     public $bank_id, $account_number, $account_name, $desc;
 
     protected $listeners = [
@@ -62,7 +53,7 @@ class PurchasePayment extends Component
 
     public function updatedCashReceived()
     {
-        $this->cash_change = (int) $this->cash_received + (int) $this->out_balance;
+        $this->cash_change = (int) $this->cash_received + (int) $this->out_balance - $this->payment?->amount;
     }
 
     public function edit($payment)
@@ -76,46 +67,28 @@ class PurchasePayment extends Component
         $this->bank_id = $this->payment?->bank_id;
         $this->desc = $this->payment?->desc;
         $this->reference = $this->payment?->reference;
-
-
     }
 
     public function save()
     {
         $this->validate();
         try {
-            if($this->payment) {
-                $this->payment->update([
-                    'reference' => $this->reference,
-                    'date' => Carbon::now(),
-                    'amount' => $this->cash_change > 0 ? $this->total_price : $this->cash_received,
-                    'cash_received' => $this->cash_received,
-                    'cash_change' => $this->cash_change,
-                    'payment_type' => strtolower($this->payment_type),
-                    'account_number' => $this->account_number,
-                    'account_name' => $this->account_name,
-                    'desc' => $this->desc,
-                    'bank_id' => $this->bank_id
-                ]);
-                $this->payment = null;
-                $this->alert('success', 'Payment Successfully Updated');
-            } else {
-                ModelsPurchasePayment::create([
-                    'purchase_id' => $this->purchase?->id,
-                    'user_id' => Auth::user()->id,
-                    'date' => Carbon::now(),
-                    'reference' => $this->reference,
-                    'amount' => $this->cash_change > 0 ? -1 * $this->out_balance : $this->cash_received,
-                    'cash_received' => $this->cash_received,
-                    'cash_change' => $this->cash_change,
-                    'payment_type' => strtolower($this->payment_type),
-                    'account_number' => $this->account_number,
-                    'account_name' => $this->account_name,
-                    'desc' => $this->desc,
-                    'bank_id' => $this->bank_id
-                ]);
-                $this->alert('success', 'Payment Successfully Added');
-            }
+            ModelsPurchasePayment::updateOrCreate(['id' => $this->payment?->id],[
+                'purchase_id' => $this->purchase?->id,
+                'user_id' => Auth::user()->id,
+                'date' => Carbon::now(),
+                'reference' => $this->reference,
+                'amount' => $this->cash_change > 0 ? $this->total_price : $this->cash_received,
+                'cash_received' => $this->cash_received,
+                'cash_change' => $this->cash_change,
+                'payment_type' => strtolower($this->payment_type),
+                'account_number' => $this->account_number,
+                'account_name' => $this->account_name,
+                'desc' => $this->desc,
+                'bank_id' => $this->bank_id
+            ]);
+            $this->payment = null;
+            $this->alert('success', 'Payment Successfully Updated');
 
             //update outstanding balance
             $this->out_balance = $this->total_price > $this->purchase->purchasePayments->sum('amount') ? -1 * ($this->total_price - $this->purchase->purchasePayments->sum('amount')) : 0;
@@ -124,6 +97,7 @@ class PurchasePayment extends Component
             ]);
             $this->resetInput();
         } catch (\Exception $exception) {
+            dd($exception);
             $this->alert('warning', 'Error' . $exception);
         }
     }

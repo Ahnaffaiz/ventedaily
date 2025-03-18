@@ -2,7 +2,6 @@
 
 namespace App\Livewire\PreOrder;
 
-use App\Enums\PreOrderStatus;
 use App\Models\PreOrder;
 use App\Models\Purchase;
 use Exception;
@@ -19,11 +18,9 @@ class ListPreOrder extends Component
 
     public $isOpen = false;
     public $preOrder;
-    public $query = '', $perPage = 10, $sortBy = 'no_pre_order', $sortDirection = 'asc', $status = PreOrderStatus::ACTIVE;
+    public $query = '', $perPage = 10, $sortBy = 'no_pre_order', $sortDirection = 'asc';
     public $total_price;
     public $showColumns = [
-        'status' => true,
-        'pre_order_time' => true,
         'total_items' => true,
         'total_price' => true,
         'created_at' => false,
@@ -64,7 +61,6 @@ class ListPreOrder extends Component
             'preOrders' => PreOrder::select('pre_orders.*')
                 ->join('customers', 'pre_orders.customer_id', '=', 'customers.id')
                 ->where('customers.name', 'like', '%' . $this->query . '%')
-                ->where('status', 'like', '%' . $this->status . '%')
                 ->orderBy($this->sortBy, $this->sortDirection)
                 ->paginate($this->perPage)
         ]);
@@ -98,13 +94,11 @@ class ListPreOrder extends Component
     public function delete()
     {
         try {
-            if ($this->preOrder->status == PreOrderStatus::ACTIVE) {
-                foreach ($this->preOrder->preOrderProducts as $preOrderProduct) {
-                    $preOrderProduct->productStock->update([
-                        'all_stock' => $preOrderProduct->productStock->all_stock + $preOrderProduct->total_items,
-                        'pre_order_stock' => $preOrderProduct->productStock->pre_order_stock + $preOrderProduct->total_items,
-                    ]);
-                }
+            foreach ($this->preOrder->preOrderProducts as $preOrderProduct) {
+                $preOrderProduct->productStock->update([
+                    'all_stock' => $preOrderProduct->productStock->all_stock + $preOrderProduct->total_items,
+                    'pre_order_stock' => $preOrderProduct->productStock->pre_order_stock + $preOrderProduct->total_items,
+                ]);
             }
             $this->preOrder->delete();
             $this->alert('success', 'PreOrder Data Succesfully Deleted');

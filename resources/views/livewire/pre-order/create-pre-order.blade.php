@@ -3,19 +3,15 @@
     {{-- product --}}
     <div class="card">
         <div class="card-header">
-            <h4 class="card-title">Create Pre Order</h4>
+            <h4 class="card-title">No Pre Order :
+                <span class="font-bold text-success font-md">{{ $no_pre_order }}</span>
+            </h4>
         </div>
         <div class="p-6">
             <div class="section">
                 <div class="grid gap-3 lg:grid-cols-3 md:grid-cols-2">
                     <x-input-select id="customer_id" name="customer_id" title="Customer" :options="$customers"
                         placeholder="Select Customer" />
-                    <x-input-select id="pre_order_type" name="pre_order_type" title="PreOrder Type"
-                        :options="App\Enums\PreOrderType::asSelectArray()" />
-                    @if (strtolower($pre_order_type) === App\Enums\PreOrderType::CUSTOM)
-                        <x-input-text id="pre_order_time" name="pre_order_time" title="PreOrder Time" placeholder="Select Time"
-                            type="datetime-local" />
-                    @endif
                 </div>
                 <div class="mt-4">
                     <x-textarea-input id="desc" name="desc" title="PreOrder Note" />

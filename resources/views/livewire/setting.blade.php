@@ -45,7 +45,6 @@
                     <x-input-text id="telp" name="telp" title="Phone" type="tel" prepend="+62" />
                     <x-textarea-input id="address" name="address" title="Address" />
                     <x-input-text type="time" name="keep_timeout" id="keep_timeout" title="Keep Timeout" placeholder="Keep Timeout" />
-                    <x-input-text type="time" name="pre_order_timeout" id="pre_order_timeout" title="Pre Order Timeout" placeholder="Pre Order Timeout" />
                 </div>
             </div>
         </div>

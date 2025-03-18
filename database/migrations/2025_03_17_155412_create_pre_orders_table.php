@@ -12,9 +12,6 @@ return new class extends Migration {
             $table->string('no_pre_order', 25);
             $table->foreignId('customer_id')->constrained('customers')->onDelete('cascade');
             $table->foreignId('user_id')->constrained('users')->onDelete('cascade');
-            $table->enum('pre_order_type', ['custom', 'regular']);
-            $table->enum('status', ['active', 'sold', 'canceled']);
-            $table->timestamp('pre_order_time');
             $table->integer('total_items');
             $table->integer('total_price');
             $table->longText('desc')->nullable();

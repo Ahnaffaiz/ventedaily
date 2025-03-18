@@ -11,7 +11,6 @@ class Setting extends Model
         'telp',
         'owner',
         'keep_timeout',
-        'pre_order_timeout',
         'logo',
         'name',
         'keep_code',

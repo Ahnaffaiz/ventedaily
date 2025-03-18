@@ -2,8 +2,6 @@
 
 namespace App\Livewire\PreOrder;
 
-use App\Enums\PreOrderStatus;
-use App\Enums\PreOrderType;
 use App\Models\Customer;
 use App\Models\Group;
 use App\Models\PreOrder;
@@ -28,17 +26,11 @@ class CreatePreOrder extends Component
     public string $subRoute = 'pre-order';
 
     public $customers;
-    public $preOrder, $isEdit;
+    public $preOrder, $isEdit, $no_pre_order;
     public $productStockList, $product_id, $productStock, $products;
 
     #[Rule('required')]
     public $customer_id;
-
-    #[Rule('required')]
-    public $pre_order_type;
-
-    #[Rule('required')]
-    public $pre_order_time;
 
     public $desc;
     public $cart = [], $total_items, $total_price;
@@ -60,16 +52,12 @@ class CreatePreOrder extends Component
         $this->customers = Customer::get()->pluck('name', 'id')->toArray();
         if($preorder) {
             $this->preOrder = PreOrder::where('id', $preorder)->first();
-            if(strtolower($this->preOrder->status) === strtolower(PreOrderStatus::ACTIVE)) {
-                $this->edit();
-                $this->getTotalPrice();
-            } else {
-                return redirect()->route('preOrder')->with('error', 'PreOrder Order Not Found');
-            }
+            $this->no_pre_order = $this->preOrder->no_pre_order;
+            $this->edit();
+            $this->getTotalPrice();
         } else {
-            $PreOrderTimeout = Setting::first()->pre_order_timeout;
-            $this->pre_order_type = PreOrderType::REGULAR;
-            $this->pre_order_time = Carbon::tomorrow()->setTimeFromTimeString($PreOrderTimeout);
+            $setting = Setting::first();
+            $this->no_pre_order = $setting->pre_order_code . str_pad($setting->pre_order_increment + 1, 4, '0', STR_PAD_LEFT);
         }
     }
 
@@ -105,22 +93,6 @@ class CreatePreOrder extends Component
                 })
                 ->toArray();
             }
-    }
-
-    public function updatedPreOrderType()
-    {
-        if (strtolower($this->pre_order_type) === PreOrderType::REGULAR) {
-            $setting = Setting::first();
-            if($setting?->pre_order_timeout == null) {
-                $this->alert('warning', 'PreOrder Timeout Belum diatur');
-                $this->pre_order_type = null;
-            } else {
-                $PreOrderTimeout = Setting::first()->pre_order_timeout;
-                $this->pre_order_time = Carbon::tomorrow()->setTimeFromTimeString($PreOrderTimeout);
-            }
-        } else {
-            $this->pre_order_time = null;
-        }
     }
 
     public function updatedProductId()
@@ -240,12 +212,10 @@ class CreatePreOrder extends Component
         try {
             $preorder = PreOrder::create([
                 'user_id' => Auth::user()->id,
-                'status' => strtolower(PreOrderStatus::ACTIVE),
                 'no_pre_order' => $setting->pre_order_code . str_pad($setting->pre_order_increment + 1, 4, '0', STR_PAD_LEFT),
                 'customer_id' => $this->customer_id,
                 'total_price' => $this->total_price,
                 'total_items' => $this->total_items,
-                'pre_order_time' => $this->pre_order_time,
                 'desc' => $this->desc,
             ]);
 
@@ -278,7 +248,6 @@ class CreatePreOrder extends Component
             $this->alert('success', 'PreOrder Order Succesfully Created');
             $this->mount();
         } catch (\Throwable $th) {
-            dd($th);
             $this->alert('warning', $th);
         }
     }
@@ -288,8 +257,6 @@ class CreatePreOrder extends Component
         $this->isEdit = true;
         $this->customers = Customer::get()->pluck('name', 'id')->toArray();
         $this->customer_id = $this->preOrder->customer_id;
-        $this->pre_order_type = $this->preOrder->pre_order_type;
-        $this->pre_order_time = $this->preOrder->pre_order_time;
 
         foreach ($this->preOrder->preOrderProducts as $preOrderProduct) {
             $this->cart[$preOrderProduct->product_stock_id] = [
@@ -311,11 +278,9 @@ class CreatePreOrder extends Component
         $this->validate();
         $this->preOrder->update([
             'user_id' => Auth::user()->id,
-            'status' => strtolower(PreOrderStatus::ACTIVE),
             'customer_id' => $this->customer_id,
             'total_price' => $this->total_price,
             'total_items' => $this->total_items,
-            'pre_order_time' => $this->pre_order_time,
             'desc' => $this->desc,
         ]);
 

@@ -18,7 +18,7 @@ class Setting extends Component
     public $setting;
 
     #[Validate('required')]
-    public $name, $address, $owner, $keep_timeout, $keep_code, $keep_increment, $sale_code, $sale_increment, $pre_order_timeout, $pre_order_code, $pre_order_increment;
+    public $name, $address, $owner, $keep_timeout, $keep_code, $keep_increment, $sale_code, $sale_increment, $pre_order_code, $pre_order_increment;
 
     #[Validate('required|regex:/^8\d+$/')]
     public $telp;
@@ -39,7 +39,6 @@ class Setting extends Component
         $this->keep_timeout = $this->setting?->keep_timeout;
         $this->keep_code = $this->setting?->keep_code;
         $this->keep_increment = $this->setting?->keep_increment;
-        $this->pre_order_timeout = $this->setting?->pre_order_timeout;
         $this->pre_order_code = $this->setting?->pre_order_code;
         $this->pre_order_increment = $this->setting?->pre_order_increment;
         $this->sale_code = $this->setting?->sale_code;
@@ -74,7 +73,6 @@ class Setting extends Component
                 'keep_timeout' => $this->keep_timeout,
                 'keep_code' => $this->keep_code,
                 'keep_increment' => $this->keep_increment,
-                'pre_order_timeout' => $this->pre_order_timeout,
                 'pre_order_code' => $this->pre_order_code,
                 'pre_order_increment' => $this->pre_order_increment,
                 'sale_code' => $this->sale_code,
@@ -90,7 +88,6 @@ class Setting extends Component
                 'keep_timeout' => $this->keep_timeout,
                 'keep_code' => $this->keep_code,
                 'keep_increment' => $this->keep_increment,
-                'pre_order_timeout' => $this->pre_order_timeout,
                 'pre_order_code' => $this->pre_order_code,
                 'pre_order_increment' => $this->pre_order_increment,
                 'sale_code' => $this->sale_code,

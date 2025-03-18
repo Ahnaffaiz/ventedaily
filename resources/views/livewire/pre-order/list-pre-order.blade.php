@@ -25,15 +25,6 @@
                     <div class="absolute right-0 z-10 hidden w-56 mt-2 origin-top-right bg-white rounded-md shadow-lg dark:bg-gray-700 ring-1 ring-black ring-opacity-5 focus:outline-none"
                         role="menu" aria-orientation="vertical" aria-labelledby="menu-button" tabindex="-1" onclick="event.stopPropagation()">
                         <div class="max-h-[300px] h-56 overflow-auto mt-2">
-                            <span class="m-2">Status</span>
-                            <div class="flex w-full p-1">
-                                <select class="form-input" wire:model.change="status">
-                                    <option value="">All</option>
-                                    @foreach (\App\Enums\PreOrderStatus::asSelectArray() as $key => $value)
-                                        <option value="{{ $value }}">{{ ucfirst($value) }}</option>
-                                    @endforeach
-                                </select>
-                            </div>
                             <div class="py-1" role="none">
                                 <span class="m-2">Column</span>
                                 @foreach ($showColumns as $column => $isVisible)
@@ -84,36 +75,6 @@
                                     <i class="ri-expand-up-down-line"></i>
                                 @endif
                             </th>
-                            @if ($showColumns['status'])
-                                <th scope="col" class="px-4 py-4 text-sm font-medium text-gray-500 text-start"
-                                    wire:click="sortByColumn('status')">
-                                    PreOrder Status
-                                    @if ($sortBy === 'status')
-                                        @if ($sortDirection === 'asc')
-                                            <i class="ri-arrow-up-s-line"></i>
-                                        @else
-                                            <i class="ri-arrow-down-s-line"></i>
-                                        @endif
-                                    @else
-                                        <i class="ri-expand-up-down-line"></i>
-                                    @endif
-                                </th>
-                            @endif
-                            @if ($showColumns['pre_order_time'])
-                                <th scope="col" class="px-4 py-4 text-sm font-medium text-gray-500 text-start"
-                                    wire:click="sortByColumn('pre_order_time')">
-                                    End PreOrder
-                                    @if ($sortBy === 'pre_order_time')
-                                        @if ($sortDirection === 'asc')
-                                            <i class="ri-arrow-up-s-line"></i>
-                                        @else
-                                            <i class="ri-arrow-down-s-line"></i>
-                                        @endif
-                                    @else
-                                        <i class="ri-expand-up-down-line"></i>
-                                    @endif
-                                </th>
-                            @endif
                             @if ($showColumns['total_items'])
                                 <th scope="col" class="px-4 py-4 text-sm font-medium text-gray-500 text-start"
                                     wire:click="sortByColumn('total_items')">
@@ -190,29 +151,6 @@
                                 <td class="px-4 py-4 text-sm text-gray-500 whitespace-nowrap dark:text-gray-200">
                                     {{ $preOrder->customer?->name }}
                                 </td>
-                                @if ($showColumns['status'])
-                                    <td class="px-4 py-4 text-sm text-gray-500 whitespace-nowrap dark:text-gray-200">
-                                        @if (strtolower($preOrder->status) === strtolower(App\Enums\PreOrderStatus::ACTIVE))
-                                            <span
-                                                class="inline-flex items-center gap-1.5 py-0.5 px-1.5 rounded-md text-xs font-medium bg-primary/10 text-primary">
-                                                {{ ucwords($preOrder->status) }}
-                                            </span>
-                                        @elseif (strtolower($preOrder->status) === strtolower(App\Enums\PreOrderStatus::SOLD))
-                                            <span class="inline-flex items-center gap-1.5 py-0.5 px-1.5 rounded-md text-xs font-medium bg-success/10 text-success">
-                                                {{ ucwords($preOrder->status) }}
-                                            </span>
-                                        @else
-                                            <span class="inline-flex items-center gap-1.5 py-0.5 px-1.5 rounded-md text-xs font-medium bg-danger/10 text-danger">
-                                                {{ ucwords($preOrder->status) }}
-                                            </span>
-                                        @endif
-                                    </td>
-                                @endif
-                                @if ($showColumns['pre_order_time'])
-                                    <td class="px-4 py-4 text-sm text-gray-500 whitespace-nowrap dark:text-gray-200">
-                                        {{ $preOrder->pre_order_time }}
-                                    </td>
-                                @endif
                                 @if ($showColumns['total_items'])
                                     <td class="px-4 py-4 text-sm text-gray-500 whitespace-nowrap dark:text-gray-200">
                                         {{ $preOrder->total_items }}
@@ -238,12 +176,10 @@
                                         <button wire:click="show({{ $preOrder->id }})" class="text-primary">
                                             <i class="ri-eye-line"></i>
                                         </button>
-                                        @if (strtolower($preOrder->status) === strtolower(App\Enums\PreOrderStatus::ACTIVE))
-                                            <a wire:navigate href="{{ route('create-pre-order', ['preorder' => $preOrder->id]) }}"
-                                                class="text-info">
-                                                <i class="ri-edit-circle-line"></i>
-                                            </a>
-                                        @endif
+                                        <a wire:navigate href="{{ route('create-pre-order', ['preorder' => $preOrder->id]) }}"
+                                            class="text-info">
+                                            <i class="ri-edit-circle-line"></i>
+                                        </a>
                                         <button wire:click="deleteAlert({{ $preOrder->id }})" class="text-danger">
                                             <i class="text-base ri-delete-bin-2-line"></i>
                                         </button>

@@ -20,7 +20,6 @@ return new class extends Migration
             $table->time('keep_timeout')->nullable();
             $table->string('keep_code');
             $table->string('keep_increment');
-            $table->time('pre_order_timeout')->nullable();
             $table->string('pre_order_code');
             $table->string('pre_order_increment');
             $table->string('sale_code');

@@ -2,6 +2,7 @@
 
 namespace App\Models;
 
+use App\Enums\KeepStatus;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 
@@ -52,5 +53,41 @@ class ProductStock extends Model
     public function saleItems()
     {
         return $this->hasMany(SaleItem::class);
+    }
+
+    public function homeStockInKeep()
+    {
+        return KeepProduct::whereHas('keep', function($query){
+                $query->where('status', strtolower(KeepStatus::ACTIVE));
+            })
+            ->where('product_stock_id', $this->id)
+            ->sum('home_stock');
+    }
+
+    public function storeStockInKeep()
+    {
+        return KeepProduct::whereHas('keep', function($query){
+            $query->where('status', strtolower(KeepStatus::ACTIVE));
+        })
+        ->where('product_stock_id', $this->id)
+        ->sum('store_stock');
+    }
+
+    public function preOrderStockInUse()
+    {
+        return PreOrderProduct::whereHas('preOrder', function($query){
+            $query->where('status', strtolower(KeepStatus::ACTIVE));
+        })
+        ->where('product_stock_id', $this->id)
+        ->sum('total_items');
+    }
+
+    public function allStockInKeep()
+    {
+        return KeepProduct::whereHas('keep', function($query){
+            $query->where('status', strtolower(KeepStatus::ACTIVE));
+        })
+        ->where('product_stock_id', $this->id)
+        ->sum('total_items');
     }
 }

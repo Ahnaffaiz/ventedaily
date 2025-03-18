@@ -161,6 +161,9 @@
                                 @if ($showColumns['pre_order_stock'])
                                     <td class="px-4 py-4 text-sm text-center text-gray-800 whitespace-nowrap dark:text-gray-200">
                                         {{ $product->preOrderStock() }}
+                                        @if ($product->preOrderStockInUse() > 0)
+                                            <span class="inline-flex items-center gap-1.5 py-0.5 px-1.5 rounded-full text-xs font-medium bg-danger text-white">{{ $product->preOrderStockInUse() }}</span>
+                                        @endif
                                     </td>
                                 @endif
                                 <td class="px-4 py-4">
@@ -192,10 +195,30 @@
                                                     <td class="w-2/12 py-2"></td>
                                                     <td class="w-2/12 px-4 py-2 text-sm text-gray-800 text-start whitespace-nowrap dark:text-gray-200">{{ $productStock->color->name }}</td>
                                                     <td class="w-2/12 px-4 py-2 text-sm text-gray-800 text-start whitespace-nowrap dark:text-gray-200">{{ $productStock->size->name }}</td>
-                                                    <td class="w-1/12 px-4 py-2 text-sm text-center text-gray-800 whitespace-nowrap dark:text-gray-200">{{ $productStock->all_stock }}</td>
-                                                    <td class="w-1/12 px-4 py-2 text-sm text-center text-gray-800 whitespace-nowrap dark:text-gray-200">{{ $productStock->home_stock }}</td>
-                                                    <td class="w-1/12 px-4 py-2 text-sm text-center text-gray-800 whitespace-nowrap dark:text-gray-200">{{ $productStock->store_stock }}</td>
-                                                    <td class="w-1/12 px-4 py-2 text-sm text-center text-gray-800 whitespace-nowrap dark:text-gray-200">{{ $productStock->pre_order_stock }}</td>
+                                                    <td class="w-1/12 px-4 py-2 text-sm text-center text-gray-800 whitespace-nowrap dark:text-gray-200">
+                                                        {{ $productStock->all_stock }}
+                                                        @if ($productStock->allStockInKeep() > 0)
+                                                            <span class="inline-flex items-center gap-1.5 py-0.5 px-1.5 rounded-full text-xs font-medium bg-warning text-white">{{ $productStock->allStockInKeep() }}</span>
+                                                        @endif
+                                                    </td>
+                                                    <td class="w-1/12 px-4 py-2 text-sm text-center text-gray-800 whitespace-nowrap dark:text-gray-200">
+                                                        {{ $productStock->home_stock }}
+                                                        @if ($productStock->homeStockInKeep() > 0)
+                                                            <span class="inline-flex items-center gap-1.5 py-0.5 px-1.5 rounded-full text-xs font-medium bg-warning text-white">{{ $productStock->homeStockInKeep() }}</span>
+                                                        @endif
+                                                    </td>
+                                                    <td class="w-1/12 px-4 py-2 text-sm text-center text-gray-800 whitespace-nowrap dark:text-gray-200">
+                                                        {{ $productStock->store_stock }}
+                                                        @if ($productStock->storeStockInKeep() > 0)
+                                                            <span class="inline-flex items-center gap-1.5 py-0.5 px-1.5 rounded-full text-xs font-medium bg-warning text-white">{{ $productStock->storeStockInKeep() }}</span>
+                                                        @endif
+                                                    </td>
+                                                    <td class="w-1/12 px-4 py-2 text-sm text-center text-gray-800 whitespace-nowrap dark:text-gray-200">
+                                                        {{ $productStock->pre_order_stock }}
+                                                        @if ($productStock->preOrderStockInUse() > 0)
+                                                            <span class="inline-flex items-center gap-1.5 py-0.5 px-1.5 rounded-full text-xs font-medium bg-danger text-white">{{ $productStock->preOrderStockInUse() }}</span>
+                                                        @endif
+                                                    </td>
                                                     <td class="w-2/12 px-4 py-2 text-sm text-center text-gray-800 whitespace-nowrap dark:text-gray-200">
                                                         <div class="flex items-center justify-center space-x-3">
                                                             <button wire:click="transferStock({{ $productStock->id }})" class="text-primary">

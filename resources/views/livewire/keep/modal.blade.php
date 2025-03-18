@@ -10,7 +10,7 @@
                             <tr>
                                 <th class="px-4 py-4 text-sm font-medium text-gray-500 text-start">Color</th>
                                 <th class="px-4 py-4 text-sm font-medium text-gray-500 text-start">Size</th>
-                                <th class="px-4 py-4 text-sm font-medium text-gray-500 text-start">All Stock</th>
+                                <th class="px-4 py-4 text-sm font-medium text-gray-500 text-start">Total Stock</th>
                                 <th class="px-4 py-4 text-sm font-medium text-gray-500 text-start">Home Stock</th>
                                 <th class="px-4 py-4 text-sm font-medium text-gray-500 text-start">Store Stock</th>
                                 <th class="px-4 py-4 text-sm font-medium text-gray-500 text-start">Price</th>
@@ -27,7 +27,7 @@
                                         {{ $productStock['size']['name'] }}
                                     </td>
                                     <td class="px-4 py-4 text-sm text-gray-500 whitespace-nowrap">
-                                        {{ $productStock['all_stock'] }}
+                                        {{ $productStock['total_stock'] }}
                                     </td>
                                     <td class="px-4 py-4 text-sm text-gray-500 whitespace-nowrap">
                                         {{ $productStock['home_stock'] }}
@@ -39,7 +39,7 @@
                                         Rp. {{ number_format($productStock['selling_price'], 0, ',', '.') }}
                                     </td>
                                     <td>
-                                        @if ($productStock['all_stock'] > 0)
+                                        @if ($productStock['total_stock'] > 0)
                                             <div class="flex items-center justify-center gap-2">
                                                 <button wire:click="removeProductStock({{ $productStock['id'] }})"
                                                     class="h-8 px-4 py-1 rounded-md bg-primary/25 text-primary hover:bg-primary hover:text-white font-md"

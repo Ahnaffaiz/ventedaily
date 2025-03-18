@@ -76,10 +76,7 @@ class Product extends Model
 
     public function preOrderStockInUse()
     {
-        return PreOrderProduct::whereHas('preOrder', function($query){
-            $query->where('status', strtolower(KeepStatus::ACTIVE));
-        })
-        ->whereIn('product_stock_id', $this->productStocks()->pluck('id')->toArray())
+        return PreOrderProduct::whereIn('product_stock_id', $this->productStocks()->pluck('id')->toArray())
         ->sum('total_items');
     }
 

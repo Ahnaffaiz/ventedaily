@@ -5,6 +5,7 @@ namespace App\Livewire\Purchase;
 use App\Enums\DiscountType;
 use App\Models\Purchase;
 use Exception;
+use Illuminate\Support\Facades\DB;
 use Jantinnerezo\LivewireAlert\LivewireAlert;
 use Livewire\Attributes\Title;
 use Livewire\Component;
@@ -114,17 +115,31 @@ class ListPurchase extends Component
 
     public function delete()
     {
+        DB::beginTransaction();
         try {
             foreach ($this->purchase->purchaseItems as $purchaseItem) {
-                $purchaseItem->productStock->update([
-                    'all_stock' => $purchaseItem->productStock->all_stock - $purchaseItem->total_items,
-                    'home_stock' => $purchaseItem->productStock->home_stock - $purchaseItem->total_items,
+                $productStock = $purchaseItem->productStock;
+                if ($productStock->home_stock < $purchaseItem->total_items) {
+                    $this->alert('warning', "Stok tidak mencukupi untuk membatalkan transaksi");
+                    DB::rollBack();
+                    return;
+                }
+            }
+
+            foreach ($this->purchase->purchaseItems as $purchaseItem) {
+                $productStock = $purchaseItem->productStock;
+                $productStock->update([
+                    'all_stock' => $productStock->all_stock - $purchaseItem->total_items,
+                    'home_stock' => $productStock->home_stock - $purchaseItem->total_items,
                 ]);
             }
             $this->purchase->delete();
             $this->alert('success', 'Purchase Succesfully Deleted');
-        } catch (Exception $th) {
-            $this->alert('error', $th);
+
+            DB::commit();
+        } catch (Exception $e) {
+            DB::rollBack();
+            $this->alert('error', 'Tidak dapat menghapus data');
         }
     }
 }

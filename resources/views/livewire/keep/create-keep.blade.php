@@ -3,7 +3,9 @@
     {{-- product --}}
     <div class="card">
         <div class="card-header">
-            <h4 class="card-title">Keep Order</h4>
+            <h4 class="card-title">No Keep :
+                <span class="font-bold text-success">{{ $no_keep }}</span>
+            </h4>
         </div>
         <div class="p-6">
             <div class="section">
@@ -92,6 +94,7 @@
                                     <td class="px-4 py-4 text-sm text-gray-500 whitespace-nowrap">
                                         Rp. {{ number_format($productStock['total_price'], 0, ',', '.') }}
                                     </td>
+                                    <td class="px-4 py-4 text-sm text-gray-500 whitespace-nowrap"></td>
                                 </tr>
                             @endforeach
                             <tr>

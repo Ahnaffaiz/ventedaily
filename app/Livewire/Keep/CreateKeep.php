@@ -28,7 +28,7 @@ class CreateKeep extends Component
     public string $subRoute = 'keep';
 
     public $customers, $groups;
-    public $keep, $isEdit;
+    public $keep, $isEdit, $no_keep;
     public $productStockList, $product_id, $productStock, $products;
 
     #[Rule('required')]
@@ -63,6 +63,7 @@ class CreateKeep extends Component
         $this->products = Product::all()->pluck('name', 'id')->toArray();
         if($keep) {
             $this->keep = Keep::where('id', $keep)->first();
+            $this->no_keep = $this->keep->no_keep;
             if(strtolower($this->keep->status) === strtolower(KeepStatus::ACTIVE)) {
                 $this->edit();
                 $this->getTotalPrice();
@@ -70,7 +71,9 @@ class CreateKeep extends Component
                 return redirect()->route('keep')->with('error', 'Keep Order Not Found');
             }
         } else {
-            $keepTimeout = Setting::first()->keep_timeout;
+            $setting = Setting::first();
+            $keepTimeout = $setting->keep_timeout;
+            $this->no_keep = $setting->keep_code . str_pad($setting->keep_increment + 1, 4, '0', STR_PAD_LEFT);
             $this->keep_type = KeepType::REGULAR;
             $this->keep_time = Carbon::tomorrow()->setTimeFromTimeString($keepTimeout);
         }
@@ -318,7 +321,7 @@ class CreateKeep extends Component
             $this->createKeepProduct($keep->id);
             $this->reset();
             $this->alert('success', 'Keep Order Succesfully Created');
-            $this->mount();
+            return redirect()->route('keep');
         } catch (\Throwable $th) {
             $this->alert('warning', $th);
         }

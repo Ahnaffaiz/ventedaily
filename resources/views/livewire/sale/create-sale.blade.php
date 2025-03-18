@@ -97,6 +97,7 @@
                                     <td class="px-4 py-4 text-sm text-gray-500 whitespace-nowrap">
                                         Rp. {{ number_format($productStock['total_price'], 0, ',', '.') }}
                                     </td>
+                                    <td class="px-4 py-4 text-sm text-gray-500 whitespace-nowrap"></td>
                                 </tr>
                             @endforeach
                             <tr>

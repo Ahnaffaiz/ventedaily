@@ -38,18 +38,14 @@ class CreateSale extends Component
     //existing data
     public $keeps, $keep, $keep_id;
 
+    public $no_sale;
+
     public $customers, $groups, $termOfPayments;
     public $sale, $isEdit;
     public $productStockList, $product_id, $productStock, $products;
 
     #[Rule('required')]
-    public $group_id;
-
-    #[Rule('required')]
-    public $customer_id;
-
-    #[Rule('required')]
-    public $term_of_payment_id;
+    public $group_id, $customer_id, $term_of_payment_id;
 
     public $desc;
 
@@ -86,8 +82,12 @@ class CreateSale extends Component
 
         if($sale) {
             $this->sale = Sale::where('id', $sale)->first();
+            $this->no_sale = $this->sale->no_sale;
             $this->edit();
             $this->getTotalPrice();
+        } else {
+            $setting = Setting::first();
+            $this->no_sale = $setting->sale_code . str_pad($setting->sale_increment + 1, 4, '0', STR_PAD_LEFT);
         }
     }
 
@@ -289,9 +289,17 @@ class CreateSale extends Component
     {
         $stockType = $this->group_id == 1 ? 'store_stock' : 'home_stock';
         if (!isset($this->cart[$productStockId])) {
-            $this->cart[$productStockId]['home_stock'] = ProductStock::where('id', $productStockId)->first()->home_stock;
-            $this->cart[$productStockId]['store_stock'] = ProductStock::where('id', $productStockId)->first()->store_stock;
-            $this->cart[$productStockId]['all_stock'] = ProductStock::where('id', $productStockId)->first()->all_stock;
+            $productStock = ProductStock::where('id', $productStockId)->first();
+            if($this->keep) {
+                $keepProduct = $this->keep?->keepProducts()->where('product_stock_id', $productStockId)->first();
+                $this->cart[$productStockId]['home_stock'] = $productStock->home_stock + $keepProduct->home_stock;
+                $this->cart[$productStockId]['store_stock'] = $productStock->store_stock + $keepProduct->store_stock;
+                $this->cart[$productStockId]['all_stock'] = $productStock->all_stock + $keepProduct->total_items;
+            } else {
+                $this->cart[$productStockId]['home_stock'] = $productStock->home_stock;
+                $this->cart[$productStockId]['store_stock'] = $productStock->store_stock;
+                $this->cart[$productStockId]['all_stock'] = $productStock->all_stock;
+            }
 
             if ($this->cart[$productStockId][$stockType] > 0) {
                 $this->cart[$productStockId]['quantity'] = 1;
@@ -438,7 +446,7 @@ class CreateSale extends Component
 
             $this->reset();
             $this->alert('success', 'Sale Succesfully Created');
-            $this->mount();
+            return redirect()->route('sale');
         } catch (\Throwable $th) {
             $this->alert('error', $th->getMessage());
         }
@@ -483,6 +491,8 @@ class CreateSale extends Component
 
     public function update()
     {
+        $this->payment_type = PaymentType::CASH;
+        $this->cash_received = 0;
         $this->validate();
         $this->sale->update([
             'user_id' => Auth::user()->id,
@@ -496,7 +506,7 @@ class CreateSale extends Component
             'discount_id' => $this->discount_id ?? null,
             'sub_total' => $this->sub_total,
             'total_price' => $this->total_price,
-            'cd standing_balance' => $this->cash_change < 0 ? $this->cash_change : 0,
+            'outstanding_balance' => -1 * $this->total_price,
             'total_items' => $this->total_items,
             'desc' => $this->desc,
         ]);
@@ -529,20 +539,9 @@ class CreateSale extends Component
             }
         }
 
-        SalePayment::where('sale_id', $this->sale->id)->where('reference', 'First Payment')->update([
-            'sale_id' => $this->sale->id,
-            'user_id' => Auth::user()->id,
-            'date' => Carbon::now(),
-            'reference' => 'First Payment',
-            'amount' => $this->cash_change > 0 ? $this->total_price : $this->cash_received,
-            'cash_received' => $this->cash_received,
-            'cash_change' => $this->cash_change,
-            'payment_type' => strtolower($this->payment_type),
-            'account_number' => $this->account_number,
-            'account_name' => $this->account_name,
-            'desc' => $this->desc,
-            'bank_id' => $this->bank_id
-        ]);
+        foreach ($this->sale->salePayments as $salePayment) {
+            $salePayment->delete();
+        }
 
         $this->alert('success', 'Sale Succesfully Updated');
         $this->mount();

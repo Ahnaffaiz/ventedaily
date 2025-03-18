@@ -97,7 +97,6 @@ class PurchasePayment extends Component
             ]);
             $this->resetInput();
         } catch (\Exception $exception) {
-            dd($exception);
             $this->alert('warning', 'Error' . $exception);
         }
     }

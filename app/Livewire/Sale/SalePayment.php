@@ -62,15 +62,7 @@ class SalePayment extends Component
 
     public function updatedCashReceived()
     {
-        $payment = ModalSalePayment::where('sale_id', $this->sale->id)->count();
-        if($payment > 1) {
-            $this->cash_change = ($this->sale->salePayments->sum('amount') + (int) $this->cash_received) - $this->total_price;
-            if($this->payment) {
-                $this->cash_change = $this->cash_change - $this->payment->amount;
-            }
-        } else {
-            $this->cash_change = $this->cash_received - $this->total_price;
-        }
+        $this->cash_change = (int) $this->cash_received + (int) $this->out_balance - $this->payment?->amount;
     }
 
     public function edit($payment)

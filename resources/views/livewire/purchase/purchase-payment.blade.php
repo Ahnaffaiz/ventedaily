@@ -127,10 +127,8 @@
                                             class="ri-edit-circle-line"></i></button>
                                     <button wire:click="printPayment({{ $payment->id }})" class="text-info"><i
                                             class="ri-printer-line"></i></button>
-                                    @if (strtolower($payment->reference) != 'first payment')
-                                        <button wire:click="deleteAlert({{ $payment->id }})" class="text-danger"><i
-                                                class="text-base ri-delete-bin-2-line"></i></button>
-                                    @endif
+                                    <button wire:click="deleteAlert({{ $payment->id }})" class="text-danger"><i
+                                            class="text-base ri-delete-bin-2-line"></i></button>
                                 </div>
                             </td>
                         </tr>

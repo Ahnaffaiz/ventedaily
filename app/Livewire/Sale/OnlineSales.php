@@ -69,7 +69,7 @@ class OnlineSales extends Component
                         'sales.total_price',
                         'sale_shippings.status as ship_status',
                         'sale_shippings.cost as ship_cost',
-                        'sale_withdrawals.amount as withdrawal_amount',
+                        'sale_withdrawals.withdrawal_amount as withdrawal_amount',
                         'marketplaces.name as marketplace_name'
                     )
                     ->whereHas('customer', function($query){

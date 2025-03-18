@@ -8,7 +8,7 @@
             @endif
             <x-input-text type="datetime-local" name="date" id="date" title="Date"/>
             <div class="grid grid-cols-2 gap-2">
-                <x-input-text type="number" name="amount" id="amount" title="Withdrawal Amount" placeholder="Withdrawal Amount" prepend="Rp." />
+                <x-input-text type="number" name="withdrawal_amount" id="withdrawal_amount" title="Withdrawal Amount" placeholder="Withdrawal Amount" prepend="Rp." />
                 <x-input-text type="number" name="marketplace_price" id="marketplace_price" title="Marketplace Price" placeholder="Marketplace Price" prepend="Rp." />
             </div>
         </form>
@@ -191,11 +191,11 @@
                                     @endif
                                 </th>
                             @endif
-                            @if ($showColumns['amount'])
+                            @if ($showColumns['withdrawal_amount'])
                                 <th scope="col" class="px-4 py-4 text-sm font-medium text-gray-500 text-start"
-                                    wire:click="sortByColumn('amount')">
+                                    wire:click="sortByColumn('withdrawal_amount')">
                                     WD Amount
-                                    @if ($sortBy === 'amount')
+                                    @if ($sortBy === 'withdrawal_amount')
                                         @if ($sortDirection === 'asc')
                                             <i class="ri-arrow-up-s-line"></i>
                                         @else
@@ -302,9 +302,9 @@
                                         {{ $withdrawal->date }}
                                     </td>
                                 @endif
-                                @if ($showColumns['amount'])
+                                @if ($showColumns['withdrawal_amount'])
                                     <td class="px-4 py-4 text-sm text-gray-500 whitespace-nowrap dark:text-gray-200">
-                                        {{ 'Rp.' . number_format($withdrawal->amount, 0, ',', '.') }}
+                                        {{ 'Rp.' . number_format($withdrawal->withdrawal_amount, 0, ',', '.') }}
                                     </td>
                                 @endif
                                 @if ($showColumns['marketplace_price'])

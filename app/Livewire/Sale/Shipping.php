@@ -153,7 +153,7 @@ class Shipping extends Component
                 'city' => $this->city,
                 'phone' => $this->phone,
                 'bank_id' => $this->bank_id,
-                'transfer_amount' => $this->transfer_amount,
+                'transfer_amount' => $this->transfer_amount ? $this->transfer_amount : 0,
             ]);
             $shipping->sale->update([
                 'ship' => $shipping->cost

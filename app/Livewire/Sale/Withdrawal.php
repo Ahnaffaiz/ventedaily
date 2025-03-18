@@ -23,7 +23,7 @@ class Withdrawal extends Component
     public $query = '', $perPage = 10, $sortBy = 'no_sale', $sortDirection = 'desc';
 
     #[Validate('required')]
-    public $date, $amount, $marketplace_price, $sale_id;
+    public $date, $withdrawal_amount, $marketplace_price, $sale_id;
 
     public $showColumns = [
         'sale_date' => true,
@@ -33,7 +33,7 @@ class Withdrawal extends Component
         'order_id_marketplace' => true,
         'marketplace_id' => true,
         'withdrawal_date' => true,
-        'amount' => true,
+        'withdrawal_amount' => true,
         'marketplace_price' => true,
         'created_at' => false,
         'updated_at' => false,
@@ -89,7 +89,7 @@ class Withdrawal extends Component
                 ->select(
                     'sale_withdrawals.id',
                     'sale_withdrawals.marketplace_price',
-                    'sale_withdrawals.amount',
+                    'sale_withdrawals.withdrawal_amount',
                     'sale_withdrawals.date',
                     'sales.customer_id',
                     'sales.no_sale',
@@ -133,7 +133,7 @@ class Withdrawal extends Component
             $this->validate();
             $shipping = SaleWithdrawal::firstOrCreate(['sale_id' => $this->sale_id],[
                 'date' => $this->date,
-                'amount' => $this->amount,
+                'withdrawal_amount' => $this->withdrawal_amount,
                 'marketplace_price' => $this->marketplace_price,
             ]);
 
@@ -151,7 +151,7 @@ class Withdrawal extends Component
         $this->withdrawal = SaleWithdrawal::where('id', $withdrawal_id)->first();
         if($this->withdrawal) {
             $this->date = $this->withdrawal->date;
-            $this->amount = $this->withdrawal->amount;
+            $this->withdrawal_amount = $this->withdrawal->withdrawal_amount;
             $this->marketplace_price = $this->withdrawal->marketplace_price;
             $this->isOpen = true;
         }
@@ -163,7 +163,7 @@ class Withdrawal extends Component
         try {
             $this->withdrawal->update([
                 'date' => $this->date,
-                'amount'=> $this->amount,
+                'withdrawal_amount'=> $this->withdrawal_amount,
                 'marketplace_price'=> $this->marketplace_price
             ]);
 
@@ -213,7 +213,7 @@ class Withdrawal extends Component
         $this->withdrawal = null;
         $this->withdrawal_id = null;
         $this->date = null;
-        $this->amount = null;
+        $this->withdrawal_amount = null;
         $this->sale_id = null;
         $this->marketplace_price = null;
     }

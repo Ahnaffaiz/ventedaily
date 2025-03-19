@@ -22,6 +22,8 @@ return new class extends Migration
             $table->string('keep_increment');
             $table->string('pre_order_code');
             $table->string('pre_order_increment');
+            $table->string('retur_code');
+            $table->string('retur_increment');
             $table->string('sale_code');
             $table->string('sale_increment');
             $table->string('logo', 255)->nullable();

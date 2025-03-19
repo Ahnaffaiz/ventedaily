@@ -15,7 +15,6 @@ class PreOrder extends Model
         'user_id',
         'pre_order_type',
         'status',
-        'pre_order_time',
         'total_items',
         'total_price',
         'desc'

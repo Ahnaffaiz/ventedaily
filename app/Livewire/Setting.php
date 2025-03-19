@@ -18,7 +18,7 @@ class Setting extends Component
     public $setting;
 
     #[Validate('required')]
-    public $name, $address, $owner, $keep_timeout, $keep_code, $keep_increment, $sale_code, $sale_increment, $pre_order_code, $pre_order_increment;
+    public $name, $address, $owner, $keep_timeout, $keep_code, $keep_increment, $sale_code, $sale_increment, $pre_order_code, $pre_order_increment, $retur_code, $retur_increment;
 
     #[Validate('required|regex:/^8\d+$/')]
     public $telp;
@@ -43,6 +43,8 @@ class Setting extends Component
         $this->pre_order_increment = $this->setting?->pre_order_increment;
         $this->sale_code = $this->setting?->sale_code;
         $this->sale_increment = $this->setting?->sale_increment;
+        $this->retur_code = $this->setting?->retur_code;
+        $this->retur_increment = $this->setting?->retur_increment;
     }
     public function render()
     {
@@ -77,6 +79,8 @@ class Setting extends Component
                 'pre_order_increment' => $this->pre_order_increment,
                 'sale_code' => $this->sale_code,
                 'sale_increment' => $this->sale_increment,
+                'retur_code' => $this->retur_code,
+                'retur_increment' => $this->retur_increment,
             ]);
         } else {
             $setting->update([
@@ -92,6 +96,8 @@ class Setting extends Component
                 'pre_order_increment' => $this->pre_order_increment,
                 'sale_code' => $this->sale_code,
                 'sale_increment' => $this->sale_increment,
+                'retur_code' => $this->retur_code,
+                'retur_increment' => $this->retur_increment,
             ]);
         }
         $this->alert('success', 'Setting Succesfully Saved');

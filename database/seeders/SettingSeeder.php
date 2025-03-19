@@ -21,11 +21,12 @@ class SettingSeeder extends Seeder
                 'keep_timeout' => '08:00',
                 'keep_code' => 'K',
                 'keep_increment' => 0,
-                'pre_order_timeout' => '08:00',
                 'pre_order_code' => 'P',
                 'pre_order_increment' => 0,
                 'sale_code' => 'A',
                 'sale_increment' => 0,
+                'retur_code' => 'R',
+                'retur_increment' => 0,
                 'logo' => null
             ]);
     }

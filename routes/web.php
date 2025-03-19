@@ -15,7 +15,8 @@ use App\Livewire\Product\Product;
 use App\Livewire\Product\Size;
 use App\Livewire\Purchase\CreatePurchase;
 use App\Livewire\Purchase\ListPurchase;
-use App\Livewire\Purchase\PurchasePayment;
+use App\Livewire\Retur\CreateRetur;
+use App\Livewire\Retur\ListRetur;
 use App\Livewire\Sale\CreateSale;
 use App\Livewire\Sale\ListSale;
 use App\Livewire\Sale\OnlineSales;
@@ -84,6 +85,10 @@ Route::middleware([
     Route::get('/online-sales', OnlineSales::class)->name('online-sales');
     Route::get('/shipping', Shipping::class)->name('shipping');
     Route::get('/withdrawal', Withdrawal::class)->name('withdrawal');
+
+    //retur
+    Route::get('/return', ListRetur::class)->name('retur');
+    Route::get('/create-return', CreateRetur::class)->name('create-retur');
 
     //discount
     Route::get('/discount', Discount::class)->name('discount');

@@ -17,6 +17,8 @@ class Setting extends Model
         'keep_increment',
         'pre_order_code',
         'pre_order_increment',
+        'retur_code',
+        'retur_increment',
         'sale_code',
         'sale_increment'
     ];

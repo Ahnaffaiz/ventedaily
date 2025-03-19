@@ -6,13 +6,11 @@
                     <td class="font-normal text-md text-start">No Pre Order:</td>
                     <td class="font-normal text-md text-start">Type:</td>
                     <td class="font-normal text-md text-start">Customer Name:</td>
-                    <td class="font-normal text-md text-start">End Pre Order:</td>
                 </tr>
                 <tr>
                     <td class="font-bold text-md text-start">{{ $preOrder?->no_pre_order }}</td>
                     <td class="font-bold text-md text-start">{{ $preOrder?->customer?->group?->name }}</td>
                     <td class="font-bold text-md text-start">{{ $preOrder?->customer?->name }}</td>
-                    <td class="font-bold text-md text-start">{{ $preOrder?->pre_order_time }}</td>
                 </tr>
             </tbody>
         </table>

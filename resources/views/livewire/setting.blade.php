@@ -52,20 +52,25 @@
             <div class="card-header">
                 <div class="card-title">Transaction Setting</div>
             </div>
-            <div class="p-6 section">
+            <div class="p-4 section">
                 <x-input-text type="text" name="keep_code" id="keep_code" title="Keep Code" placeholder="Keep Code" />
                 <x-input-text type="number" name="keep_increment" id="keep_increment" title="Keep Increment"
                     placeholder="Keep Increment" />
             </div>
-            <div class="p-6 section">
+            <div class="p-4 section">
                 <x-input-text type="text" name="sale_code" id="sale_code" title="Sale Code" placeholder="Sale Code" />
                 <x-input-text type="number" name="sale_increment" id="sale_increment" title="Sale Increment"
                     placeholder="Sale Increment" />
             </div>
-            <div class="p-6 section">
+            <div class="p-4 section">
                 <x-input-text type="text" name="pre_order_code" id="pre_order_code" title="Pre Order Code" placeholder="Sale Code" />
                 <x-input-text type="number" name="pre_order_increment" id="sale_increment" title="Pre Order Increment"
                     placeholder="Pre Order Increment" />
+            </div>
+            <div class="p-4 section">
+                <x-input-text type="text" name="retur_code" id="pre_order_code" title="Retur Code" placeholder="Retur Code" />
+                <x-input-text type="number" name="retur_increment" id="sale_increment" title="Retur Increment"
+                    placeholder="Retur Increment" />
             </div>
             <button class="flex justify-end m-6 mt-5 text-white btn bg-primary" wire:click="save">Save Change</button>
         </div>

@@ -11,8 +11,12 @@ use App\Livewire\PreOrder\ListPreOrder;
 use App\Livewire\Product\Category;
 use App\Livewire\Product\Color;
 use App\Livewire\Product\CreateProduct;
+use App\Livewire\Product\CreateTransferProductStock;
 use App\Livewire\Product\Product;
 use App\Livewire\Product\Size;
+use App\Livewire\Product\TransferProductStock;
+use App\Livewire\Product\TransferStock\CreateTransferStock;
+use App\Livewire\Product\TransferStock\ListTransferStock;
 use App\Livewire\Purchase\CreatePurchase;
 use App\Livewire\Purchase\ListPurchase;
 use App\Livewire\Retur\CreateRetur;
@@ -44,6 +48,8 @@ Route::middleware([
     Route::get('/category', Category::class)->name('category');
     Route::get('/color', Color::class)->name('color');
     Route::get('/size', Size::class)->name('size');
+    Route::get('/transfer-stock', ListTransferStock::class)->name('transfer-stock');
+    Route::get('/create-transfer-stock/{transferstock?}', CreateTransferStock::class)->name('create-transfer-stock');
 
     //stock management
     Route::get('/stock-management', ListStock::class)->name('stock-management');
@@ -89,7 +95,6 @@ Route::middleware([
 
     //retur
     Route::get('/retur', ListRetur::class)->name('retur');
-    Route::get('/create-retur', CreateRetur::class)->name('create-retur');
     Route::get('/create-retur/{retur?}', CreateRetur::class)->name('create-retur');
     Route::get('/print-retur-payment/{retur}', function () {
         $retur = Session::get('retur');

@@ -328,6 +328,8 @@ class Product extends Component
             $this->alert('success','Stock successfully transfered');
             $this->stockAmount = null;
             $this->stockTotal = null;
+            $this->stockFrom = null;
+            $this->stockTo = null;
             $this->isOpen = false;
         }
 

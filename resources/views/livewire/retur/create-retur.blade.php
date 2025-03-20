@@ -12,9 +12,10 @@
         </div>
         <div class="p-6">
             <div class="section">
-                <div class="grid gap-2 lg:grid-cols-2 md:grid-cols-2">
+                <div class="grid gap-3 lg:grid-cols-3 md:grid-cols-2">
                     <x-input-select-search id="sale_id" name="sale_id" title="Sale Code" placeholder="Type Sale Code" :options="$sales" searchFunction="searchSales" />
                     <x-input-select id="status" name="status" title="Status" :options="App\Enums\ReturStatus::asSelectArray()" />
+                    <x-input-select id="reason" name="reason" title="Reason" :options="App\Enums\ReturReason::asSelectArray()" />
                 </div>
                 @if ($sale || $retur)
                     <div class="grid gap-2 mt-4 lg:grid-cols-2 md:grid-cols-2">
@@ -33,7 +34,7 @@
                     </div>
                 @endif
                 <div class="mt-4">
-                    <x-textarea-input id="desc" name="desc" title="Alasan Retur" />
+                    <x-textarea-input id="desc" name="desc" title="Retur Reason" />
                 </div>
             </div>
             <div class="mt-4 overflow-x-auto border border-gray-200 rounded-md section">

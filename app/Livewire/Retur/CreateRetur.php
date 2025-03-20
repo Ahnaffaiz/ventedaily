@@ -2,6 +2,7 @@
 
 namespace App\Livewire\Retur;
 
+use App\Enums\ReturReason;
 use App\Enums\ReturStatus;
 use App\Models\ProductStock;
 use App\Models\Retur;
@@ -29,7 +30,10 @@ class CreateRetur extends Component
 
     public $customer_name, $group_name;
     public $no_retur;
-    public $status = ReturStatus::BACK_TO_STOCK, $item_status;
+
+    #[Rule(['required'])]
+    public $status = ReturStatus::BACK_TO_STOCK, $reason = ReturReason::SWAP_ITEM;
+    public $item_status;
     public $retur;
 
     public $desc;
@@ -219,6 +223,7 @@ class CreateRetur extends Component
         try {
             $retur = Retur::create([
                 'status' => strtolower($this->status),
+                'reason' => strtolower($this->reason),
                 'sale_id' => $this->sale_id,
                 'user_id' => Auth::user()->id,
                 'no_retur' => $this->no_retur,
@@ -247,6 +252,7 @@ class CreateRetur extends Component
         $this->customer_name = $this->retur->sale->customer->name;
         $this->sale_id = $this->retur->sale_id;
         $this->status = strtolower($this->retur->status);
+        $this->reason = strtolower($this->retur->reason);
         foreach ($this->retur->returItems as $returItem) {
             $this->returItems[$returItem->product_stock_id] = [
                 'id' => $returItem->product_stock_id,
@@ -280,6 +286,7 @@ class CreateRetur extends Component
         try {
             $this->retur->update([
                 'status' => strtolower($this->status),
+                'reason' => strtolower($this->reason),
                 'sale_id' => $this->sale_id,
                 'user_id' => Auth::user()->id,
                 'no_retur' => $this->no_retur,

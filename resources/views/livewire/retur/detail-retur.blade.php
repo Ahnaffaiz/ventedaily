@@ -8,12 +8,18 @@
                     <td class="font-normal text-md text-start">Customer Group:</td>
                 </tr>
                 <tr>
-                    <td class="font-bold text-md text-start">{{ $retur?->no_retur }}</td>
+                    <td class="font-bold text-md text-start text-success">{{ $retur?->no_retur }}</td>
                     <td class="font-bold text-md text-start">{{ $retur?->sale->customer?->name }}</td>
-                    <td class="font-bold text-md text-start text-success">{{ $retur?->sale->customer?->group?->name }}</td>
+                    <td class="font-bold text-md text-start">{{ $retur?->sale->customer?->group?->name }}</td>
                 </tr>
             </tbody>
         </table>
+        @if ($retur?->desc)
+            <div class="pt-4">
+                <h1>Reason</h1>
+                <p>{{ $retur?->desc }}</p>
+            </div>
+        @endif
     </div>
     <div class="p-6 border">
         <table class="min-w-full divide-y divide-gray-200 dark:divide-gray-700">

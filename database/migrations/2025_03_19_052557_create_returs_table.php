@@ -18,6 +18,7 @@ return new class extends Migration
             $table->foreignId('user_id')->constrained('users')->onDelete('cascade');
             $table->integer('total_price');
             $table->integer('total_items');
+            $table->enum('reason', ['swap item', 'swap money', 'deposit']);
             $table->enum('status', ['taken', 'processing', 'back to stock']);
             $table->longText('desc')->nullable();
             $table->timestamps();

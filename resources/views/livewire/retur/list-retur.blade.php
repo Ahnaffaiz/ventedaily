@@ -107,8 +107,23 @@
                             @if ($showColumns['status'])
                                 <th scope="col" class="px-4 py-4 text-sm font-medium text-gray-500 text-start"
                                     wire:click="sortByColumn('status')">
-                                    Retur Status
+                                    Status
                                     @if ($sortBy === 'status')
+                                        @if ($sortDirection === 'asc')
+                                            <i class="ri-arrow-up-s-line"></i>
+                                        @else
+                                            <i class="ri-arrow-down-s-line"></i>
+                                        @endif
+                                    @else
+                                        <i class="ri-expand-up-down-line"></i>
+                                    @endif
+                                </th>
+                            @endif
+                            @if ($showColumns['reason'])
+                                <th scope="col" class="px-4 py-4 text-sm font-medium text-gray-500 text-start"
+                                    wire:click="sortByColumn('reason')">
+                                    Reason
+                                    @if ($sortBy === 'reason')
                                         @if ($sortDirection === 'asc')
                                             <i class="ri-arrow-up-s-line"></i>
                                         @else
@@ -231,6 +246,28 @@
                                                 </span>
                                             @endif
                                         </button>
+                                    </td>
+                                @endif
+                                @if ($showColumns['reason'])
+                                    <td class="px-4 py-4 text-sm text-gray-500 whitespace-nowrap dark:text-gray-200">
+                                        @if (strtolower($retur->reason) === strtolower(App\Enums\ReturReason::SWAP_ITEM))
+                                            <span
+                                                class="inline-flex items-center gap-1.5 py-0.5 px-1.5 rounded-md text-xs font-medium bg-warning/10 text-warning">
+                                                {{ ucwords($retur->reason) }}
+                                            </span>
+                                        @elseif (strtolower($retur->reason) === strtolower(App\Enums\ReturReason::SWAP_MONEY))
+                                            <span class="inline-flex items-center gap-1.5 py-0.5 px-1.5 rounded-md text-xs font-medium bg-danger/10 text-danger">
+                                                {{ ucwords($retur->reason) }}
+                                            </span>
+                                        @elseif (strtolower($retur->reason) === strtolower(App\Enums\ReturReason::DEPOSIT))
+                                            <span class="inline-flex items-center gap-1.5 py-0.5 px-1.5 rounded-md text-xs font-medium bg-primary/10 text-primary">
+                                                {{ ucwords($retur->reason) }}
+                                            </span>
+                                        @else
+                                            <span class="inline-flex items-center gap-1.5 py-0.5 px-1.5 rounded-md text-xs font-medium bg-secondary/10 text-secondary">
+                                                {{ ucwords($retur->reason) }}
+                                            </span>
+                                        @endif
                                     </td>
                                 @endif
                                 @if ($showColumns['total_items'])

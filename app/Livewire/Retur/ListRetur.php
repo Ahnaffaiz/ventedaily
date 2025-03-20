@@ -26,6 +26,7 @@ class ListRetur extends Component
     public $total_price;
     public $showColumns = [
         'status' => true,
+        'reason' => true,
         'group' => true,
         'total_items' => true,
         'total_price' => true,

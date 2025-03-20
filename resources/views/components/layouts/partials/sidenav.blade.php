@@ -36,6 +36,115 @@
                 </ul>
             </li>
 
+            <li class="menu-title">Sales</li>
+
+            {{-- Sale --}}
+            <li class="menu-item">
+                @php
+                    $activeRoutes = ['create-sale', 'sale'];
+                    $isActive = in_array(request()->route()->getName(), $activeRoutes);
+                @endphp
+                <a href="javascript:void(0)" data-fc-type="collapse" class="menu-link">
+                    <span class="menu-icon">
+                        <i class="ri-calculator-line {{ $isActive ? 'text-white font-bold' : 'text-gray-300' }}"></i>
+                    </span>
+                    <span class="menu-text {{ $isActive ? 'text-white font-bold' : 'text-gray-300' }}"> Sale </span>
+                    <span class="menu-arrow"></span>
+                </a>
+
+                <ul class="hidden sub-menu">
+                    <x-menu-item activeRoute="create-sale" text="Cashier" />
+                    <x-menu-item activeRoute="sale" text="Sale List" />
+                </ul>
+            </li>
+            {{-- end of Sale --}}
+
+            {{-- Keep Booking --}}
+            <li class="menu-item">
+                @php
+                    $activeRoutes = ['create-keep', 'keep'];
+                    $isActive = in_array(request()->route()->getName(), $activeRoutes);
+                @endphp
+                <a href="javascript:void(0)" data-fc-type="collapse" class="menu-link">
+                    <span class="menu-icon">
+                        <i class="ri-shopping-bag-line {{ $isActive ? 'text-white font-bold' : 'text-gray-300' }}"></i>
+                    </span>
+                    <span class="menu-text {{ $isActive ? 'text-white font-bold' : 'text-gray-300' }}"> Keep </span>
+                    <span class="menu-arrow"></span>
+                </a>
+
+                <ul class="hidden sub-menu">
+                    <x-menu-item activeRoute="create-keep" text="Create Keep" />
+                    <x-menu-item activeRoute="keep" text="Keep List" />
+                </ul>
+            </li>
+            {{-- end of Keep Booking --}}
+
+            {{-- Pre Order --}}
+            <li class="menu-item">
+                @php
+                    $activeRoutes = ['create-pre-order', 'pre-order'];
+                    $isActive = in_array(request()->route()->getName(), $activeRoutes);
+                @endphp
+                <a href="javascript:void(0)" data-fc-type="collapse" class="menu-link">
+                    <span class="menu-icon">
+                        <i class="ri-gift-line {{ $isActive ? 'text-white font-bold' : 'text-gray-300' }}"></i>
+                    </span>
+                    <span class="menu-text {{ $isActive ? 'text-white font-bold' : 'text-gray-300' }}"> Pre Order </span>
+                    <span class="menu-arrow"></span>
+                </a>
+
+                <ul class="hidden sub-menu">
+                    <x-menu-item activeRoute="create-pre-order" text="Create Pre Order" />
+                    <x-menu-item activeRoute="pre-order" text="Pre Order List" />
+                </ul>
+            </li>
+            {{-- end of Pre Order --}}
+
+            {{-- Ventedaily --}}
+            <li class="menu-item">
+                @php
+                    $activeRoutes = ['shipping', 'withdrawal', 'online-sales'];
+                    $isActive = in_array(request()->route()->getName(), $activeRoutes);
+                @endphp
+                <a href="javascript:void(0)" data-fc-type="collapse" class="menu-link">
+                    <span class="menu-icon">
+                        <i class="ri-emotion-line {{ $isActive ? 'text-white font-bold' : 'text-gray-300' }}"></i>
+                    </span>
+                    <span class="menu-text {{ $isActive ? 'text-white font-bold' : 'text-gray-300' }}"> Ventedaily </span>
+                    <span class="menu-arrow"></span>
+                </a>
+
+                <ul class="hidden sub-menu">
+                    <x-menu-item activeRoute="online-sales" text="Online Sales" />
+                    <x-menu-item activeRoute="shipping" text="Shipping" />
+                    <x-menu-item activeRoute="withdrawal" text="Withdrawal" />
+                </ul>
+            </li>
+            {{-- end of Ventedaily --}}
+
+            {{-- customer --}}
+            <li class="menu-item">
+                @php
+                    $activeRoutes = ['customer', 'group'];
+                    $isActive = in_array(request()->route()->getName(), $activeRoutes);
+                @endphp
+                <a href="javascript:void(0)" data-fc-type="collapse" class="menu-link">
+                    <span class="menu-icon">
+                        <i class="ri-shield-user-line {{ $isActive ? 'text-white font-bold' : 'text-gray-300' }}"></i>
+                    </span>
+                    <span class="menu-text {{ $isActive ? 'text-white font-bold' : 'text-gray-300' }}"> Customer </span>
+                    <span class="menu-arrow"></span>
+                </a>
+
+                <ul class="hidden sub-menu">
+                    <x-menu-item activeRoute="customer" text="Customer" />
+                    <x-menu-item activeRoute="group" text="Group" />
+                </ul>
+            </li>
+            {{-- end of customer --}}
+            <x-menu-item activeRoute="discount" text="Discount" iconClass="ri-price-tag-3-line" />
+
             <li class="menu-title">Inventory</li>
 
             {{-- product --}}
@@ -85,94 +194,6 @@
                     <x-menu-item activeRoute="purchase" text="Purchase" />
                 </ul>
             </li>
-            <x-menu-item activeRoute="supplier" text="Supplier" iconClass="ri-user-line" />
-
-            <li class="menu-title">Sales</li>
-
-            {{-- Keep Booking --}}
-            <li class="menu-item">
-                @php
-                    $activeRoutes = ['create-keep', 'keep'];
-                    $isActive = in_array(request()->route()->getName(), $activeRoutes);
-                @endphp
-                <a href="javascript:void(0)" data-fc-type="collapse" class="menu-link">
-                    <span class="menu-icon">
-                        <i class="ri-shopping-bag-line {{ $isActive ? 'text-white font-bold' : 'text-gray-300' }}"></i>
-                    </span>
-                    <span class="menu-text {{ $isActive ? 'text-white font-bold' : 'text-gray-300' }}"> Keep </span>
-                    <span class="menu-arrow"></span>
-                </a>
-
-                <ul class="hidden sub-menu">
-                    <x-menu-item activeRoute="create-keep" text="Create Keep" />
-                    <x-menu-item activeRoute="keep" text="Keep List" />
-                </ul>
-            </li>
-            {{-- end of Keep Booking --}}
-
-            {{-- Keep Booking --}}
-            <li class="menu-item">
-                @php
-                    $activeRoutes = ['create-pre-order', 'pre-order'];
-                    $isActive = in_array(request()->route()->getName(), $activeRoutes);
-                @endphp
-                <a href="javascript:void(0)" data-fc-type="collapse" class="menu-link">
-                    <span class="menu-icon">
-                        <i class="ri-gift-line {{ $isActive ? 'text-white font-bold' : 'text-gray-300' }}"></i>
-                    </span>
-                    <span class="menu-text {{ $isActive ? 'text-white font-bold' : 'text-gray-300' }}"> Pre Order </span>
-                    <span class="menu-arrow"></span>
-                </a>
-
-                <ul class="hidden sub-menu">
-                    <x-menu-item activeRoute="create-pre-order" text="Create Pre Order" />
-                    <x-menu-item activeRoute="pre-order" text="Pre Order List" />
-                </ul>
-            </li>
-            {{-- end of Keep Booking --}}
-
-            {{-- Sale --}}
-            <li class="menu-item">
-                @php
-                    $activeRoutes = ['create-sale', 'sale'];
-                    $isActive = in_array(request()->route()->getName(), $activeRoutes);
-                @endphp
-                <a href="javascript:void(0)" data-fc-type="collapse" class="menu-link">
-                    <span class="menu-icon">
-                        <i class="ri-calculator-line {{ $isActive ? 'text-white font-bold' : 'text-gray-300' }}"></i>
-                    </span>
-                    <span class="menu-text {{ $isActive ? 'text-white font-bold' : 'text-gray-300' }}"> Sale </span>
-                    <span class="menu-arrow"></span>
-                </a>
-
-                <ul class="hidden sub-menu">
-                    <x-menu-item activeRoute="create-sale" text="Cashier" />
-                    <x-menu-item activeRoute="sale" text="Sale List" />
-                </ul>
-            </li>
-            {{-- end of Sale --}}
-
-            {{-- Ventedaily --}}
-            <li class="menu-item">
-                @php
-                    $activeRoutes = ['shipping', 'withdrawal', 'online-sales'];
-                    $isActive = in_array(request()->route()->getName(), $activeRoutes);
-                @endphp
-                <a href="javascript:void(0)" data-fc-type="collapse" class="menu-link">
-                    <span class="menu-icon">
-                        <i class="ri-emotion-line {{ $isActive ? 'text-white font-bold' : 'text-gray-300' }}"></i>
-                    </span>
-                    <span class="menu-text {{ $isActive ? 'text-white font-bold' : 'text-gray-300' }}"> Ventedaily </span>
-                    <span class="menu-arrow"></span>
-                </a>
-
-                <ul class="hidden sub-menu">
-                    <x-menu-item activeRoute="online-sales" text="Online Sales" />
-                    <x-menu-item activeRoute="shipping" text="Shipping" />
-                    <x-menu-item activeRoute="withdrawal" text="Withdrawal" />
-                </ul>
-            </li>
-            {{-- end of Ventedaily --}}
 
             {{-- Retur --}}
             <li class="menu-item">
@@ -195,27 +216,9 @@
             </li>
             {{-- end of Retur --}}
 
-            {{-- customer --}}
-            <li class="menu-item">
-                @php
-                    $activeRoutes = ['customer', 'group'];
-                    $isActive = in_array(request()->route()->getName(), $activeRoutes);
-                @endphp
-                <a href="javascript:void(0)" data-fc-type="collapse" class="menu-link">
-                    <span class="menu-icon">
-                        <i class="ri-shield-user-line {{ $isActive ? 'text-white font-bold' : 'text-gray-300' }}"></i>
-                    </span>
-                    <span class="menu-text {{ $isActive ? 'text-white font-bold' : 'text-gray-300' }}"> Customer </span>
-                    <span class="menu-arrow"></span>
-                </a>
+            <x-menu-item activeRoute="supplier" text="Supplier" iconClass="ri-user-line" />
 
-                <ul class="hidden sub-menu">
-                    <x-menu-item activeRoute="customer" text="Customer" />
-                    <x-menu-item activeRoute="group" text="Group" />
-                </ul>
-            </li>
-            {{-- end of customer --}}
-            <x-menu-item activeRoute="discount" text="Discount" iconClass="ri-price-tag-3-line" />
+            <li class="menu-title">Master</li>
 
             <x-menu-item activeRoute="settings" text="Settings" iconClass="ri-settings-line" />
         </ul>

@@ -8,7 +8,9 @@ use App\Models\Group;
 use App\Models\ProductStock;
 use App\Models\Retur;
 use App\Models\Purchase;
+use App\Models\Setting;
 use Exception;
+use Illuminate\Support\Facades\Session;
 use Jantinnerezo\LivewireAlert\LivewireAlert;
 use Livewire\Attributes\Title;
 use Livewire\Component;
@@ -158,5 +160,14 @@ class ListRetur extends Component
         } catch (\Throwable $th) {
             $this->alert('error',$th->getMessage());
         }
+    }
+
+    public function printPayment($retur_id)
+    {
+        $retur = Retur::where('id', $retur_id)->first();
+        $setting = Setting::first();
+        Session::put('retur', $retur);
+        Session::put('setting', $setting);
+        $this->dispatch('print-retur-payment',route('print-retur-payment', ['retur' => $retur->id]));
     }
 }

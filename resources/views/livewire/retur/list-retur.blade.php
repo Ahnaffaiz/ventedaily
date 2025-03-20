@@ -295,6 +295,8 @@
                                         <button wire:click="show({{ $retur->id }})" class="text-primary">
                                             <i class="ri-eye-line"></i>
                                         </button>
+                                        <button wire:click="printPayment({{ $retur->id }})" class="text-info"><i
+                                            class="ri-printer-line"></i></button>
                                         <button wire:navigate href="{{ route('create-retur', ['retur' => $retur->id]) }}"
                                             class="text-info">
                                             <i class="ri-edit-circle-line"></i>
@@ -335,3 +337,25 @@
         </div>
     </div>
 </div>
+
+@script
+<script>
+    Livewire.on('print-retur-payment', (url) => {
+        let printWindow = window.open(url, '_blank', 'width=100,height=100,resizable=yes,scrollbars=yes,left=50,right=50');
+
+        if (printWindow) {
+            printWindow.focus();
+
+            printWindow.onload = function () {
+                let body = printWindow.document.body;
+                let width = body.scrollWidth;
+                let height = body.scrollHeight;
+                let left = (screen.width - width) / 2;
+                let top = (screen.height - height) / 2;
+
+                printWindow.resizeTo(width + 60, height + 250);
+            };
+        }
+    });
+</script>
+@endscript

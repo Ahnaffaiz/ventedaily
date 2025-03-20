@@ -221,25 +221,29 @@ class CreateRetur extends Component
         $this->validate();
         $setting = Setting::first();
         try {
-            $retur = Retur::create([
-                'status' => strtolower($this->status),
-                'reason' => strtolower($this->reason),
-                'sale_id' => $this->sale_id,
-                'user_id' => Auth::user()->id,
-                'no_retur' => $this->no_retur,
-                'total_price' => $this->total_price,
-                'total_items' => $this->total_items,
-                'desc' => $this->desc,
-            ]);
+            if($this->returItems) {
+                $retur = Retur::create([
+                    'status' => strtolower($this->status),
+                    'reason' => strtolower($this->reason),
+                    'sale_id' => $this->sale_id,
+                    'user_id' => Auth::user()->id,
+                    'no_retur' => $this->no_retur,
+                    'total_price' => $this->total_price,
+                    'total_items' => $this->total_items,
+                    'desc' => $this->desc,
+                ]);
 
-            $setting->update([
-                'retur_increment' => $setting->retur_increment + 1
-            ]);
+                $setting->update([
+                    'retur_increment' => $setting->retur_increment + 1
+                ]);
 
-            $this->createReturProduct($retur->id);
-            $this->reset();
-            $this->alert('success', 'Retur Succesfully Created');
-            return redirect()->route('retur');
+                $this->createReturProduct($retur->id);
+                $this->reset();
+                $this->alert('success', 'Retur Succesfully Created');
+                return redirect()->route('retur');
+            } else {
+                $this->alert('warning','No Product to Return');
+            }
         } catch (\Throwable $th) {
             $this->alert('warning', $th->getMessage());
         }
@@ -284,31 +288,35 @@ class CreateRetur extends Component
         $this->validate();
         $setting = Setting::first();
         try {
-            $this->retur->update([
-                'status' => strtolower($this->status),
-                'reason' => strtolower($this->reason),
-                'sale_id' => $this->sale_id,
-                'user_id' => Auth::user()->id,
-                'no_retur' => $this->no_retur,
-                'total_price' => $this->total_price,
-                'total_items' => $this->total_items,
-                'desc' => $this->desc,
-            ]);
-
-            foreach ($this->retur->returItems as $returItem) {
-                $stockType = $this->retur->sale->customer->group_id == 1 ? 'store_stock' : 'home_stock';
-                $productStock = ProductStock::where('id', $returItem->product_stock_id)->first();
-                $productStock->update([
-                    $stockType => $productStock->$stockType - $returItem->total_items,
-                    'all_stock' => $productStock->all_stock - $returItem->total_items
+            if($this->returItems) {
+                $this->retur->update([
+                    'status' => strtolower($this->status),
+                    'reason' => strtolower($this->reason),
+                    'sale_id' => $this->sale_id,
+                    'user_id' => Auth::user()->id,
+                    'no_retur' => $this->no_retur,
+                    'total_price' => $this->total_price,
+                    'total_items' => $this->total_items,
+                    'desc' => $this->desc,
                 ]);
-                $returItem->delete();
-            }
 
-            $this->createReturProduct($this->retur->id);
-            $this->reset();
-            $this->alert('success', 'Retur Succesfully Updated');
-            return redirect()->route('retur');
+                foreach ($this->retur->returItems as $returItem) {
+                    $stockType = $this->retur->sale->customer->group_id == 1 ? 'store_stock' : 'home_stock';
+                    $productStock = ProductStock::where('id', $returItem->product_stock_id)->first();
+                    $productStock->update([
+                        $stockType => $productStock->$stockType - $returItem->total_items,
+                        'all_stock' => $productStock->all_stock - $returItem->total_items
+                    ]);
+                    $returItem->delete();
+                }
+
+                $this->createReturProduct($this->retur->id);
+                $this->reset();
+                $this->alert('success', 'Retur Succesfully Updated');
+                return redirect()->route('retur');
+            } else {
+                $this->alert('warning','No Product to Return');
+            }
         } catch (\Throwable $th) {
             $this->alert('warning', $th->getMessage());
         }

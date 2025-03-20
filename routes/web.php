@@ -71,6 +71,7 @@ Route::middleware([
     //pre order
     Route::get('/pre-order', ListPreOrder::class)->name('pre-order');
     Route::get('/create-pre-order/{preorder?}', CreatePreOrder::class)->name('create-pre-order');
+    Route::get('/pre-order/cashier', CreatePreOrder::class)->name('pre-order/cashier');
 
     //sale
     Route::get('/sale', ListSale::class)->name('sale');
@@ -90,6 +91,11 @@ Route::middleware([
     Route::get('/retur', ListRetur::class)->name('retur');
     Route::get('/create-retur', CreateRetur::class)->name('create-retur');
     Route::get('/create-retur/{retur?}', CreateRetur::class)->name('create-retur');
+    Route::get('/print-retur-payment/{retur}', function () {
+        $retur = Session::get('retur');
+        $setting = Session::get('setting');
+        return view('print.retur-payment', compact('retur', 'setting'));
+    })->name('print-retur-payment');
 
     //discount
     Route::get('/discount', Discount::class)->name('discount');

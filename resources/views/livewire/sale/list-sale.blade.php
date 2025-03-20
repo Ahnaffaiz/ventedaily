@@ -33,7 +33,7 @@
                             <span class="m-2">Group</span>
                             <div class="flex w-full p-1">
                                 <select class="form-input" wire:model.change="groupId">
-                                    <option value="">All Keep</option>
+                                    <option value="">Customer Group</option>
                                     @foreach ($groupIds as $group)
                                         <option value="{{ $group->id }}">{{ $group->name }}</option>
                                     @endforeach
@@ -89,6 +89,16 @@
                                     <i class="ri-expand-up-down-line"></i>
                                 @endif
                             </th>
+                            @if ($showColumns['keep_id'])
+                                <th scope="col" class="px-4 py-4 text-sm font-medium text-gray-500 text-start">
+                                    No Keep
+                                </th>
+                            @endif
+                            @if ($showColumns['pre_order_id'])
+                                <th scope="col" class="px-4 py-4 text-sm font-medium text-gray-500 text-start">
+                                    No Pre Order
+                                </th>
+                            @endif
                             @if ($showColumns['group'])
                                 <th scope="col" class="px-4 py-4 text-sm font-medium text-gray-500 text-start">
                                     Group
@@ -244,6 +254,12 @@
                                 </td>
                                 <td class="px-4 py-4 text-sm text-gray-500 whitespace-nowrap dark:text-gray-200">
                                     {{ $sale->customer->name }}
+                                </td>
+                                <td class="px-4 py-4 text-sm text-gray-500 whitespace-nowrap dark:text-gray-200">
+                                    {{ $sale->keep?->no_keep }}
+                                </td>
+                                <td class="px-4 py-4 text-sm text-gray-500 whitespace-nowrap dark:text-gray-200">
+                                    {{ $sale->preOrder?->no_pre_order }}
                                 </td>
                                 @if ($showColumns['group'])
                                     <td class="px-4 py-4 text-sm text-gray-500 whitespace-nowrap dark:text-gray-200">

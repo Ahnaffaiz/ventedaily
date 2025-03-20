@@ -24,6 +24,11 @@ class Sale extends Model
         return $this->belongsTo(Keep::class);
     }
 
+    public function preOrder()
+    {
+        return $this->belongsTo(PreOrder::class);
+    }
+
     public function user()
     {
         return $this->belongsTo(User::class);

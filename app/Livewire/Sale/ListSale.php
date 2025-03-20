@@ -26,6 +26,8 @@ class ListSale extends Component
 
     public $total_price, $sub_total_after_discount;
     public $showColumns = [
+        'keep_id' => true,
+        'pre_order_id' => true,
         'group' => true,
         'term_of_payment_id' => true,
         'total_items' => true,

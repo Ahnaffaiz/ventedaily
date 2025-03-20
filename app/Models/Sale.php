@@ -11,7 +11,7 @@ class Sale extends Model
     use HasFactory;
 
     protected $fillable = [
-        'keep_id', 'user_id', 'customer_id', 'term_of_payment_id', 'discount_type', 'discount', 'discount_id', 'tax',
+        'keep_id', 'pre_order_id', 'user_id', 'customer_id', 'term_of_payment_id', 'discount_type', 'discount', 'discount_id', 'tax',
         'total_price', 'sub_total', 'total_items', 'desc', 'no_sale', 'ship', 'outstanding_balance'
     ];
 

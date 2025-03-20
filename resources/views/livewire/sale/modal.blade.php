@@ -11,11 +11,15 @@
                             <tr>
                                 <th class="px-4 py-4 text-sm font-medium text-gray-500 text-start">Color</th>
                                 <th class="px-4 py-4 text-sm font-medium text-gray-500 text-start">Size</th>
-                                @if ($group_id == 2)
-                                    <th class="px-4 py-4 text-sm font-medium text-gray-500 text-start">Home Stock</th>
-                                @endif
-                                @if ($group_id == 1)
-                                    <th class="px-4 py-4 text-sm font-medium text-gray-500 text-start">Store Stock</th>
+                                @if ($preOrder || $sale?->pre_order_id)
+                                    <th class="px-4 py-4 text-sm font-medium text-gray-500 text-start">Pre Order Stock</th>
+                                @else
+                                    @if ($group_id == 2)
+                                        <th class="px-4 py-4 text-sm font-medium text-gray-500 text-start">Home Stock</th>
+                                    @endif
+                                    @if ($group_id == 1)
+                                        <th class="px-4 py-4 text-sm font-medium text-gray-500 text-start">Store Stock</th>
+                                    @endif
                                 @endif
                                 <th class="px-4 py-4 text-sm font-medium text-gray-500 text-start">Price</th>
                                 <th class="px-4 py-4 text-sm font-medium text-center text-gray-500">Action</th>
@@ -30,15 +34,21 @@
                                     <td class="px-4 py-4 text-sm text-gray-500 whitespace-nowrap">
                                         {{ $productStock['size']['name'] }}
                                     </td>
-                                    @if ($group_id == 2)
+                                    @if ($preOrder || $sale?->pre_order_id)
                                         <td class="px-4 py-4 text-sm text-gray-500 whitespace-nowrap">
-                                            {{ $productStock['home_stock'] }}
+                                            {{ $productStock['pre_order_stock'] }}
                                         </td>
-                                    @endif
-                                    @if ($group_id == 1)
-                                        <td class="px-4 py-4 text-sm text-gray-500 whitespace-nowrap">
-                                            {{ $productStock['store_stock'] }}
-                                        </td>
+                                    @else
+                                        @if ($group_id == 2)
+                                            <td class="px-4 py-4 text-sm text-gray-500 whitespace-nowrap">
+                                                {{ $productStock['home_stock'] }}
+                                            </td>
+                                        @endif
+                                        @if ($group_id == 1)
+                                            <td class="px-4 py-4 text-sm text-gray-500 whitespace-nowrap">
+                                                {{ $productStock['store_stock'] }}
+                                            </td>
+                                        @endif
                                     @endif
                                     <td class="px-4 py-4 text-sm text-gray-500 whitespace-nowrap">
                                         Rp. {{ number_format($productStock['selling_price'], 0, ',', '.') }}

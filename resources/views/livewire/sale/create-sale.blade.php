@@ -9,10 +9,27 @@
             </h4>
         </div>
         <div class="p-6">
-            <div class="section">
-                <x-input-select-search id="keep_id" name="keep_id" title="Keep Code" placeholder="Type Keep Code"
-                    :options="$keeps" searchFunction="searchKeep" />
-            </div>
+            @if (!$isEdit)
+                <div class="flex gap-5">
+                    <div class="flex items-center">
+                        <input type="radio" class="form-radio text-primary" wire:model.live="saleFrom" value="keep" id="keep">
+                        <label class="ms-1.5" for="keep">Keep</label>
+                    </div>
+                    <div class="flex items-center">
+                        <input type="radio" class="form-radio text-primary" wire:model.live="saleFrom" value="pre_order" id="pre_order">
+                        <label class="ms-1.5" for="pre_order">Pre Order</label>
+                    </div>
+                </div>
+                <div class="section">
+                    @if ($saleFrom === 'keep')
+                        <x-input-select-search id="keep_id" name="keep_id" title="Keep Code" placeholder="Type Keep Code"
+                            :options="$keeps" searchFunction="searchKeep" />
+                    @elseif ($saleFrom === 'pre_order')
+                        <x-input-select-search id="pre_order_id" name="pre_order_id" title="Pre Order Code" placeholder="Type Pre Order Code"
+                            :options="$preOrders" searchFunction="searchPreOrder" />
+                    @endif
+                </div>
+            @endif
             <div class="section">
                 <div class="grid gap-4 md:grid-cols-3">
                     <x-input-select id="group_id" name="group_id" title="Group" :options="$groups"
@@ -32,13 +49,17 @@
                             </th>
                             <th scope="col" class="px-4 py-4 text-sm font-medium text-gray-500 text-start">Color</th>
                             <th scope="col" class="px-4 py-4 text-sm font-medium text-gray-500 text-start">Size</th>
-                            @if ($group_id == 2)
-                                <th scope="col" class="px-4 py-4 text-sm font-medium text-gray-500 text-start">Home Stock
-                                </th>
-                            @endif
-                            @if ($group_id == 1)
-                                <th scope="col" class="px-4 py-4 text-sm font-medium text-gray-500 text-start">Store Stock
-                                </th>
+                            @if ($preOrder || $sale?->pre_order_id != null)
+                                <th scope="col" class="px-4 py-4 text-sm font-medium text-gray-500 text-start">Pre Order Stock</th>
+                            @else
+                                @if ($group_id == 2)
+                                    <th scope="col" class="px-4 py-4 text-sm font-medium text-gray-500 text-start">Home Stock
+                                    </th>
+                                @endif
+                                @if ($group_id == 1)
+                                    <th scope="col" class="px-4 py-4 text-sm font-medium text-gray-500 text-start">Store Stock
+                                    </th>
+                                @endif
                             @endif
                             <th scope="col" class="px-4 py-4 text-sm font-medium text-gray-500 text-start">Price (@)
                             </th>
@@ -63,15 +84,21 @@
                                     <td class="px-4 py-4 text-sm text-gray-500 whitespace-nowrap">
                                         {{ $productStock['size'] }}
                                     </td>
-                                    @if ($group_id == 2)
+                                    @if ($preOrder || $sale?->pre_order_id != null)
                                         <td class="px-4 py-4 text-sm text-gray-500 whitespace-nowrap">
-                                            {{ $productStock['home_stock'] }}
+                                            {{ $productStock['pre_order_stock'] }}
                                         </td>
-                                    @endif
-                                    @if ($group_id == 1)
-                                        <td class="px-4 py-4 text-sm text-gray-500 whitespace-nowrap">
-                                            {{ $productStock['store_stock'] }}
-                                        </td>
+                                    @else
+                                        @if ($group_id == 2)
+                                            <td class="px-4 py-4 text-sm text-gray-500 whitespace-nowrap">
+                                                {{ $productStock['home_stock'] }}
+                                            </td>
+                                        @endif
+                                        @if ($group_id == 1)
+                                            <td class="px-4 py-4 text-sm text-gray-500 whitespace-nowrap">
+                                                {{ $productStock['store_stock'] }}
+                                            </td>
+                                        @endif
                                     @endif
                                     <td class="px-4 py-4 text-sm text-gray-500 whitespace-nowrap">
                                         {{ number_format($productStock['selling_price'], 0, ',', '.') }}

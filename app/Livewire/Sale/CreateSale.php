@@ -10,6 +10,8 @@ use App\Models\Customer;
 use App\Models\Discount;
 use App\Models\Group;
 use App\Models\Keep;
+use App\Models\PreOrder;
+use App\Models\PreOrderProduct;
 use App\Models\Sale;
 use App\Models\KeepProduct;
 use App\Models\Product;
@@ -37,6 +39,8 @@ class CreateSale extends Component
 
     //existing data
     public $keeps, $keep, $keep_id;
+    public $preOrders, $preOrder, $pre_order_id;
+    public $saleFrom = 'keep';
 
     public $no_sale;
 
@@ -77,6 +81,7 @@ class CreateSale extends Component
         $this->discount_type = DiscountType::PERSEN;
         $this->discount_programs = Discount::all()->pluck('name', 'id')->toArray();
         $this->keeps = Keep::where('keep_time', '>=', Carbon::now())->where('status', strtolower(KeepStatus::ACTIVE))->pluck('no_keep', 'id')->toArray();
+        $this->preOrders = PreOrder::whereNotIn('id', Sale::pluck('pre_order_id'))->pluck('no_pre_order', 'id')->toArray();
         $this->groups = Group::all()->pluck('name', 'id')->toArray();
         $this->customers = Customer::all()->pluck('name', 'id')->toArray();
 
@@ -163,18 +168,36 @@ class CreateSale extends Component
             ->where('no_keep', 'like', '%'.$query.'%')
             ->pluck('no_keep', 'id')
             ->toArray();
-            }
+        }
+    }
+
+    public function searchPreOrder($query)
+    {
+        $this->preOrders = PreOrder::whereNotIn('id', Sale::pluck('pre_order_id'))->pluck('no_pre_order', 'id')->toArray();
+        if ($query) {
+            $this->preOrders = PreOrder::whereNotIn('id', Sale::pluck('pre_order_id'))
+            ->where('no_pre_order', 'like', '%'.$query.'%')
+            ->pluck('no_pre_order', 'id')
+            ->toArray();
+        }
     }
 
     public function updatedProductId()
     {
         $this->productStockList = ProductStock::with('color', 'size')->where('product_id', $this->product_id)->get()->toArray();
         $this->productStockList = collect($this->productStockList)->map(function ($stockItem) {
-            $stockType = $this->group_id == 1 ? 'store_stock' : 'home_stock';
-            if ($this->keep) {
-                $keepProduct = KeepProduct::where('product_stock_id', $stockItem['id'])->where('keep_id', $this->keep_id)->first();
+            $stockType = 'pre_order_stock';
+            if($this->preOrder) {
+                $keepProduct = PreOrderProduct::where('product_stock_id', $stockItem['id'])->where('pre_order_id', $this->pre_order_id)->first();
                 $stockItem['all_stock'] += $keepProduct?->total_items;
                 $stockItem[$stockType] += $keepProduct?->total_items;
+            } else {
+                $stockType = $this->group_id == 1 ? 'store_stock' : 'home_stock';
+                if ($this->keep) {
+                    $keepProduct = KeepProduct::where('product_stock_id', $stockItem['id'])->where('keep_id', $this->keep_id)->first();
+                    $stockItem['all_stock'] += $keepProduct?->total_items;
+                    $stockItem[$stockType] += $keepProduct?->total_items;
+                }
             }
             return $stockItem;
         })->toArray();
@@ -219,6 +242,31 @@ class CreateSale extends Component
         }
     }
 
+    public function updatedPreOrderId()
+    {
+        if($this->pre_order_id) {
+            $this->preOrder = PreOrder::where('id', $this->pre_order_id)->first();
+            $this->group_id = $this->preOrder->customer->group_id;
+            $this->customer_id = $this->preOrder->customer_id;
+            $this->cart = [];
+            $stockType = 'pre_order_stock';
+            foreach ($this->preOrder->preOrderProducts as $preOrderProduct) {
+                $this->cart[$preOrderProduct->product_stock_id] = [
+                    'id' => $preOrderProduct->product_stock_id,
+                    'color' => $preOrderProduct->productStock->color->name,
+                    'size' => $preOrderProduct->productStock->size->name,
+                    'product' => $preOrderProduct->productStock->product->name,
+                    'quantity' => $preOrderProduct->total_items,
+                    'all_stock' => $preOrderProduct->productStock->all_stock + $preOrderProduct->total_items,
+                    $stockType => $preOrderProduct->productStock->$stockType + $preOrderProduct->total_items,
+                    'selling_price' => $preOrderProduct->selling_price,
+                    'total_price' => $preOrderProduct->total_price,
+                ];
+            }
+            $this->getTotalPrice();
+        }
+    }
+
     public function getTotalPrice()
     {
         $this->total_items = array_sum(array_column($this->cart, 'quantity'));
@@ -247,12 +295,15 @@ class CreateSale extends Component
 
     public function addToCart($productStockId)
     {
-        $stockType = $this->group_id == 1 ? 'store_stock' : 'home_stock';
+        $stockType = 'pre_order_stock';
+        if(!$this->preOrder && $this->sale->pre_order_id == null) {
+            $stockType = $this->group_id == 1 ? 'store_stock' : 'home_stock';
+        }
         $productStock = ProductStock::where('id', $productStockId)->first();
         $this->cart[$productStockId]['selling_price'] = $productStock->selling_price;
 
         if(!array_key_exists($stockType, $this->cart[$productStockId])) {
-            $this->cart[$productStockId][$stockType] = ProductStock::where('id', $productStockId)->first()->home_stock;
+            $this->cart[$productStockId][$stockType] = ProductStock::where('id', $productStockId)->first()->$stockType;
             $this->cart[$productStockId]['all_stock'] = ProductStock::where('id', $productStockId)->first()->all_stock;
         }
 
@@ -287,10 +338,18 @@ class CreateSale extends Component
 
     public function addProductStock($productStockId)
     {
-        $stockType = $this->group_id == 1 ? 'store_stock' : 'home_stock';
+        $stockType = "pre_order_stock";
+        if(!$this->preOrder && $this->sale->pre_order_id == null) {
+            $stockType = $this->group_id == 1 ? 'store_stock' : 'home_stock';
+        }
+
         if (!isset($this->cart[$productStockId])) {
             $productStock = ProductStock::where('id', $productStockId)->first();
-            if($this->keep) {
+            if($this->preOrder) {
+                $preOrderProduct = $this->preOrder?->preOrderProducts()->where('product_stock_id', $productStockId)->first();
+                $this->cart[$productStockId]['pre_order_stock'] = $productStock->pre_order_stock + $preOrderProduct?->total_items;
+                $this->cart[$productStockId]['all_stock'] = $productStock->all_stock + $preOrderProduct?->total_items;
+            } elseif($this->keep) {
                 $keepProduct = $this->keep?->keepProducts()->where('product_stock_id', $productStockId)->first();
                 $this->cart[$productStockId]['home_stock'] = $productStock->home_stock + $keepProduct->home_stock;
                 $this->cart[$productStockId]['store_stock'] = $productStock->store_stock + $keepProduct->store_stock;
@@ -298,6 +357,7 @@ class CreateSale extends Component
             } else {
                 $this->cart[$productStockId]['home_stock'] = $productStock->home_stock;
                 $this->cart[$productStockId]['store_stock'] = $productStock->store_stock;
+                $this->cart[$productStockId]['pre_order_stock'] = $productStock->pre_order_stock;
                 $this->cart[$productStockId]['all_stock'] = $productStock->all_stock;
             }
 
@@ -362,11 +422,15 @@ class CreateSale extends Component
     {
         $this->validate();
         $setting = Setting::first();
-        $stockType = $this->group_id == 1 ? 'store_stock' : 'home_stock';
+        $stockType = "pre_order_stock";
+        if(!$this->preOrder && $this->sale->pre_order_id == null) {
+            $stockType = $this->group_id == 1 ? 'store_stock' : 'home_stock';
+        }
         try {
             $sale = Sale::create([
                 'user_id' => Auth::user()->id,
                 'keep_id' => $this->keep != null ? $this->keep->id : null,
+                'pre_order_id' => $this->preOrder != null ? $this->preOrder->id : null,
                 'no_sale' => $setting->sale_code . str_pad($setting->sale_increment + 1, 4, '0', STR_PAD_LEFT),
                 'customer_id' => $this->customer_id,
                 'term_of_payment_id' => $this->term_of_payment_id,
@@ -390,18 +454,32 @@ class CreateSale extends Component
                     'price' => $productStock['selling_price'],
                     'total_price' => $productStock['total_price']
                 ]);
-                if($this->keep == null) {
+                if($this->keep == null && $this->preOrder == null) {
                     $saleItem->productStock->update([
                         $stockType => $saleItem->productStock->$stockType - $productStock['quantity'],
                         'all_stock' => $saleItem->productStock->all_stock - $productStock['quantity'],
                     ]);
-                } else {
+                } elseif($this->keep) {
                     $keepProduct = $this->keep->keepProducts->where('product_stock_id', $saleItem->product_stock_id)->first();
                     if($keepProduct != null) {
                         $additionalStock = $keepProduct->total_items - $saleItem->total_items;
                         $keepProduct->productStock->update([
                             $stockType => $keepProduct->productStock->$stockType + $additionalStock,
                             'all_stock' => $keepProduct->productStock->all_stock + $additionalStock,
+                        ]);
+                    } else {
+                        $saleItem->productStock->update([
+                            $stockType => $saleItem->productStock->$stockType - $saleItem->total_items,
+                            'all_stock' => $saleItem->productStock->all_stock - $saleItem->total_items,
+                        ]);
+                    }
+                } elseif($this->preOrder) {
+                    $preOrderProduct = $this->preOrder->preOrderProducts->where('product_stock_id', $saleItem->product_stock_id)->first();
+                    if($preOrderProduct != null) {
+                        $additionalStock = $preOrderProduct->total_items - $saleItem->total_items;
+                        $preOrderProduct->productStock->update([
+                            $stockType => $preOrderProduct->productStock->$stockType + $additionalStock,
+                            'all_stock' => $preOrderProduct->productStock->all_stock + $additionalStock,
                         ]);
                     } else {
                         $saleItem->productStock->update([
@@ -421,6 +499,16 @@ class CreateSale extends Component
                     $keepNotSale->productStock->update([
                         $stockType => $keepNotSale->productStock->$stockType + $keepNotSale->total_items,
                         'all_stock' => $keepNotSale->productStock->all_stock + $keepNotSale->total_items
+                    ]);
+                }
+            }
+
+            if($this->preOrder != null) {
+                $preOrderNotSales = $this->preOrder->preOrderProducts->whereNotIn('product_stock_id', $sale->saleItems->pluck('product_stock_id')->toArray());
+                foreach ($preOrderNotSales as $preOrderNotSale) {
+                    $preOrderNotSale->productStock->update([
+                        $stockType => $preOrderNotSale->productStock->$stockType + $preOrderNotSale->total_items,
+                        'all_stock' => $preOrderNotSale->productStock->all_stock + $preOrderNotSale->total_items
                     ]);
                 }
             }
@@ -448,6 +536,7 @@ class CreateSale extends Component
             $this->alert('success', 'Sale Succesfully Created');
             return redirect()->route('sale');
         } catch (\Throwable $th) {
+            dd($th);
             $this->alert('error', $th->getMessage());
         }
     }
@@ -460,6 +549,11 @@ class CreateSale extends Component
         $this->customer_id = $this->sale->customer_id;
         $this->term_of_payment_id = $this->sale->term_of_payment_id;
 
+        $stockType = "pre_order_stock";
+        if(!$this->preOrder && $this->sale->pre_order_id == null) {
+            $stockType = $this->group_id == 1 ? 'store_stock' : 'home_stock';
+        }
+
         foreach ($this->sale->saleItems as $product) {
             $this->cart[$product->product_stock_id] = [
                 'id' => $product->product_stock_id,
@@ -468,8 +562,7 @@ class CreateSale extends Component
                 'product' => $product->productStock->product->name,
                 'quantity' => $product->total_items,
                 'all_stock' => $product->productStock->all_stock + $product->total_items,
-                'store_stock' => $product->productStock->store_stock + ($this->group_id == 1 ?  $product->total_items : 0),
-                'home_stock' => $product->productStock->home_stock + ($this->group_id == 2 ?  $product->total_items : 0),
+                $stockType => $product->productStock->store_stock + $product->total_items,
                 'selling_price' => $product->price,
                 'total_price' => $product->total_price
             ];
@@ -496,7 +589,6 @@ class CreateSale extends Component
         $this->validate();
         $this->sale->update([
             'user_id' => Auth::user()->id,
-            'keep_id' => $this->keep != null ? $this->keep->id : null,
             'customer_id' => $this->customer_id,
             'term_of_payment_id' => $this->term_of_payment_id,
             'discount_type' => $this->discount_type ?? null,
@@ -511,7 +603,11 @@ class CreateSale extends Component
             'desc' => $this->desc,
         ]);
 
-        $stockType = $this->group_id == 1 ? 'store_stock' : 'home_stock';
+        $stockType = "pre_order_stock";
+        if(!$this->preOrder && $this->sale->pre_order_id == null) {
+            $stockType = $this->group_id == 1 ? 'store_stock' : 'home_stock';
+        }
+
         foreach ($this->sale->saleItems as $saleItem) {
             $stock = ProductStock::where('id', $saleItem->product_stock_id)->first();
             $stock->update([
@@ -530,7 +626,7 @@ class CreateSale extends Component
                 'total_price' => $productStock['total_price']
             ]);
 
-            if($this->keep == null) {
+            if($this->keep == null && $this->preOrder == null) {
                 $stock = ProductStock::where('id', $saleItem->product_stock_id)->first();
                 $stock->update([
                     $stockType => $stock->$stockType - $productStock['quantity'],
@@ -551,6 +647,7 @@ class CreateSale extends Component
     {
         $this->sale = null;
         $this->keep = null;
+        $this->preOrder = null;
         $this->cart = null;
         $this->customer_id = null;
         $this->group_id = null;

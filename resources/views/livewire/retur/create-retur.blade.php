@@ -6,7 +6,7 @@
     </x-modal>
     <div class="card">
         <div class="card-header">
-            <h4 class="card-title">No Keep :
+            <h4 class="card-title">No Retur :
                 <span class="font-bold text-success">{{ $no_retur }}</span>
             </h4>
         </div>
@@ -16,6 +16,22 @@
                     <x-input-select-search id="sale_id" name="sale_id" title="Sale Code" placeholder="Type Sale Code" :options="$sales" searchFunction="searchSales" />
                     <x-input-select id="status" name="status" title="Status" :options="App\Enums\ReturStatus::asSelectArray()" />
                 </div>
+                @if ($sale || $retur)
+                    <div class="grid gap-2 mt-4 lg:grid-cols-2 md:grid-cols-2">
+                        <table class="min-w-full">
+                            <tbody>
+                                <tr>
+                                    <td class="font-normal text-md text-start">Customer :</td>
+                                    <td class="font-normal text-md text-start">Group :</td>
+                                </tr>
+                                <tr>
+                                    <td class="font-bold text-md text-start">{{ $customer_name }}</td>
+                                    <td class="font-bold text-md text-start">{{ $group_name }}</td>
+                                </tr>
+                            </tbody>
+                        </table>
+                    </div>
+                @endif
                 <div class="mt-4">
                     <x-textarea-input id="desc" name="desc" title="Alasan Retur" />
                 </div>
@@ -108,7 +124,7 @@
                                             </div>
                                         @else
                                             <button class="h-8 px-4 py-1 text-sm rounded-md bg-danger/25 text-danger hover:bg-danger hover:text-white font-md"
-                                            wire:click="retur({{ $saleItem['id'] }})">Retur</button>
+                                            wire:click="returProduct({{ $saleItem['id'] }})">Return</button>
                                         @endif
                                     </td>
                                 </tr>
@@ -130,9 +146,9 @@
                 @if ($isEdit)
                     <button class="gap-1 text-white btn bg-primary" wire:click="update">
                         <i class="ri-save-line"></i>
-                        Update Keep</button>
+                        Update</button>
                 @else
-                    <button class="gap-1 btn bg-danger/20 text-danger" wire:click="resetKeep()">
+                    <button class="gap-1 btn bg-danger/20 text-danger" wire:click="resetRetur()">
                         <i class="ri-refresh-line"></i>
                         Reset
                     </button>

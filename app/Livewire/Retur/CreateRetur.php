@@ -26,8 +26,11 @@ class CreateRetur extends Component
     #[Rule(['required'])]
     public $sale_id;
     public $sales, $sale, $isEdit, $sales_ids;
+
+    public $customer_name, $group_name;
     public $no_retur;
-    public $status, $item_status;
+    public $status = ReturStatus::BACK_TO_STOCK, $item_status;
+    public $retur;
 
     public $desc;
     public $saleItems = [], $returItems = [], $total_items, $total_price, $returItem;
@@ -48,7 +51,14 @@ class CreateRetur extends Component
         $this->sales_ids = Retur::get()->pluck('sale_id')->toArray();
         $this->sales = Sale::whereNotIn('id', $this->sales_ids)->pluck('no_sale', 'id')->toArray();
         if($retur) {
-
+            $this->retur = Retur::where('id', $retur)->first();
+            if($this->retur) {
+                $this->no_retur = $this->retur->no_retur;
+                $this->edit();
+                $this->getTotalPrice();
+            } else {
+                return redirect()->route('retur')->with('error', 'Keep Order Not Found');
+            }
         } else {
             $setting = Setting::first();
             $this->no_retur = $setting->retur_code . str_pad($setting->retur_increment + 1, 4, '0', STR_PAD_LEFT);
@@ -84,6 +94,8 @@ class CreateRetur extends Component
     {
         $this->saleItems = [];
         $this->sale = Sale::where('id', $this->sale_id)->first();
+        $this->customer_name = $this->sale->customer->name;
+        $this->group_name = $this->sale->customer->group->name;
         foreach ($this->sale->saleItems as $saleItem) {
             $this->saleItems[$saleItem->product_stock_id] = [
                 'id' => $saleItem->product_stock_id,
@@ -104,7 +116,7 @@ class CreateRetur extends Component
         $this->total_price = array_sum(array_column($this->returItems, 'total_price'));
     }
 
-    public function retur($product_stock_id)
+    public function returProduct($product_stock_id)
     {
         $this->returItems[$product_stock_id] = [
             'id' => $product_stock_id,
@@ -222,6 +234,73 @@ class CreateRetur extends Component
             $this->createReturProduct($retur->id);
             $this->reset();
             $this->alert('success', 'Retur Succesfully Created');
+            return redirect()->route('retur');
+        } catch (\Throwable $th) {
+            $this->alert('warning', $th->getMessage());
+        }
+    }
+
+    public function edit()
+    {
+        $this->isEdit = true;
+        $this->group_name = $this->retur->sale->customer->group->name;
+        $this->customer_name = $this->retur->sale->customer->name;
+        $this->sale_id = $this->retur->sale_id;
+        $this->status = strtolower($this->retur->status);
+        foreach ($this->retur->returItems as $returItem) {
+            $this->returItems[$returItem->product_stock_id] = [
+                'id' => $returItem->product_stock_id,
+                'color' => $returItem->productStock->color->name,
+                'size' => $returItem->productStock->size->name,
+                'product' => $returItem->productStock->product->name,
+                'total_items' => $returItem->total_items,
+                'price' => $returItem->price,
+                'total_price' => $returItem->total_price,
+                'item_status' => strtolower($returItem->status)
+            ];
+        }
+
+        foreach ($this->retur->sale->saleItems as $saleItem) {
+            $this->saleItems[$saleItem->product_stock_id] = [
+                'id' => $saleItem->product_stock_id,
+                'color' => $saleItem->productStock->color->name,
+                'size' => $saleItem->productStock->size->name,
+                'product' => $saleItem->productStock->product->name,
+                'total_items' => $saleItem->total_items,
+                'price' => $saleItem->price,
+                'total_price' => $saleItem->total_price,
+            ];
+        }
+    }
+
+    public function update()
+    {
+        $this->validate();
+        $setting = Setting::first();
+        try {
+            $this->retur->update([
+                'status' => strtolower($this->status),
+                'sale_id' => $this->sale_id,
+                'user_id' => Auth::user()->id,
+                'no_retur' => $this->no_retur,
+                'total_price' => $this->total_price,
+                'total_items' => $this->total_items,
+                'desc' => $this->desc,
+            ]);
+
+            foreach ($this->retur->returItems as $returItem) {
+                $stockType = $this->retur->sale->customer->group_id == 1 ? 'store_stock' : 'home_stock';
+                $productStock = ProductStock::where('id', $returItem->product_stock_id)->first();
+                $productStock->update([
+                    $stockType => $productStock->$stockType - $returItem->total_items,
+                    'all_stock' => $productStock->all_stock - $returItem->total_items
+                ]);
+                $returItem->delete();
+            }
+
+            $this->createReturProduct($this->retur->id);
+            $this->reset();
+            $this->alert('success', 'Retur Succesfully Updated');
             return redirect()->route('retur');
         } catch (\Throwable $th) {
             $this->alert('warning', $th->getMessage());

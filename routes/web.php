@@ -87,8 +87,9 @@ Route::middleware([
     Route::get('/withdrawal', Withdrawal::class)->name('withdrawal');
 
     //retur
-    Route::get('/return', ListRetur::class)->name('retur');
-    Route::get('/create-return', CreateRetur::class)->name('create-retur');
+    Route::get('/retur', ListRetur::class)->name('retur');
+    Route::get('/create-retur', CreateRetur::class)->name('create-retur');
+    Route::get('/create-retur/{retur?}', CreateRetur::class)->name('create-retur');
 
     //discount
     Route::get('/discount', Discount::class)->name('discount');

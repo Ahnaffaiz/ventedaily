@@ -13,6 +13,7 @@ return new class extends Migration
     {
         Schema::create('retur_items', function (Blueprint $table) {
             $table->id();
+            $table->foreignId('retur_id')->constrained('returs')->onDelete('cascade');
             $table->foreignId('product_stock_id')->constrained('product_stocks')->onDelete('cascade');
             $table->enum('status', ['vermak', 'grade b']);
             $table->integer('total_items');

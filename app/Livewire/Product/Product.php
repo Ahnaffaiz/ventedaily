@@ -19,7 +19,7 @@ use Livewire\Component;
 use Livewire\WithFileUploads;
 use Livewire\WithoutUrlPagination;
 use Livewire\WithPagination;
-use Str;
+use Illuminate\Support\Str;
 
 class Product extends Component
 {
@@ -310,6 +310,13 @@ class Product extends Component
         } elseif ($this->stockTo == $this->stockFrom && $this->stockTo == 'pre_order_stock') {
             $this->stockFrom = 'home_stock';
         }
+    }
+
+    public function generateImei()
+    {
+        do {
+            $this->imei = Str::random(20);
+        } while (ModelsProduct::where('imei', $this->imei)->exists());
     }
 
     public function saveStock()

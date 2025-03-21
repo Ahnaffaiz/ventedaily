@@ -2,6 +2,7 @@
     <x-modal wire:model="isOpen" title="Detail Keep" closeButton="closeModal" large="true">
         @include('livewire.keep.detail-keep')
     </x-modal>
+    @include('livewire.keep.statistic')
     <div class="relative mt-4 overflow-hidden bg-white shadow-md dark:bg-gray-800 sm:rounded-lg">
         <div class="flex items-center justify-between p-4 d">
             <div class="flex">

@@ -53,7 +53,18 @@
                         <img src="{{ Storage::url($current_image) }}" alt="" class="rounded w-[100%] h-[100%]">
                     @endif
                 </div>
-                <x-input-text name="imei" id="imei" title="Barcode Imei" placeholder="Input Imei Barcode Here" />
+                <div class="relative ms-auto">
+                    <button type="button" wire:click="generateImei" class="absolute z-10 text-base -translate-y-1/2 text-primary end-2 top-1/2">
+                        <i class="ri-refresh-line" wire:loading.remove wire:target="generateImei"></i>
+                        <div wire:loading wire:target="generateImei" class="animate-spin w-4 h-4 border-[3px] border-current border-t-transparent text-primary rounded-full" role="status" aria-label="loading">
+                            <span class="sr-only">Loading...</span>
+                        </div>
+                    </button>
+                    <input type="text" id="imei" class="pe-8 relative form-input {{ $errors->first('imei') ? 'border-2 border-danger' : '' }}" wire:model.live="imei" placeholder="Input Imei">
+                </div>
+                @error('imei')
+                    <span class="font-normal is-invalid text-danger text-small" id="is-invalid">{{ $message }}</span>
+                @enderror
                 <x-input-select id="category_id" name="category_id" title="Category" placeholder="Select Category"
                     :options="App\Models\Category::all()->pluck('name', 'id')->toArray()" />
                 <x-input-select id="status" name="status" title="Product Status"

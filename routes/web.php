@@ -4,12 +4,14 @@ use App\Livewire\Customer\Customer;
 use App\Livewire\Customer\Group;
 use App\Livewire\Dashboard;
 use App\Livewire\Discount;
+use App\Livewire\Expense;
 use App\Livewire\Keep\CreateKeep;
 use App\Livewire\Keep\ListKeep;
 use App\Livewire\PreOrder\CreatePreOrder;
 use App\Livewire\PreOrder\ListPreOrder;
 use App\Livewire\Product\Category;
 use App\Livewire\Product\Color;
+use App\Livewire\Cost;
 use App\Livewire\Product\CreateProduct;
 use App\Livewire\Product\CreateTransferProductStock;
 use App\Livewire\Product\Product;
@@ -34,7 +36,7 @@ use Illuminate\Support\Facades\Route;
 use Illuminate\Support\Facades\Session;
 
 Route::get('/', function () {
-    return view('welcome');
+    return redirect('/login');
 });
 
 Route::middleware([
@@ -104,6 +106,10 @@ Route::middleware([
 
     //discount
     Route::get('/discount', Discount::class)->name('discount');
+
+    //Cost and Expense
+    Route::get('/cost', Cost::class)->name('cost');
+    Route::get('/expense', Expense::class)->name('expense');
 
     //settings
     Route::get('/settings', Setting::class)->name('settings');

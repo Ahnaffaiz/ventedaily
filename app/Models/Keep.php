@@ -37,4 +37,46 @@ class Keep extends Model
     {
         return $this->hasOne(Sale::class);
     }
+
+    public static function allTotalItems()
+    {
+        return self::where('status', KeepStatus::ACTIVE)->sum('total_items');
+    }
+
+    public static function onlineTotalItems()
+    {
+        return self::whereHas('customer', function($query) {
+            return $query->where('group_id', 2);
+        })->where('status', KeepStatus::ACTIVE)
+        ->sum('total_items');
+    }
+
+    public static function resellerTotalItems()
+    {
+        return self::whereHas('customer', function($query) {
+            return $query->where('group_id', 1);
+        })->where('status', KeepStatus::ACTIVE)
+        ->sum('total_items');
+    }
+
+    public static function allTotalPrice()
+    {
+        return self::where('status', KeepStatus::ACTIVE)->sum('total_price');
+    }
+
+    public static function onlineTotalPrice()
+    {
+        return self::whereHas('customer', function($query) {
+            return $query->where('group_id', 2);
+        })->where('status', KeepStatus::ACTIVE)
+        ->sum('total_price');
+    }
+
+    public static function resellerTotalPrice()
+    {
+        return self::whereHas('customer', function($query) {
+            return $query->where('group_id', 1);
+        })->where('status', KeepStatus::ACTIVE)
+        ->sum('total_price');
+    }
 }

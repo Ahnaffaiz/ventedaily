@@ -11,30 +11,7 @@
     <!--- Menu -->
     <div class="scrollbar" data-simplebar>
         <ul class="menu" data-fc-type="accordion">
-            <li class="menu-title">Navigation</li>
-
-            <li class="menu-item">
-                <a href="javascript:void(0)" data-fc-type="collapse" class="menu-link">
-                    <span class="menu-icon">
-                        <i class="ri-home-4-line"></i>
-                    </span>
-                    <span class="menu-text"> Dashboard </span>
-                    <span class="rounded-full badge bg-success">2</span>
-                </a>
-
-                <ul class="hidden sub-menu">
-                    <li class="menu-item">
-                        <a href="dashboard-analytics.html" class="menu-link">
-                            <span class="menu-text">Analytics</span>
-                        </a>
-                    </li>
-                    <li class="menu-item">
-                        <a href="index.html" class="menu-link">
-                            <span class="menu-text">Ecommerce</span>
-                        </a>
-                    </li>
-                </ul>
-            </li>
+            <x-menu-item activeRoute="dashboard" text="Dashboard" iconClass="ri-home-3-line" />
 
             <li class="menu-title">Sales</li>
 
@@ -218,6 +195,11 @@
             {{-- end of Retur --}}
 
             <x-menu-item activeRoute="supplier" text="Supplier" iconClass="ri-user-line" />
+
+            <li class="menu-title">Finance</li>
+
+            <x-menu-item activeRoute="cost" text="Cost" iconClass="ri-money-dollar-box-line" />
+            <x-menu-item activeRoute="expense" text="Expense" iconClass="ri-bank-line" />
 
             <li class="menu-title">Master</li>
 

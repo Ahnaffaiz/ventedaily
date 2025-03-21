@@ -21,6 +21,9 @@ class ListKeep extends Component
     public $isOpen = false;
     public $keep;
     public $query = '', $perPage = 10, $sortBy = 'no_keep', $sortDirection = 'desc', $groupIds, $groupId = '', $status = KeepStatus::ACTIVE;
+
+    public $online_keep_products, $reseller_keep_products, $all_keep_products;
+    public $online_keep_price, $reseller_keep_price, $all_keep_price;
     public $total_price;
     public $showColumns = [
         'group' => true,
@@ -66,6 +69,14 @@ class ListKeep extends Component
     }
     public function render()
     {
+        //statistic
+        $this->all_keep_products = Keep::allTotalItems();
+        $this->online_keep_products = Keep::onlineTotalItems();
+        $this->reseller_keep_products = Keep::resellerTotalItems();
+        $this->all_keep_price = Keep::allTotalPrice();
+        $this->online_keep_price = Keep::onlineTotalPrice();
+        $this->reseller_keep_price = Keep::resellerTotalPrice();
+
         return view('livewire.keep.list-keep', [
             'keeps' => Keep::select('keeps.*')
                 ->join('customers', 'keeps.customer_id', '=', 'customers.id')

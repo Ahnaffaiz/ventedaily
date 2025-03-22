@@ -14,7 +14,7 @@ return new class extends Migration {
             $table->longText('desc')->nullable();
             $table->integer('amount');
             $table->integer('qty');
-            $table->integer('uom');
+            $table->string('uom', 25);
             $table->integer('total_amount');
             $table->timestamps();
         });

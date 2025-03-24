@@ -3,6 +3,7 @@
 namespace App\Livewire\Purchase;
 
 use App\Enums\DiscountType;
+use App\Exports\PurchaseExport;
 use App\Exports\PurchaseProductExport;
 use App\Models\Purchase;
 use Carbon\Carbon;
@@ -26,7 +27,7 @@ class ListPurchase extends Component
     public $query = '', $perPage = 10, $sortBy = 'name', $sortDirection = 'asc';
 
     #[Rule('required')]
-    public $start_date, $end_date;
+    public $start_date, $end_date, $exportType = 'product';
     public $showColumns = [
         'supplier_id' => true,
         'term_of_payment_id' => true,
@@ -156,23 +157,20 @@ class ListPurchase extends Component
         $this->isOpen = true;
     }
 
-    public function exportProductPurchaseExcel()
+    public function exportExcel()
     {
-        $this->validate();
-        $name = "Data Pembelian Product Tanggal " . Carbon::parse($this->start_date)->translatedFormat('d F Y') ." - ". Carbon::parse($this->end_date)->translatedFormat('d F Y') .".xlsx";
-        return Excel::download(new PurchaseProductExport($this->start_date, $this->end_date), $name);
-    }
-
-    public function exportProductPurchasePdf()
-    {
-        $this->validate();
-        $name = "Data Pembelian Product Tanggal " . Carbon::parse($this->start_date)->translatedFormat('d F Y') ." - ". Carbon::parse($this->end_date)->translatedFormat('d F Y') .".pdf";
-        return Excel::download(new PurchaseProductExport($this->start_date, $this->end_date), $name, \Maatwebsite\Excel\Excel::DOMPDF);
-    }
-
-    public function printReport()
-    {
-        $this->dispatch('print-report');
+        if($this->exportType == 'product') {
+            $this->validate();
+            $name = "Data Pembelian Product Tanggal " . Carbon::parse($this->start_date)->translatedFormat('d F Y') ." - ". Carbon::parse($this->end_date)->translatedFormat('d F Y') .".xlsx";
+            return Excel::download(new PurchaseProductExport($this->start_date, $this->end_date), $name);
+        } elseif($this->exportType == 'purchase') {
+            $this->validate();
+            $name = "Data Pembelian Tanggal " . Carbon::parse($this->start_date)->translatedFormat('d F Y') ." - ". Carbon::parse($this->end_date)->translatedFormat('d F Y') .".xlsx";
+            return Excel::download(new PurchaseExport($this->start_date, $this->end_date), $name);
+        }
+        $this->start_date = null;
+        $this->end_date = null;
+        $this->exportType = 'product';
     }
 
 }

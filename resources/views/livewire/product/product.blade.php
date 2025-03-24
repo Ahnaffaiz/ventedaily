@@ -244,6 +244,16 @@
         </div>
 
         <div class="px-3 py-4">
+            <div class="flex justify-start mb-6">
+                <div class="flex gap-2 pe-4">
+                    <div class="p-2 rounded-full bg-warning"></div>
+                    <span>Product In Pre Keep</span>
+                </div>
+                <div class="flex gap-2">
+                    <div class="p-2 rounded-full bg-danger"></div>
+                    <span>Product In Pre Order</span>
+                </div>
+            </div>
             <div class="flex justify-between">
                 <div class="flex items-center">
                     <label class="w-32 text-sm font-medium text-gray-900">Per Page</label>

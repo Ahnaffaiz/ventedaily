@@ -221,7 +221,7 @@
                                         @endif
                                         @if ($showColumns['tax'])
                                             <td class="px-4 py-4 text-sm text-gray-500 whitespace-nowrap dark:text-gray-200">
-                                                Rp. {{ $purchase->tax / 100 * ($purchase->sub_total - $discount)}}
+                                                Rp. {{ number_format($purchase->tax / 100 * ($purchase->sub_total - $discount), 0, ',', '.') }}
                                             </td>
                                         @endif
                                         @if ($showColumns['total_price'])

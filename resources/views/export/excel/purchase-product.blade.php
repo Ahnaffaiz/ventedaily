@@ -26,6 +26,7 @@
         <tr>
             <th width="20px"></th>
             <th style="border: 1px solid black; text-align:center">No</th>
+            <th style="border: 1px solid black; text-align:center">Date</th>
             <th style="border: 1px solid black; text-align:center">Name</th>
             <th style="border: 1px solid black; text-align:center">Color</th>
             <th style="border: 1px solid black; text-align:center">Size</th>
@@ -36,10 +37,11 @@
         @foreach ($products as $product)
             <tr>
                 <td width="20px"></td>
-                <td style="border: 1px solid black; text-align: center;margin:20px; padding: 20px;">{{ $loop->iteration }}</td>
-                <td style="border: 1px solid black">{{ $product['product_name'] }}</td>
-                <td style="border: 1px solid black">{{ $product['color'] }}</td>
-                <td style="border: 1px solid black">{{ $product['size'] }}</td>
+                <td style="border: 1px solid black; text-align: center;">{{ $loop->iteration }}</td>
+                <td style="border: 1px solid black; width: 100px;">{{ $product['date'] }}</td>
+                <td style="border: 1px solid black; width: 150px;">{{ $product['product_name'] }}</td>
+                <td style="border: 1px solid black; width: 120px;">{{ $product['color'] }}</td>
+                <td style="border: 1px solid black; width: 80px;">{{ $product['size'] }}</td>
                 <td style="border: 1px solid black; text-align: center;">{{ $product['qty'] }}</td>
             </tr>
         @endforeach

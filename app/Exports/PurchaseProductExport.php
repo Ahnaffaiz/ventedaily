@@ -19,6 +19,8 @@ class PurchaseProductExport implements FromView
         $this->setting = Setting::first();
         $this->start_date = Carbon::parse($start_date)->format('d/m/Y');
         $this->end_date = Carbon::parse($end_date)->format('d/m/Y');
+        $start_date = Carbon::parse($start_date)->startOfDay();
+        $end_date = Carbon::parse($end_date)->endOfDay();
         $purchases = Purchase::whereBetween('created_at', [$start_date, $end_date])->get();
         $this->purchaseItems = PurchaseItem::whereIn('purchase_id', $purchases->pluck('id'))
             ->with([
@@ -28,9 +30,11 @@ class PurchaseProductExport implements FromView
             ])
             ->get()
             ->groupBy('product_stock_id')
-            ->map(function ($items) {
+            ->map(function ($items) use ($purchases) {
+                $purchase = $purchases->firstWhere('id', $items->first()->purchase_id);
                 return [
                     'product_stock_id' => $items->first()->product_stock_id,
+                    'date' => Carbon::parse(optional($purchase)->created_at)->format('d/m/Y'),
                     'product_name' => $items->first()->productStock->product->name,
                     'color' => $items->first()->productStock->color->name,
                     'size' => $items->first()->productStock->size->name,

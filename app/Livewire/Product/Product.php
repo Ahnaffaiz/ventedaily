@@ -4,6 +4,7 @@ namespace App\Livewire\Product;
 
 use App\Enums\KeepStatus;
 use App\Enums\ProductStatus;
+use App\Exports\TransferStockExport;
 use App\Models\Category;
 use App\Models\KeepProduct;
 use App\Models\Product as ModelsProduct;
@@ -20,6 +21,7 @@ use Livewire\WithFileUploads;
 use Livewire\WithoutUrlPagination;
 use Livewire\WithPagination;
 use Illuminate\Support\Str;
+use Maatwebsite\Excel\Facades\Excel;
 
 class Product extends Component
 {
@@ -354,5 +356,12 @@ class Product extends Component
             $this->isOpen = false;
         }
 
+    }
+
+    public function exportTransferProduct($transferTo)
+    {
+        $tranfer = $transferTo == 'store' ? ' Toko ' : ' Rumah ';
+        $name = "Tranfser Produk Ke " . $tranfer . Carbon::now()->format('d F Y')  .".xlsx";
+        return Excel::download(new TransferStockExport($transferTo), $name);
     }
 }

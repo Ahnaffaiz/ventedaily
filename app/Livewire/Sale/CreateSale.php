@@ -296,7 +296,7 @@ class CreateSale extends Component
     public function addToCart($productStockId)
     {
         $stockType = 'pre_order_stock';
-        if(!$this->preOrder && $this->sale->pre_order_id == null) {
+        if(!$this->preOrder && $this->sale?->pre_order_id == null) {
             $stockType = $this->group_id == 1 ? 'store_stock' : 'home_stock';
         }
         $productStock = ProductStock::where('id', $productStockId)->first();
@@ -339,7 +339,7 @@ class CreateSale extends Component
     public function addProductStock($productStockId)
     {
         $stockType = "pre_order_stock";
-        if(!$this->preOrder && $this->sale->pre_order_id == null) {
+        if(!$this->preOrder && $this->sale?->pre_order_id == null) {
             $stockType = $this->group_id == 1 ? 'store_stock' : 'home_stock';
         }
 
@@ -423,7 +423,7 @@ class CreateSale extends Component
         $this->validate();
         $setting = Setting::first();
         $stockType = "pre_order_stock";
-        if(!$this->preOrder && $this->sale->pre_order_id == null) {
+        if(!$this->preOrder && $this->sale?->pre_order_id == null) {
             $stockType = $this->group_id == 1 ? 'store_stock' : 'home_stock';
         }
         try {
@@ -550,7 +550,7 @@ class CreateSale extends Component
         $this->term_of_payment_id = $this->sale->term_of_payment_id;
 
         $stockType = "pre_order_stock";
-        if(!$this->preOrder && $this->sale->pre_order_id == null) {
+        if(!$this->preOrder && $this->sale?->pre_order_id == null) {
             $stockType = $this->group_id == 1 ? 'store_stock' : 'home_stock';
         }
 
@@ -604,7 +604,7 @@ class CreateSale extends Component
         ]);
 
         $stockType = "pre_order_stock";
-        if(!$this->preOrder && $this->sale->pre_order_id == null) {
+        if(!$this->preOrder && $this->sale?->pre_order_id == null) {
             $stockType = $this->group_id == 1 ? 'store_stock' : 'home_stock';
         }
 

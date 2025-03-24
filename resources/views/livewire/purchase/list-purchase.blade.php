@@ -1,18 +1,22 @@
 <div>
-    <x-modal wire:model="isOpen" title="Purchase Payment" closeButton="closeModal" large="true">
+    <x-modal wire:model="isOpen" title="Purchase" closeButton="closeModal" large="true">
         @if ($isPayment)
             @livewire('purchase.purchase-payment', ['purchase' => $purchase], key($purchase->id))
+        @elseif($isExport)
+            @include('livewire.purchase.export')
         @else
             @include('livewire.purchase.detail-purchase')
         @endif
     </x-modal>
     <div class="relative mt-4 overflow-hidden bg-white shadow-md dark:bg-gray-800 sm:rounded-lg">
-        <div class="flex items-center justify-between p-4 d">
+        <div class="flex items-center justify-between p-4">
             <div class="flex">
                 <div class="relative w-full">
-                    <a class="text-white btn bg-primary" wire:navigate href="{{ route('create-purchase') }}"
-                        type="button">
-                        Create </a>
+                    <a class="text-white btn bg-primary" wire:navigate href="{{ route('create-purchase') }}" type="button"> Create </a>
+                    <button type="button" class="inline text-white btn bg-success gaps-2" wire:click="openModalExport" type="button">
+                        <i class="ri-file-download-line"></i>
+                        Export
+                    </button>
                 </div>
             </div>
             <div class="flex justify-end mb-4">
@@ -287,4 +291,19 @@
             </div>
         </div>
     </div>
+
 </div>
+
+@script
+    <script>
+        window.addEventListener('print-report', event => {
+            var printContent = document.getElementById("printableArea").innerHTML;
+            var originalContent = document.body.innerHTML;
+
+            document.body.innerHTML = printContent;
+            window.print();
+            document.body.innerHTML = originalContent;
+            location.reload();
+        });
+    </script>
+@endscript

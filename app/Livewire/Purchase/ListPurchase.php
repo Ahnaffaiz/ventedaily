@@ -3,14 +3,18 @@
 namespace App\Livewire\Purchase;
 
 use App\Enums\DiscountType;
+use App\Exports\PurchaseProductExport;
 use App\Models\Purchase;
+use Carbon\Carbon;
 use Exception;
 use Illuminate\Support\Facades\DB;
 use Jantinnerezo\LivewireAlert\LivewireAlert;
+use Livewire\Attributes\Rule;
 use Livewire\Attributes\Title;
 use Livewire\Component;
 use Livewire\WithoutUrlPagination;
 use Livewire\WithPagination;
+use Maatwebsite\Excel\Facades\Excel;
 
 class ListPurchase extends Component
 {
@@ -18,8 +22,11 @@ class ListPurchase extends Component
     use WithPagination, WithoutUrlPagination;
 
     public $purchase, $sub_total_after_discount;
-    public $isOpen = false, $isPayment = false;
+    public $isOpen = false, $isPayment = false, $isExport = false;
     public $query = '', $perPage = 10, $sortBy = 'name', $sortDirection = 'asc';
+
+    #[Rule('required')]
+    public $start_date, $end_date;
     public $showColumns = [
         'supplier_id' => true,
         'term_of_payment_id' => true,
@@ -142,4 +149,30 @@ class ListPurchase extends Component
             $this->alert('error', 'Tidak dapat menghapus data');
         }
     }
+
+    public function openModalExport()
+    {
+        $this->isExport = true;
+        $this->isOpen = true;
+    }
+
+    public function exportProductPurchaseExcel()
+    {
+        $this->validate();
+        $name = "Data Pembelian Product Tanggal " . Carbon::parse($this->start_date)->translatedFormat('d F Y') ." - ". Carbon::parse($this->end_date)->translatedFormat('d F Y') .".xlsx";
+        return Excel::download(new PurchaseProductExport($this->start_date, $this->end_date), $name);
+    }
+
+    public function exportProductPurchasePdf()
+    {
+        $this->validate();
+        $name = "Data Pembelian Product Tanggal " . Carbon::parse($this->start_date)->translatedFormat('d F Y') ." - ". Carbon::parse($this->end_date)->translatedFormat('d F Y') .".pdf";
+        return Excel::download(new PurchaseProductExport($this->start_date, $this->end_date), $name, \Maatwebsite\Excel\Excel::DOMPDF);
+    }
+
+    public function printReport()
+    {
+        $this->dispatch('print-report');
+    }
+
 }

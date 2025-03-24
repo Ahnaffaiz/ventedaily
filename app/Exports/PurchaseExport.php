@@ -54,6 +54,7 @@ class PurchaseExport implements FromView
             'sub_total' => $this->sub_total,
             'total_price' => $this->total_price,
             'total_discount' => $this->total_discount,
+            'total_ship' => $this->total_ship,
             'total_tax' => $this->total_tax,
             'total_payment' => $this->total_payment,
             'total_out_balance' => $this->total_out_balance,

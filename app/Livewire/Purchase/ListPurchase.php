@@ -6,6 +6,7 @@ use App\Enums\DiscountType;
 use App\Exports\PurchaseExport;
 use App\Exports\PurchaseProductExport;
 use App\Models\Purchase;
+use App\Models\Supplier;
 use Carbon\Carbon;
 use Exception;
 use Illuminate\Support\Facades\DB;
@@ -28,6 +29,7 @@ class ListPurchase extends Component
 
     #[Rule('required')]
     public $start_date, $end_date, $exportType = 'product';
+    public $supplier_id, $suppliers;
     public $showColumns = [
         'supplier_id' => true,
         'term_of_payment_id' => true,
@@ -153,8 +155,19 @@ class ListPurchase extends Component
 
     public function openModalExport()
     {
+        $this->suppliers = Supplier::all()->pluck('name', 'id')->toArray();
         $this->isExport = true;
         $this->isOpen = true;
+    }
+
+    public function searchSupplier($query)
+    {
+        $this->suppliers = Supplier::all()->pluck('name', 'id')->toArray();
+        if ($query) {
+            $this->suppliers = Supplier::where('name', 'like', '%'.$query.'%')
+            ->pluck('name', 'id')
+            ->toArray();
+        }
     }
 
     public function exportExcel()
@@ -166,7 +179,11 @@ class ListPurchase extends Component
         } elseif($this->exportType == 'purchase') {
             $this->validate();
             $name = "Data Pembelian Tanggal " . Carbon::parse($this->start_date)->translatedFormat('d F Y') ." - ". Carbon::parse($this->end_date)->translatedFormat('d F Y') .".xlsx";
-            return Excel::download(new PurchaseExport($this->start_date, $this->end_date), $name);
+            if($this->supplier_id) {
+                return Excel::download(new PurchaseExport($this->start_date, $this->end_date, $this->supplier_id), $name);
+            } else {
+                return Excel::download(new PurchaseExport($this->start_date, $this->end_date), $name);
+            }
         }
         $this->start_date = null;
         $this->end_date = null;

@@ -51,7 +51,7 @@
                             <th scope="col" class="px-4 py-4 text-sm font-medium text-center text-gray-500">No</th>
                             <th scope="col" class="px-4 py-4 text-sm font-medium text-gray-500 text-start"
                                 wire:click="sortByColumn('no_pre_order')">
-                                No PreOrder
+                                No Pre Order
                                 @if ($sortBy === 'no_pre_order')
                                     @if ($sortDirection === 'asc')
                                         <i class="ri-arrow-up-s-line"></i>

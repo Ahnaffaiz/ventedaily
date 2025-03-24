@@ -170,7 +170,7 @@ class Product extends Component
             // store logo left to storage
             $ekstensi = $this->image->getClientOriginalExtension();
             $image =  'image' . "." . $ekstensi;
-            $image = 'kejuaraan/logo/'.$image;
+            $image = 'products/'.$image;
             Storage::disk('public')->put($image, $cropped_image, 'public');
 
             $this->current_image = $image;

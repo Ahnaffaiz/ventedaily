@@ -23,7 +23,7 @@
             <form>
                 <x-input-text name="name" id="name" title="Name" placeholder="Input Product Name Here" />
                 @if (!$image)
-                    <x-input-text name="image" id="image" title="Image" placeholder="Input Product Image" type="file" />
+                    <x-input-text name="image" id="image" title="Image" placeholder="Input Product Image" type="file" accept="image/*"/>
                     <small class="text-muted">Image max. 512 kb </small>
                 @endif
                 <div wire:loading wire:target="image">
@@ -43,11 +43,26 @@
                                 <i class="inline ri-delete-bin-line"></i> Delete
                             </a>
                         </div>
-
-                        <div wire:ignore>
-                            <img id="image" src="{{ $image->temporaryUrl() }}" alt="Preview Image"
-                                class="rounded w-[100%] h-[100%]">
-                        </div>
+                        <div wire:ignore x-data="{
+                            setUp() {
+                                const image = document.getElementById('image');
+                                const cropper = new Cropper(image, {
+                                    aspectRatio: 1/1,
+                                    autoCropArea: 1/1,
+                                    viewMode: 1,
+                                    crop () {
+                                        @this.set('x_image', event.detail.x)
+                                        @this.set('y_image', event.detail.y)
+                                        @this.set('width_image', event.detail.width)
+                                        @this.set('height_image', event.detail.height)
+                                    }
+                                })
+                            }
+                        }" x-init="setUp">
+                        <img id="image" src="{{ $image->temporaryUrl() }}" alt="Preview Image"
+                            class="rounded-3 img-fluid img-thumbnail"
+                            style="width: 100%; max-width:100%">
+                    </div>
 
                     @elseif ($current_image)
                         <img src="{{ Storage::url($current_image) }}" alt="" class="rounded w-[100%] h-[100%]">

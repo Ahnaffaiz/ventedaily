@@ -1,4 +1,4 @@
-@props(['id', 'name', 'title', 'placeholder' => null, 'type' => 'text', 'prepend' => null, 'disabled' => false])
+@props(['id', 'name', 'title', 'placeholder' => null, 'type' => 'text', 'prepend' => null, 'disabled' => false, 'accept' => null])
 
 <div>
     <label class="mt-3 mb-2" for="{{ $id }}">{{ $title }}</label>
@@ -8,12 +8,12 @@
                 class="inline-flex items-center px-4 text-sm text-gray-500 border border-r-0 border-gray-200 rounded-l min-w-fit bg-gray-50 dark:bg-gray-700 dark:border-gray-600 dark:text-gray-400">{{$prepend}}</span>
             <input type="{{ $type }}" id="{{ $id }}" @if ($disabled) disabled @endif
                 class="form-input rounded-l-none {{ $errors->first($name) ? 'border-2 border-danger' : '' }}"
-                wire:model.live="{{ $name }}" placeholder="{{ $placeholder }}">
+                wire:model.live="{{ $name }}" placeholder="{{ $placeholder }}" accept="{{ $accept }}">
         </div>
     @else
         <input type="{{ $type }}" id="{{ $id }}" @if ($disabled) disabled @endif
             class="form-input {{ $errors->first($name) ? 'border-2 border-danger' : '' }}" wire:model.live="{{ $name }}"
-            placeholder="{{ $placeholder }}">
+            placeholder="{{ $placeholder }}" accept="{{ $accept }}">
     @endif
     @error($name)
         <span class="font-normal is-invalid text-danger text-small" id="is-invalid">{{ $message }}</span>

@@ -34,8 +34,7 @@ class Product extends Component
     public $category_id, $is_favorite=false, $imei, $status;
 
     #[Validate('max:512')]
-    public $image;
-    public $current_image;
+    public $image, $x_image, $y_image, $width_image, $height_image, $current_image;
 
     public $productStock;
     public $stockTypes = ['home_stock' => 'Home Stock', 'store_stock' => 'Store Stock', 'pre_order_stock' => 'Pre Order Stock'];
@@ -159,22 +158,37 @@ class Product extends Component
         $this->validate();
         $path = null;
         if($this->image){
-            $path = $this->image->store('products', 'public');
-            $this->current_image = $path;
-        }
+            $width_image = intval(round($this->width_image));
+            $height_image = intval(round($this->height_image));
+            $x_image = intval(round($this->x_image));
+            $y_image = intval(round($this->y_image));
 
-        ModelsProduct::firstOrCreate(['name' => $this->name],[
-            'category_id' => $this->category_id,
-            'is_favorite' => $this->is_favorite,
-            'imei' => $this->imei,
-            'code' => Str::random(10),
-            'status' => $this->status,
-            'desc' => $this->desc,
-            'image' => $path
-        ]);
-        $this->alert('success', 'Product Successfully Created');
+            $cropped_image = Image::make($this->image->getRealPath());
+            $cropped_image->crop($width_image, $height_image, $x_image, $y_image);
+            $cropped_image->save();
+
+            // store logo left to storage
+            $ekstensi = $this->image->getClientOriginalExtension();
+            $image =  'image' . "." . $ekstensi;
+            $image = 'kejuaraan/logo/'.$image;
+            Storage::disk('public')->put($image, $cropped_image, 'public');
+
+            $this->current_image = $image;
+        }
         try {
+            ModelsProduct::updateOrCreate(['name' => $this->name],[
+                'category_id' => $this->category_id,
+                'is_favorite' => $this->is_favorite,
+                'imei' => $this->imei,
+                'code' => Str::random(10),
+                'status' => $this->status,
+                'desc' => $this->desc,
+                'image' => $image
+            ]);
+            $this->alert('success', 'Product Successfully Created');
             $this->closeModal();
+            $this->reset();
+            $this->mount();
         } catch (Exception $th) {
             $this->alert('error', 'Can\'t Create Product', [
                 'text' => $th

@@ -11,3 +11,4 @@
 <script src="//cdn.jsdelivr.net/npm/sweetalert2@11"></script>
 <script src="{{ asset('assets/js/pages/form-choises.min.js') }}"></script>
 <script src="{{ asset('assets/js/pages/form-choises.js') }}"></script>
+@stack('scripts')

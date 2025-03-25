@@ -145,6 +145,11 @@
                     <x-menu-item activeRoute="category" text="Category" />
                     <x-menu-item activeRoute="color" text="Color" />
                     <x-menu-item activeRoute="size" text="Size" />
+                    <li class="menu-item">
+                        <a target="_blank" href="{{ route('product-stock') }}" class="menu-link">
+                            <span class="text-sm text-secondary">Product Stock</span>
+                        </a>
+                    </li>
                 </ul>
             </li>
             {{-- end of product --}}

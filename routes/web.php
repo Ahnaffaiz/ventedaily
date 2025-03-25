@@ -21,6 +21,8 @@ use App\Livewire\Product\StockIn\ListStockIn;
 use App\Livewire\Product\TransferProductStock;
 use App\Livewire\Product\TransferStock\CreateTransferStock;
 use App\Livewire\Product\TransferStock\ListTransferStock;
+use App\Livewire\Public\ProductStock;
+use App\Livewire\Public\StockOverview;
 use App\Livewire\Purchase\CreatePurchase;
 use App\Livewire\Purchase\ListPurchase;
 use App\Livewire\Retur\CreateRetur;
@@ -119,3 +121,5 @@ Route::middleware([
     //settings
     Route::get('/settings', Setting::class)->name('settings');
 });
+
+Route::get('/product-stock', ProductStock::class)->name('product-stock');

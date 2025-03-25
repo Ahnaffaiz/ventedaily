@@ -16,6 +16,8 @@ use App\Livewire\Product\CreateProduct;
 use App\Livewire\Product\CreateTransferProductStock;
 use App\Livewire\Product\Product;
 use App\Livewire\Product\Size;
+use App\Livewire\Product\StockIn\CreateStockIn;
+use App\Livewire\Product\StockIn\ListStockIn;
 use App\Livewire\Product\TransferProductStock;
 use App\Livewire\Product\TransferStock\CreateTransferStock;
 use App\Livewire\Product\TransferStock\ListTransferStock;
@@ -32,6 +34,7 @@ use App\Livewire\Setting;
 use App\Livewire\StockManagement\Dashboard as StockManagementDashboard;
 use App\Livewire\StockManagement\ListStock;
 use App\Livewire\Supplier\Supplier;
+use App\Models\StockIn;
 use Illuminate\Support\Facades\Route;
 use Illuminate\Support\Facades\Session;
 
@@ -52,6 +55,8 @@ Route::middleware([
     Route::get('/size', Size::class)->name('size');
     Route::get('/transfer-stock', ListTransferStock::class)->name('transfer-stock');
     Route::get('/create-transfer-stock/{transferstock?}', CreateTransferStock::class)->name('create-transfer-stock');
+    Route::get('/stock-in', ListStockIn::class)->name('stock-in');
+    Route::get('/create-stock-in/{stockin?}', CreateStockIn::class)->name('create-stock-in');
 
     //stock management
     Route::get('/stock-management', ListStock::class)->name('stock-management');

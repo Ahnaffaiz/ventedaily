@@ -157,27 +157,28 @@ class Product extends Component
 
     public function save()
     {
-        $this->validate();
-        $path = null;
-        if($this->image){
-            $width_image = intval(round($this->width_image));
-            $height_image = intval(round($this->height_image));
-            $x_image = intval(round($this->x_image));
-            $y_image = intval(round($this->y_image));
 
-            $cropped_image = Image::make($this->image->getRealPath());
-            $cropped_image->crop($width_image, $height_image, $x_image, $y_image);
-            $cropped_image->save();
-
-            // store logo left to storage
-            $ekstensi = $this->image->getClientOriginalExtension();
-            $image =  'image' . "." . $ekstensi;
-            $image = 'products/'.$image;
-            Storage::disk('public')->put($image, $cropped_image, 'public');
-
-            $this->current_image = $image;
-        }
         try {
+            $this->validate();
+            $image = null;
+            if($this->image){
+                $width_image = intval(round($this->width_image));
+                $height_image = intval(round($this->height_image));
+                $x_image = intval(round($this->x_image));
+                $y_image = intval(round($this->y_image));
+
+                $cropped_image = Image::make($this->image->getRealPath());
+                $cropped_image->crop($width_image, $height_image, $x_image, $y_image);
+                $cropped_image->save();
+
+                // store logo left to storage
+                $ekstensi = $this->image->getClientOriginalExtension();
+                $image =  'image' . "." . $ekstensi;
+                $image = 'products/'.$image;
+                Storage::disk('public')->put($image, $cropped_image, 'public');
+
+                $this->current_image = $image;
+            }
             ModelsProduct::updateOrCreate(['name' => $this->name],[
                 'category_id' => $this->category_id,
                 'is_favorite' => $this->is_favorite,
@@ -185,13 +186,14 @@ class Product extends Component
                 'code' => Str::random(10),
                 'status' => $this->status,
                 'desc' => $this->desc,
-                'image' => $image
+                'image' => $image,
             ]);
             $this->alert('success', 'Product Successfully Created');
             $this->closeModal();
             $this->reset();
             $this->mount();
         } catch (Exception $th) {
+            dd($th);
             $this->alert('error', 'Can\'t Create Product', [
                 'text' => $th
             ]);

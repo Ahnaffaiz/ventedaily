@@ -30,6 +30,7 @@ class ProductStock extends Component
         'all_stock' => true,
         'home_stock' => true,
         'store_stock' => true,
+        'pre_order_stock' => true,
         'qc_stock' => false,
         'vermak_stock' => false,
         'created_at' => false,

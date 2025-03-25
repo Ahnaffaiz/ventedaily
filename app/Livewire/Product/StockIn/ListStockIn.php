@@ -1,0 +1,96 @@
+<?php
+
+namespace App\Livewire\Product\StockIn;
+
+use App\Models\ProductStock;
+use App\Models\StockIn;
+use Exception;
+use Jantinnerezo\LivewireAlert\LivewireAlert;
+use Livewire\Attributes\Title;
+use Livewire\Component;
+use Livewire\WithoutUrlPagination;
+use Livewire\WithPagination;
+
+class ListStockIn extends Component
+{
+    use LivewireAlert;
+    use WithPagination, WithoutUrlPagination;
+
+    public $isOpen = false;
+    public $stockIn;
+    public $query = '', $perPage = 10, $sortBy = 'created_at', $sortDirection = 'desc';
+    public $total_price;
+
+    protected $listeners = [
+        'delete'
+    ];
+
+    #[Title('Stock In')]
+
+    public function closeModal()
+    {
+        $this->isOpen = false;
+        $this->stockIn = null;
+    }
+
+    public function sortByColumn($column)
+    {
+        if ($this->sortBy === $column) {
+            $this->sortDirection = $this->sortDirection === 'asc' ? 'desc' : 'asc';
+        } else {
+            $this->sortDirection = 'asc';
+        }
+
+        $this->sortBy = $column;
+    }
+
+    public function render()
+    {
+        return view('livewire.product.stock-in.list-stock-in', [
+            'stockIns' => StockIn::select('stock_ins.*')
+                ->orderBy($this->sortBy, $this->sortDirection)
+                ->paginate($this->perPage)
+        ]);
+    }
+
+    public function show($stock_in_id) {
+        $this->isOpen = true;
+        $this->stockIn = stockIn::find($stock_in_id);
+    }
+
+    public function deleteAlert($stockIn)
+    {
+        $this->stockIn = StockIn::find($stockIn);
+        $this->alert('question', 'Delete', [
+            'toast' => false,
+            'text' => 'Are you sure to delete this Stock In Data ?',
+            'position' => 'center',
+            'showConfirmButton' => true,
+            'confirmButtonText' => 'Yes',
+            'showCancelButton' => true,
+            'cancelButtonText' => 'cancel',
+            'icon' => 'warning',
+            'onConfirmed' => 'delete',
+            'timer' => null,
+            'confirmButtonColor' => '#3085d6',
+            'cancelButtonColor' => '#d33'
+        ]);
+    }
+
+    public function delete()
+    {
+        try {
+            foreach ($this->stockIn->stockInProducts as $stockInProduct) {
+                $productStock = ProductStock::where('id', $stockInProduct->product_stock_id)->first();
+                $productStock->update([
+                    $this->stockIn->stock_type->value => $productStock[$this->stockIn->stock_type->value] - $stockInProduct->stock,
+                ]);
+                $stockInProduct->delete();
+            }
+            $this->stockIn->delete();
+            $this->alert('success', 'Stock In Data Succesfully Deleted');
+        } catch (Exception $th) {
+            $this->alert('error', $th->getMessage());
+        }
+    }
+}

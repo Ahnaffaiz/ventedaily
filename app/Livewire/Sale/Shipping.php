@@ -78,6 +78,8 @@ class Shipping extends Component
     {
         $sale = Sale::where('id', $this->sale_id)->first();
         $this->cost = $sale->ship;
+        $this->marketplace_id = $sale->marketplace_id;
+        $this->order_id_marketplace = $sale->order_id_marketplace;
     }
 
     public function updatedMarketplaceId()
@@ -112,7 +114,7 @@ class Shipping extends Component
             'saleShippings' => SaleShipping::join('sales', 'sale_shippings.sale_id', '=', 'sales.id')
                 ->select('sale_shippings.*', 'sales.customer_id', 'sales.no_sale', 'total_price')
                 ->where('no_resi', 'like', '%' . $this->query . '%')
-                ->orWhere('order_id_marketplace', 'like', '%' . $this->query . '%')
+                ->orWhere('sale_shippings.order_id_marketplace', 'like', '%' . $this->query . '%')
                 ->orderBy($this->sortBy, $this->sortDirection)
                 ->paginate($this->perPage),
         ]);

@@ -9,6 +9,7 @@ use App\Enums\PaymentType;
 use App\Models\Customer;
 use App\Models\Discount;
 use App\Models\Group;
+use App\Models\Marketplace;
 use App\Models\Keep;
 use App\Models\PreOrder;
 use App\Models\PreOrderProduct;
@@ -44,12 +45,14 @@ class CreateSale extends Component
 
     public $no_sale;
 
-    public $customers, $groups, $termOfPayments;
+    public $customers, $groups, $termOfPayments, $marketplaces;
+    public $marketplace_id, $order_id_marketplace;
     public $sale, $isEdit;
     public $productStockList, $product_id, $productStock, $products;
 
     #[Rule('required')]
     public $group_id, $customer_id, $term_of_payment_id;
+
 
     public $desc;
 
@@ -76,8 +79,11 @@ class CreateSale extends Component
     {
         View::share('subtitle', $this->subtitle);
         View::share('subRoute', $this->subRoute);
+        $this->term_of_payment_id = TermOfPayment::where('name', 'cash')->first()->id;
+        $this->payment_type = strtolower(PaymentType::CASH);
         $this->termOfPayments = TermOfPayment::all()->pluck('name', 'id')->toArray();
         $this->products = Product::all()->pluck('name', 'id')->toArray();
+        $this->marketplaces = Marketplace::all()->pluck('name', 'id')->toArray();
         $this->discount_type = DiscountType::PERSEN;
         $this->discount_programs = Discount::all()->pluck('name', 'id')->toArray();
         $this->keeps = Keep::where('keep_time', '>=', Carbon::now())->where('status', strtolower(KeepStatus::ACTIVE))->pluck('no_keep', 'id')->toArray();
@@ -444,6 +450,8 @@ class CreateSale extends Component
                 'outstanding_balance' => $this->cash_change < 0 ? $this->cash_change : 0,
                 'total_items' => $this->total_items,
                 'desc' => $this->desc,
+                'marketplace_id' => $this->marketplace_id,
+                'order_id_marketplace' => $this->order_id_marketplace,
             ]);
 
             foreach ($this->cart as $productStock) {
@@ -601,6 +609,8 @@ class CreateSale extends Component
             'outstanding_balance' => -1 * $this->total_price,
             'total_items' => $this->total_items,
             'desc' => $this->desc,
+            'marketplace_id' => $this->marketplace_id,
+            'order_id_marketplace' => $this->order_id_marketplace,
         ]);
 
         $stockType = "pre_order_stock";

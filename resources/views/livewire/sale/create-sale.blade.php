@@ -39,6 +39,13 @@
                     <x-input-select id="term_of_payment_id" name="term_of_payment_id" title="Term of Payemnt"
                         :options="$termOfPayments" placeholder="Select Term of Payment" />
                 </div>
+                @if ($group_id == 2)
+                    <div class="grid gap-6 md:grid-cols-2">
+                        <x-input-select id="marketplace_id" name="marketplace_id" title="Marketplace" :options="$marketplaces"
+                            placeholder="Select Marketplace" />
+                        <x-input-text id="order_id_marketplace" name="order_id_marketplace" title="Order Id"/>
+                    </div>
+                @endif
             </div>
             <div class="mt-4 border border-gray-200 rounded-md section">
                 <table class="min-w-full divide-y divide-gray-200 dark:divide-gray-700">

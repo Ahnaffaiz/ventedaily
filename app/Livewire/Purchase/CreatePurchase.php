@@ -57,6 +57,8 @@ class CreatePurchase extends Component
     {
         View::share('subtitle', $this->subtitle);
         View::share('subRoute', $this->subRoute);
+        $this->term_of_payment_id = TermOfPayment::where('name', 'cash')->first()->id;
+        $this->payment_type = strtolower(PaymentType::CASH);
         $this->products = Product::all()->pluck('name', 'id')->toArray();
         $this->suppliers = Supplier::all()->pluck('name', 'id')->toArray();
         $this->termOfPayments = TermOfPayment::all()->pluck('name', 'id')->toArray();

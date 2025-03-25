@@ -76,11 +76,6 @@
                 <td class="px-2 py-2 text-md text-gray-950 dark:text-gray-200 text-end">:</td>
                 <td class="px-2 py-2 font-semibold text-md text-gray-950 dark:text-gray-200">{{ $sale?->saleShipping?->address }}</td>
             </tr>
-            <tr class="bg-gray-50 dark:bg-gray-900">
-                <td class="px-2 py-2 text-md text-gray-950 dark:text-gray-200">Address</td>
-                <td class="px-2 py-2 text-md text-gray-950 dark:text-gray-200 text-end">:</td>
-                <td class="px-2 py-2 font-semibold text-md text-gray-950 dark:text-gray-200">{{ $sale?->saleShipping?->address }}</td>
-            </tr>
         </tbody>
     </table>
 </div>

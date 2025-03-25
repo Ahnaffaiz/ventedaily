@@ -25,7 +25,7 @@ class ListPurchase extends Component
 
     public $purchase, $sub_total_after_discount;
     public $isOpen = false, $isPayment = false, $isExport = false;
-    public $query = '', $perPage = 10, $sortBy = 'name', $sortDirection = 'asc';
+    public $query = '', $perPage = 10, $sortBy = 'created_at', $sortDirection = 'desc';
 
     #[Rule('required')]
     public $start_date, $end_date, $exportType = 'product';
@@ -38,7 +38,7 @@ class ListPurchase extends Component
         'tax' => true,
         'total_price' => true,
         'outstanding_balance' => true,
-        'created_at' => false,
+        'created_at' => true,
         'updated_at' => false,
     ];
 
@@ -188,6 +188,8 @@ class ListPurchase extends Component
         $this->start_date = null;
         $this->end_date = null;
         $this->exportType = 'product';
+        $this->isExport = false;
     }
+
 
 }

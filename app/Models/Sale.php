@@ -12,7 +12,7 @@ class Sale extends Model
 
     protected $fillable = [
         'keep_id', 'pre_order_id', 'user_id', 'customer_id', 'term_of_payment_id', 'discount_type', 'discount', 'discount_id', 'tax',
-        'total_price', 'sub_total', 'total_items', 'desc', 'no_sale', 'ship', 'outstanding_balance'
+        'total_price', 'sub_total', 'total_items', 'desc', 'no_sale', 'ship', 'outstanding_balance', 'marketplace_id', 'order_id_marketplace'
     ];
 
     protected $cast = [
@@ -27,6 +27,11 @@ class Sale extends Model
     public function preOrder()
     {
         return $this->belongsTo(PreOrder::class);
+    }
+
+    public function marketplace()
+    {
+        return $this->belongsTo(Marketplace::class);
     }
 
     public function user()

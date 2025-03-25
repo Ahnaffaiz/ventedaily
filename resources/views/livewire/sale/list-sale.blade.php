@@ -2,6 +2,8 @@
     <x-modal wire:model="isOpen" title="Detail Sale" closeButton="closeModal" large="true">
         @if ($isPayment)
             @livewire('sale.sale-payment', ['sale' => $sale], key($sale->id))
+        @elseif($isExport)
+            @include('livewire.sale.export')
         @else
             @include('livewire.sale.detail-sale')
         @endif
@@ -11,7 +13,12 @@
             <div class="flex">
                 <div class="relative w-full">
                     <a class="text-white btn bg-primary" wire:navigate href="{{ route('create-sale') }}" type="button">
-                        Create </a>
+                        Create
+                    </a>
+                    <button type="button" class="inline text-white btn bg-success gaps-2" wire:click="openModalExport" type="button">
+                        <i class="ri-file-download-line"></i>
+                        Export
+                    </button>
                 </div>
             </div>
             <div class="flex justify-end mb-4">
@@ -97,6 +104,11 @@
                             @if ($showColumns['pre_order_id'])
                                 <th scope="col" class="px-4 py-4 text-sm font-medium text-gray-500 text-start">
                                     No Pre Order
+                                </th>
+                            @endif
+                            @if ($showColumns['order_id_marketplace'])
+                                <th scope="col" class="px-4 py-4 text-sm font-medium text-gray-500 text-start">
+                                    Order ID
                                 </th>
                             @endif
                             @if ($showColumns['group'])
@@ -261,6 +273,11 @@
                                 <td class="px-4 py-4 text-sm text-gray-500 whitespace-nowrap dark:text-gray-200">
                                     {{ $sale->preOrder?->no_pre_order }}
                                 </td>
+                                @if ($showColumns['order_id_marketplace'])
+                                <td class="px-4 py-4 text-sm text-gray-500 whitespace-nowrap dark:text-gray-200">
+                                    {{ $sale->order_id_marketplace }}
+                                </td>
+                                @endif
                                 @if ($showColumns['group'])
                                     <td class="px-4 py-4 text-sm text-gray-500 whitespace-nowrap dark:text-gray-200">
                                         @if (strtolower($sale->customer?->group?->name) === 'reseller')

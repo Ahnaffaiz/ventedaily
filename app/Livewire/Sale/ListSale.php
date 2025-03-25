@@ -4,16 +4,21 @@ namespace App\Livewire\Sale;
 
 use App\Enums\DiscountType;
 use App\Enums\KeepStatus;
+use App\Exports\SaleExport;
+use App\Exports\SaleProductExport;
+use App\Models\Customer;
 use App\Models\Group;
 use App\Models\Keep;
 use App\Models\Sale;
 use Carbon\Carbon;
 use Exception;
 use Jantinnerezo\LivewireAlert\LivewireAlert;
+use Livewire\Attributes\Rule;
 use Livewire\Attributes\Title;
 use Livewire\Component;
 use Livewire\WithoutUrlPagination;
 use Livewire\WithPagination;
+use Maatwebsite\Excel\Facades\Excel;
 
 class ListSale extends Component
 {
@@ -21,13 +26,18 @@ class ListSale extends Component
     use WithPagination, WithoutUrlPagination;
 
     public $sale;
-    public $isOpen = false, $isPayment = false;
+    public $isOpen = false, $isPayment = false, $isExport = false;
     public $query = '', $perPage = 10, $sortBy = 'no_sale', $sortDirection = 'desc', $groupIds, $groupId;
+
+    #[Rule('required')]
+    public $start_date, $end_date, $exportType = 'product';
+    public $customer_id, $customers, $group_id, $groups;
 
     public $total_price, $sub_total_after_discount;
     public $showColumns = [
-        'keep_id' => true,
-        'pre_order_id' => true,
+        'keep_id' => false,
+        'pre_order_id' => false,
+        'order_id_marketplace' => false,
         'group' => true,
         'term_of_payment_id' => true,
         'total_items' => true,
@@ -156,5 +166,45 @@ class ListSale extends Component
         } catch (Exception $th) {
             $this->alert('error', $th->getMessage());
         }
+    }
+
+    public function openModalExport()
+    {
+        $this->customers = Customer::all()->pluck('name', 'id')->toArray();
+        $this->groups = Group::all()->pluck('name', 'id')->toArray();
+        $this->isExport = true;
+        $this->isOpen = true;
+    }
+
+    public function searchCustomer($query)
+    {
+        $this->customers = Customer::all()->pluck('name', 'id')->toArray();
+        if ($query) {
+            $this->customers = Customer::where('name', 'like', '%'.$query.'%')
+            ->where('group_id', $this->group_id)
+            ->pluck('name', 'id')
+            ->toArray();
+        }
+    }
+
+    public function exportExcel()
+    {
+        if($this->exportType == 'product') {
+            $this->validate();
+            $name = "Data Penjualan Product Tanggal " . Carbon::parse($this->start_date)->translatedFormat('d F Y') ." - ". Carbon::parse($this->end_date)->translatedFormat('d F Y') .".xlsx";
+            return Excel::download(new SaleProductExport($this->start_date, $this->end_date, $this->group_id, $this->customer_id), $name);
+        } elseif($this->exportType == 'sale') {
+            $this->validate();
+            $name = "Data Penjualan Tanggal " . Carbon::parse($this->start_date)->translatedFormat('d F Y') ." - ". Carbon::parse($this->end_date)->translatedFormat('d F Y') .".xlsx";
+            if($this->customer_id) {
+                return Excel::download(new SaleExport($this->start_date, $this->end_date, $this->supplier_id), $name);
+            } else {
+                return Excel::download(new SaleExport($this->start_date, $this->end_date), $name);
+            }
+        }
+        $this->start_date = null;
+        $this->end_date = null;
+        $this->exportType = 'product';
+        $this->isExport = false;
     }
 }

@@ -161,7 +161,7 @@
                                     @if ($showColumns['created_at'])
                                         <th scope="col" class="px-4 py-4 text-sm font-medium text-gray-500 text-start"
                                             wire:click="sortByColumn('created_at')">
-                                            Created at
+                                            Date
                                             @if ($sortBy === 'created_at')
                                                 @if ($sortDirection === 'asc')
                                                     <i class="ri-arrow-up-s-line"></i>
@@ -236,12 +236,12 @@
                                         @endif
                                         @if ($showColumns['created_at'])
                                             <td class="px-4 py-4 text-sm text-gray-500 whitespace-nowrap dark:text-gray-200">
-                                                {{ $purchase->created_at }}
+                                                {{ $purchase->created_at->format('d/m/Y') }}
                                             </td>
                                         @endif
                                         @if ($showColumns['updated_at'])
                                             <td class="px-4 py-4 text-sm text-gray-500 whitespace-nowrap dark:text-gray-200">
-                                                {{ $purchase->updated_at }}
+                                                {{ $purchase->updated_at->format('d/m/Y') }}
                                             </td>
                                         @endif
                                         <td class="px-4 py-4">

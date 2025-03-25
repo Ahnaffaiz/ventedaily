@@ -18,6 +18,8 @@ return new class extends Migration
             $table->foreignId('user_id')->constrained()->onDelete('cascade');
             $table->foreignId('customer_id')->constrained()->onDelete('cascade');
             $table->foreignId('term_of_payment_id')->constrained()->onDelete('cascade');
+            $table->foreignId('marketplace_id')->nullable()->constrained('marketplaces')->onDelete('cascade');
+            $table->string('order_id_marketplace', 255)->nullable();
             $table->string('no_sale', 25);
             $table->enum('discount_type', ['persen', 'rupiah'])->nullable();
             $table->integer('discount')->nullable();

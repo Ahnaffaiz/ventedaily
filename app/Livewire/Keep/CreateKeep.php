@@ -4,6 +4,8 @@ namespace App\Livewire\Keep;
 
 use App\Enums\KeepStatus;
 use App\Enums\KeepType;
+use App\Enums\StockActivity;
+use App\Enums\StockStatus;
 use App\Models\Customer;
 use App\Models\Group;
 use App\Models\Keep;
@@ -283,6 +285,26 @@ class CreateKeep extends Component
                     $stockType => $stock->$stockType - $productStock['quantity'],
                     'all_stock' => $stock->all_stock - $productStock['quantity'],
                 ]);
+            }
+
+            if($keepStock[$stockType] > 0) {
+                setStockHistory(
+                    $stock->id,
+                    $stockType,
+                    StockActivity::KEEP,
+                    StockStatus::ADD,
+                    $stock->$stockType,
+                    $keepStock[$stockType]);
+            }
+
+            if($keepStock[$notStockType] > 0) {
+                setStockHistory(
+                    $stock->id,
+                    $notStockType,
+                    StockActivity::KEEP,
+                    StockStatus::ADD,
+                    $stock->$notStockType,
+                    $keepStock[$notStockType]);
             }
 
             KeepProduct::create([

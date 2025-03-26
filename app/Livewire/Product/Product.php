@@ -4,6 +4,8 @@ namespace App\Livewire\Product;
 
 use App\Enums\KeepStatus;
 use App\Enums\ProductStatus;
+use App\Enums\StockActivity;
+use App\Enums\StockStatus;
 use App\Exports\TransferStockExport;
 use App\Models\Category;
 use App\Models\KeepProduct;
@@ -346,6 +348,21 @@ class Product extends Component
         } else {
             $stockTo = $this->stockTo;
             $stockFrom = $this->stockFrom;
+            setStockHistory(
+                $this->productStock->id,
+                $this->stockTo,
+                StockActivity::TRANSFER,
+                StockStatus::CHANGE,
+                $this->productStock->$stockTo,
+                $this->productStock->$stockTo + $this->stockAmount);
+
+            setStockHistory(
+                $this->productStock->id,
+                $this->stockFrom,
+                StockActivity::TRANSFER,
+                StockStatus::CHANGE,
+                $this->productStock->$stockFrom,
+                $this->productStock->$stockFrom - $this->stockAmount);
             $this->productStock->update([
                 $this->stockTo => $this->productStock->$stockTo + $this->stockAmount,
                 $this->stockFrom => $this->productStock->$stockFrom - $this->stockAmount,
@@ -353,8 +370,8 @@ class Product extends Component
             $this->alert('success','Stock successfully transfered');
             $this->stockAmount = null;
             $this->stockTotal = null;
-            $this->stockFrom = null;
-            $this->stockTo = null;
+            $this->stockFrom = 'home_stock';
+            $this->stockTo = 'store_stock';
             $this->isOpen = false;
         }
 

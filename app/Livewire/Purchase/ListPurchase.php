@@ -3,6 +3,8 @@
 namespace App\Livewire\Purchase;
 
 use App\Enums\DiscountType;
+use App\Enums\StockActivity;
+use App\Enums\StockStatus;
 use App\Exports\PurchaseExport;
 use App\Exports\PurchaseProductExport;
 use App\Models\Purchase;
@@ -138,6 +140,13 @@ class ListPurchase extends Component
 
             foreach ($this->purchase->purchaseItems as $purchaseItem) {
                 $productStock = $purchaseItem->productStock;
+                setStockHistory(
+                    $productStock->id,
+                    'home_stock',
+                    StockActivity::PURCHASE,
+                    StockStatus::REMOVE,
+                    $productStock->home_stock,
+                    $productStock->home_stock - $purchaseItem->total_items);
                 $productStock->update([
                     'all_stock' => $productStock->all_stock - $purchaseItem->total_items,
                     'home_stock' => $productStock->home_stock - $purchaseItem->total_items,

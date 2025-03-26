@@ -4,8 +4,11 @@ namespace App\Livewire\Purchase;
 
 use App\Enums\DiscountType;
 use App\Enums\PaymentType;
+use App\Enums\StockActivity;
+use App\Enums\StockStatus;
 use App\Models\Product;
 use App\Models\ProductStock;
+use App\Models\ProductStockHistory;
 use App\Models\Purchase;
 use App\Models\PurchaseItem;
 use App\Models\PurchasePayment;
@@ -226,6 +229,14 @@ class CreatePurchase extends Component
                 'total_price' => $productStock['total_price']
             ]);
             $stock = ProductStock::where('id', $productStock['id'])->first();
+            setStockHistory(
+                $stock->id,
+                'home_stock',
+                StockActivity::PURCHASE,
+                StockStatus::ADD,
+                $stock->home_stock,
+                $stock->home_stock+$productStock['quantity']);
+
             $stock->update([
                 'home_stock' => $stock->home_stock+$productStock['quantity'],
                 'all_stock' => $stock->all_stock+$productStock['quantity'],
@@ -298,8 +309,18 @@ class CreatePurchase extends Component
             'outstanding_balance' => -1 * $this->total_price
         ]);
 
+        $productStockHistories = [];
         foreach ($this->purchase->purchaseItems as $purchaseItem) {
             $stock = ProductStock::where('id', $purchaseItem->product_stock_id)->first();
+
+            $productStockHistory = setStockHistory(
+                $stock->id,
+                'home_stock',
+                StockActivity::PURCHASE,
+                StockStatus::CHANGE,
+                $stock->home_stock,
+                $stock->home_stock-$purchaseItem->total_items);
+            $productStockHistories[$productStockHistory->id] = $productStockHistory->stock_after;
             $stock->update([
                 'home_stock' => $stock->home_stock-$purchaseItem->total_items,
                 'all_stock' => $stock->all_stock-$purchaseItem->total_items,
@@ -316,6 +337,25 @@ class CreatePurchase extends Component
                 'total_price' => $productStock['total_price']
             ]);
             $stock = ProductStock::where('id', $productStock['id'])->first();
+            $productSockHistory = ProductStockHistory::whereIn('id', array_keys($productStockHistories))->where('product_stock_id', $productStock['id'])->first();
+            if($productSockHistory) {
+                if($productSockHistory->stock_before != $stock->home_stock+$productStock['quantity']) {
+                    $productSockHistory->update([
+                        'stock_before' => $productSockHistory->stock_before,
+                        'stock_after' => $stock->home_stock+$productStock['quantity'],
+                    ]);
+                } else {
+                    $productSockHistory->delete();
+                }
+            } else {
+                setStockHistory(
+                    $stock->id,
+                    'home_stock',
+                    StockActivity::PURCHASE,
+                    StockStatus::CHANGE,
+                    $stock->home_stock,
+                    $stock->home_stock+$productStock['quantity']);
+            }
             $stock->update([
                 'home_stock' => $stock->home_stock+$productStock['quantity'],
                 'all_stock' => $stock->all_stock+$productStock['quantity'],

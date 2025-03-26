@@ -16,11 +16,9 @@
             <thead>
                 <tr>
                     <th scope="col" class="px-4 py-2 text-sm font-bold text-center text-gray-800 dark:text-gray-200">No</th>
-                    <th scope="col" class="px-4 py-2 text-sm font-bold text-gray-800 dark:text-gray-200 text-start">Name</th>
-                    <th scope="col" class="px-4 py-2 text-sm font-bold text-center text-gray-800 dark:text-gray-200">All Stock</th>
-                    <th scope="col" class="px-4 py-2 text-sm font-bold text-center text-gray-800 dark:text-gray-200">Home Stock</th>
-                    <th scope="col" class="px-4 py-2 text-sm font-bold text-center text-gray-800 dark:text-gray-200">Store Stock</th>
-                    <th scope="col" class="px-4 py-2 text-sm font-bold text-center text-gray-800 dark:text-gray-200">Pre Order Stock</th>
+                    <th scope="col" class="px-4 py-2 text-sm font-bold text-gray-800 dark:text-gray-200 text-start">Nama</th>
+                    <th scope="col" class="px-4 py-2 text-sm font-bold text-center text-gray-800 dark:text-gray-200">Stock</th>
+                    <th scope="col" class="px-4 py-2 text-sm font-bold text-center text-gray-800 dark:text-gray-200">Harga</th>
                 </tr>
             </thead>
             <tbody class="divide-y divide-gray-200 dark:divide-gray-700">
@@ -42,31 +40,7 @@
                             @endif
                         </td>
                         <td class="px-4 py-2 text-sm text-center text-gray-700 whitespace-nowrap dark:text-gray-200">
-                            @if ($productStock->home_stock > 10)
-                                <span class="inline-flex items-center gap-1.5 py-0.5 px-1.5 rounded-full text-xs font-medium bg-primary text-white">Aman</span>
-                            @elseif ($productStock->home_stock <= 10 && $productStock->home_stock > 0)
-                                <span class="inline-flex items-center gap-1.5 py-0.5 px-1.5 rounded-full text-xs font-medium bg-warning text-white">Ready</span>
-                            @else
-                                <span class="inline-flex items-center gap-1.5 py-0.5 px-1.5 rounded-full text-xs font-medium bg-danger text-white">Habis</span>
-                            @endif
-                        </td>
-                        <td class="px-4 py-2 text-sm text-center text-gray-700 whitespace-nowrap dark:text-gray-200">
-                            @if ($productStock->store_stock > 10)
-                                <span class="inline-flex items-center gap-1.5 py-0.5 px-1.5 rounded-full text-xs font-medium bg-primary text-white">Aman</span>
-                            @elseif ($productStock->store_stock <= 10 && $productStock->store_stock > 0)
-                                <span class="inline-flex items-center gap-1.5 py-0.5 px-1.5 rounded-full text-xs font-medium bg-warning text-white">Ready</span>
-                            @else
-                                <span class="inline-flex items-center gap-1.5 py-0.5 px-1.5 rounded-full text-xs font-medium bg-danger text-white">Habis</span>
-                            @endif
-                        </td>
-                        <td class="px-4 py-2 text-sm text-center text-gray-700 whitespace-nowrap dark:text-gray-200">
-                            @if ($productStock->pre_order_stock > 10)
-                                <span class="inline-flex items-center gap-1.5 py-0.5 px-1.5 rounded-full text-xs font-medium bg-primary text-white">Aman</span>
-                            @elseif ($productStock->pre_order_stock <= 10 && $productStock->pre_order_stock > 0)
-                                <span class="inline-flex items-center gap-1.5 py-0.5 px-1.5 rounded-full text-xs font-medium bg-warning text-white">Ready</span>
-                            @else
-                                <span class="inline-flex items-center gap-1.5 py-0.5 px-1.5 rounded-full text-xs font-medium bg-danger text-white">Habis</span>
-                            @endif
+                            Rp. {{ number_format($productStock->selling_price, 0, ',', '.') }}
                         </td>
                     </tr>
                 @endforeach

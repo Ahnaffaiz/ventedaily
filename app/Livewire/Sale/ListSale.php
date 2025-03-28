@@ -35,8 +35,8 @@ class ListSale extends Component
 
     public $total_price, $sub_total_after_discount;
     public $showColumns = [
-        'keep_id' => false,
-        'pre_order_id' => false,
+        'keep_id' => true,
+        'pre_order_id' => true,
         'order_id_marketplace' => false,
         'group' => true,
         'term_of_payment_id' => true,
@@ -91,7 +91,7 @@ class ListSale extends Component
     public function addPayment($sale)
     {
         $this->isPayment = true;
-        $this->sale = Sale::with('salePayments')->where('id', $sale)->first();
+        $this->sale = Sale::with('salePayment')->where('id', $sale)->first();
         $this->isOpen = true;
     }
 

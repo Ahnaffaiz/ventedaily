@@ -209,24 +209,22 @@
             </div>
             <div class="pt-4 section">
                 <x-textarea-input id="desc" name="desc" title="Sale Note" />
-                @if (!$sale)
-                    <div class="grid lg:grid-cols-3 lg:gap-3 md:grid-cols-2 md:gap-2">
-                        <x-input-select id="payment_type" name="payment_type" title="Payment Type"
-                            :options="App\Enums\PaymentType::asSelectArray()" placeholder="Select Payment Type" />
-                        <x-input-text id="cash_received" name="cash_received" title="Cash Received" type="number"
-                            prepend="Rp." />
-                        <x-input-text id="cash_change" name="cash_change" title="Change" type="number" prepend="Rp."
-                            disabled="true" />
+                <div class="grid lg:grid-cols-3 lg:gap-3 md:grid-cols-2 md:gap-2">
+                    <x-input-select id="payment_type" name="payment_type" title="Payment Type"
+                        :options="App\Enums\PaymentType::asSelectArray()" placeholder="Select Payment Type" />
+                    <x-input-text id="cash_received" name="cash_received" title="Cash Received" type="number"
+                        prepend="Rp." />
+                    <x-input-text id="cash_change" name="cash_change" title="Change" type="number" prepend="Rp."
+                        disabled="true" />
+                </div>
+                @if (strtolower($payment_type) === App\Enums\PaymentType::TRANSFER)
+                    <div class="grid lg:grid-cols-3 md:grid-cols-2 lg:gap-2 md:gap-2">
+                        <x-input-select id="bank_id" name="bank_id" title="Bank"
+                            :options="App\Models\Bank::all()->pluck('name', 'id')->toArray()"
+                            placeholder="Select Payment Type" />
+                        <x-input-text id="account_number" name="account_number" title="Account Number" type="number" />
+                        <x-input-text id="account_name" name="account_name" title="Account Name" />
                     </div>
-                    @if (strtolower($payment_type) === App\Enums\PaymentType::TRANSFER)
-                        <div class="grid lg:grid-cols-3 md:grid-cols-2 lg:gap-2 md:gap-2">
-                            <x-input-select id="bank_id" name="bank_id" title="Bank"
-                                :options="App\Models\Bank::all()->pluck('name', 'id')->toArray()"
-                                placeholder="Select Payment Type" />
-                            <x-input-text id="account_number" name="account_number" title="Account Number" type="number" />
-                            <x-input-text id="account_name" name="account_name" title="Account Name" />
-                        </div>
-                    @endif
                 @endif
             </div>
             <div class="flex justify-end gap-3 mt-6">

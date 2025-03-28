@@ -54,9 +54,9 @@ class Sale extends Model
         return $this->belongsTo(Discount::class);
     }
 
-    public function salePayments()
+    public function salePayment()
     {
-        return $this->hasMany(SalePayment::class);
+        return $this->hasOne(SalePayment::class);
     }
 
     public function saleItems()

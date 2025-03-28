@@ -327,7 +327,7 @@
                                 @endif
                                 @if ($showColumns['payment_type'])
                                     <td class="px-4 py-4 text-sm text-gray-500 whitespace-nowrap dark:text-gray-200">
-                                        {{ $sale->salePayments->first()?->payment_type }}
+                                        {{ $sale->salePayment?->payment_type }}
                                     </td>
                                 @endif
                                 @if ($showColumns['created_at'])

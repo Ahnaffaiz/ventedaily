@@ -447,7 +447,7 @@ class CreateSale extends Component
                 'discount_id' => $this->discount_id ?? null,
                 'sub_total' => $this->sub_total,
                 'total_price' => $this->total_price,
-                'outstanding_balance' => $this->cash_change < 0 ? $this->cash_change : 0,
+                'outstanding_balance' => $this->cash_change < 0 ? -1 * $this->cash_change : 0,
                 'total_items' => $this->total_items,
                 'desc' => $this->desc,
                 'marketplace_id' => $this->marketplace_id,
@@ -580,20 +580,18 @@ class CreateSale extends Component
         $this->discount_type = $this->sale->discount_type;
         $this->tax = $this->sale->tax;
         $this->ship = $this->sale->ship;
-        $this->payment_type = $this->sale->salePayments->first()?->payment_type->key;
-        $this->cash_received = $this->sale->salePayments->first()?->cash_received;
-        $this->cash_change = $this->sale->salePayments->first()?->cash_change;
+        $this->payment_type = $this->sale->salePayment?->payment_type->key;
+        $this->cash_received = $this->sale->salePayment?->cash_received;
+        $this->cash_change = $this->sale->salePayment?->cash_change;
         if(strtolower($this->payment_type) === strtolower(PaymentType::TRANSFER)) {
-            $this->bank_id = $this->sale->salePayments->first()?->bank_id;
-            $this->account_number = $this->sale->salePayments->first()?->account_number;
-            $this->account_name = $this->sale->salePayments->first()?->account_name;
+            $this->bank_id = $this->sale->salePayment?->bank_id;
+            $this->account_number = $this->sale->salePayment?->account_number;
+            $this->account_name = $this->sale->salePayment?->account_name;
         }
     }
 
     public function update()
     {
-        $this->payment_type = PaymentType::CASH;
-        $this->cash_received = 0;
         $this->validate();
         $this->sale->update([
             'user_id' => Auth::user()->id,
@@ -606,7 +604,7 @@ class CreateSale extends Component
             'discount_id' => $this->discount_id ?? null,
             'sub_total' => $this->sub_total,
             'total_price' => $this->total_price,
-            'outstanding_balance' => -1 * $this->total_price,
+            'outstanding_balance' => $this->cash_change < 0 ? -1 * $this->cash_change : 0,
             'total_items' => $this->total_items,
             'desc' => $this->desc,
             'marketplace_id' => $this->marketplace_id,
@@ -645,9 +643,19 @@ class CreateSale extends Component
             }
         }
 
-        foreach ($this->sale->salePayments as $salePayment) {
-            $salePayment->delete();
-        }
+        $this->sale->salePayment->update([
+            'user_id' => Auth::user()->id,
+            'date' => Carbon::now(),
+            'reference' => 'First Payment',
+            'amount' => $this->cash_change > 0 ? $this->total_price : $this->cash_received,
+            'cash_received' => $this->cash_received,
+            'cash_change' => $this->cash_change,
+            'payment_type' => strtolower($this->payment_type),
+            'account_number' => $this->account_number,
+            'account_name' => $this->account_name,
+            'desc' => $this->desc,
+            'bank_id' => $this->bank_id
+        ]);
 
         $this->alert('success', 'Sale Succesfully Updated');
         $this->mount();

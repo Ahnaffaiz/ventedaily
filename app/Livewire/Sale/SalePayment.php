@@ -62,7 +62,7 @@ class SalePayment extends Component
 
     public function updatedCashReceived()
     {
-        $this->cash_change = (int) $this->cash_received + (int) $this->out_balance - $this->payment?->amount;
+        $this->cash_change = (int) $this->cash_received - (int) $this->total_price;
     }
 
     public function edit($payment)
@@ -82,43 +82,24 @@ class SalePayment extends Component
     {
         $this->validate();
         try {
-            if($this->payment) {
-                $this->payment->update([
-                    'reference' => $this->reference,
-                    'date' => Carbon::now(),
-                    'amount' => $this->cash_change > 0 ? $this->total_price : $this->cash_received,
-                    'cash_received' => $this->cash_received,
-                    'cash_change' => $this->cash_change,
-                    'payment_type' => strtolower($this->payment_type),
-                    'account_number' => $this->account_number,
-                    'account_name' => $this->account_name,
-                    'desc' => $this->desc,
-                    'bank_id' => $this->bank_id
-                ]);
-                $this->payment = null;
-                $this->alert('success', 'Payment Successfully Updated');
-            } else {
-                ModalSalePayment::create([
-                    'sale_id' => $this->sale?->id,
-                    'user_id' => Auth::user()->id,
-                    'date' => Carbon::now(),
-                    'reference' => $this->reference,
-                    'amount' => $this->cash_change > 0 ? -1 * $this->out_balance : $this->cash_received,
-                    'cash_received' => $this->cash_received,
-                    'cash_change' => $this->cash_change,
-                    'payment_type' => strtolower($this->payment_type),
-                    'account_number' => $this->account_number,
-                    'account_name' => $this->account_name,
-                    'desc' => $this->desc,
-                    'bank_id' => $this->bank_id
-                ]);
-                $this->alert('success', 'Payment Successfully Added');
-            }
+            $this->payment->update([
+                'reference' => $this->reference,
+                'date' => Carbon::now(),
+                'amount' => $this->cash_change > 0 ? $this->total_price : $this->cash_received,
+                'cash_received' => $this->cash_received,
+                'cash_change' => $this->cash_change,
+                'payment_type' => strtolower($this->payment_type),
+                'account_number' => $this->account_number,
+                'account_name' => $this->account_name,
+                'desc' => $this->desc,
+                'bank_id' => $this->bank_id
+            ]);
+            $this->payment = null;
+            $this->alert('success', 'Payment Successfully Updated');
 
             //update outstanding balance
-            $this->out_balance = $this->total_price > $this->sale->salePayments->sum('amount') ? -1 * ($this->total_price - $this->sale->salePayments->sum('amount')) : 0;
             $this->sale->update([
-                'outstanding_balance' => $this->out_balance
+                'outstanding_balance' => $this->cash_change < 0 ? -1 * $this->cash_change : 0,
             ]);
             $this->resetInput();
         } catch (\Exception $exception) {

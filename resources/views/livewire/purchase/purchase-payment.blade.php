@@ -80,8 +80,10 @@
                 </div>
             </div>
             <div class="flex justify-end mt-4">
+                @if($payment)
                 <button class="text-white btn bg-primary" wire:click="save" type="button">
                     Save </button>
+                @endif
             </div>
         </div>
     </div>
@@ -127,8 +129,6 @@
                                             class="ri-edit-circle-line"></i></button>
                                     <button wire:click="printPayment({{ $payment->id }})" class="text-info"><i
                                             class="ri-printer-line"></i></button>
-                                    <button wire:click="deleteAlert({{ $payment->id }})" class="text-danger"><i
-                                            class="text-base ri-delete-bin-2-line"></i></button>
                                 </div>
                             </td>
                         </tr>

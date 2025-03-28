@@ -17,6 +17,8 @@ return new class extends Migration
             $table->enum('stock_type', ['home_stock', 'store_stock', 'pre_order_stock']);
             $table->enum('stock_activity', ['purchase', 'keep', 'pre_order', 'sales', 'transfer', 'add', 'retur', 'remove']);
             $table->enum('status', ['add', 'remove', 'change']);
+            $table->enum('stock_transfer_from', ['home_stock', 'store_stock', 'pre_order_stock'])->nullable();
+            $table->enum('stock_transfer_to', ['home_stock', 'store_stock', 'pre_order_stock'])->nullable();
             $table->integer('stock_before');
             $table->integer('stock_after');
             $table->timestamps();

@@ -143,7 +143,6 @@
             </div>
             <div class="pt-4 section">
                 <x-textarea-input id="desc" name="desc" title="Purchase Note" />
-                @if (!$purchase)
                 <div class="grid lg:grid-cols-3 lg:gap-3 md:grid-cols-2 md:gap-2">
                     <x-input-select id="payment_type" name="payment_type" title="Payment Type"
                         :options="App\Enums\PaymentType::asSelectArray()" placeholder="Select Payment Type" />
@@ -160,7 +159,6 @@
                         <x-input-text id="account_number" name="account_number" title="Account Number" type="number" />
                         <x-input-text id="account_name" name="account_name" title="Account Name" />
                     </div>
-                @endif
                 @endif
             </div>
             <div class="flex justify-end gap-3 mt-6">

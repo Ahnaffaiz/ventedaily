@@ -123,3 +123,7 @@ Route::middleware([
 });
 
 Route::get('/product-stock', ProductStock::class)->name('product-stock');
+
+Route::get('/database-error', function () {
+    return view('errors.database');
+})->name('database.error');

@@ -354,7 +354,10 @@ class Product extends Component
                 StockActivity::TRANSFER,
                 StockStatus::CHANGE,
                 $this->productStock->$stockTo,
-                $this->productStock->$stockTo + $this->stockAmount);
+                $this->productStock->$stockTo + $this->stockAmount,
+                $this->stockFrom,
+                $this->stockTo
+            );
 
             setStockHistory(
                 $this->productStock->id,
@@ -362,7 +365,10 @@ class Product extends Component
                 StockActivity::TRANSFER,
                 StockStatus::CHANGE,
                 $this->productStock->$stockFrom,
-                $this->productStock->$stockFrom - $this->stockAmount);
+                $this->productStock->$stockFrom - $this->stockAmount,
+                $this->stockFrom,
+                $this->stockTo
+            );
             $this->productStock->update([
                 $this->stockTo => $this->productStock->$stockTo + $this->stockAmount,
                 $this->stockFrom => $this->productStock->$stockFrom - $this->stockAmount,

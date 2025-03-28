@@ -20,7 +20,9 @@ if (! function_exists('setStockHistory')) {
         string $stockActivity,
         string $status,
         int $stockBefore,
-        int $stockAfter
+        int $stockAfter,
+        string $stockTransferFrom = null,
+        string $stockTransferTo = null,
     ): ?ProductStockHistory {
         try {
             return ProductStockHistory::create([
@@ -28,6 +30,8 @@ if (! function_exists('setStockHistory')) {
                 'stock_type' => $stockType,
                 'stock_activity' => $stockActivity,
                 'status' => $status,
+                'stock_transfer_from' => $stockTransferFrom,
+                'stock_transfer_to' => $stockTransferTo,
                 'stock_before' => $stockBefore,
                 'stock_after' => $stockAfter,
             ]);

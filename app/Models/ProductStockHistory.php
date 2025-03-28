@@ -17,6 +17,8 @@ class ProductStockHistory extends Model
         'product_stock_id',
         'stock_type',
         'stock_activity',
+        'stock_transfer_from',
+        'stock_transfer_to',
         'status',
         'stock_before',
         'stock_after',
@@ -25,6 +27,8 @@ class ProductStockHistory extends Model
     protected $casts = [
         'stock_type' => StockType::class,
         'stock_activity' => StockActivity::class,
+        'stock_transfer_from' => StockType::class,
+        'stock_transfer_to' => StockType::class,
         'status' => StockStatus::class,
     ];
 

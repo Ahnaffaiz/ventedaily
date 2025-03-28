@@ -44,9 +44,9 @@ class Purchase extends Model
         return $this->belongsTo(TermOfPayment::class);
     }
 
-    public function purchasePayments()
+    public function purchasePayment()
     {
-        return $this->hasMany(PurchasePayment::class);
+        return $this->hasOne(PurchasePayment::class);
     }
 
     public function purchaseItems()

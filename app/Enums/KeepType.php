@@ -8,6 +8,18 @@ final class KeepType extends Enum  {
     const CUSTOM = 'custom';
     public static function asSelectArray(): array
     {
-        return self::asArray();
+        $array = self::asArray();
+        $formatted = [];
+
+        foreach ($array as $key => $value) {
+            $formatted[$value] = ucwords(str_replace('_', ' ', $value));
+        }
+
+        return $formatted;
+    }
+
+    public static function getLabel(string $value): string
+    {
+        return ucwords(str_replace('_', ' ', $value));
     }
 }

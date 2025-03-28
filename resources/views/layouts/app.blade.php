@@ -1,3 +1,7 @@
+@if(isset($databaseError) && $databaseError)
+    @include('errors.database')
+    @php exit; @endphp
+@endif
 <!DOCTYPE html>
 <html lang="{{ str_replace('_', '-', app()->getLocale()) }}">
 

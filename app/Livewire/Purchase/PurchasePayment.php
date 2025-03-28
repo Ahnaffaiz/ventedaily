@@ -53,7 +53,7 @@ class PurchasePayment extends Component
 
     public function updatedCashReceived()
     {
-        $this->cash_change = (int) $this->cash_received + (int) $this->out_balance - $this->payment?->amount;
+        $this->cash_change = (int) $this->cash_received - (int) $this->total_price;
     }
 
     public function edit($payment)
@@ -91,9 +91,8 @@ class PurchasePayment extends Component
             $this->alert('success', 'Payment Successfully Updated');
 
             //update outstanding balance
-            $this->out_balance = $this->total_price > $this->purchase->purchasePayments->sum('amount') ? -1 * ($this->total_price - $this->purchase->purchasePayments->sum('amount')) : 0;
             $this->purchase->update([
-                'outstanding_balance' => $this->out_balance
+                'outstanding_balance' => $this->cash_change < 0 ? -1 * $this->cash_change : 0,
             ]);
             $this->resetInput();
         } catch (\Exception $exception) {
@@ -123,7 +122,7 @@ class PurchasePayment extends Component
     public function delete()
     {
         $this->purchase->update([
-            'outstanding_balance' => $this->purchase->outstanding_balance - $this->payment->amount
+            'outstanding_balance' => 0
         ]);
         $this->payment->delete();
         $this->payment = null;

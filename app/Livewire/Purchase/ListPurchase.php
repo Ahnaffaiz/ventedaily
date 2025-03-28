@@ -90,7 +90,7 @@ class ListPurchase extends Component
     public function addPayment($purchase)
     {
         $this->isPayment = true;
-        $this->purchase = Purchase::with('purchasePayments')->where('id', $purchase)->first();
+        $this->purchase = Purchase::with('purchasePayment')->where('id', $purchase)->first();
         $this->isOpen = true;
     }
 

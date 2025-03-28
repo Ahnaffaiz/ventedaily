@@ -217,7 +217,7 @@ class CreatePurchase extends Component
             'total_price' => $this->total_price,
             'total_items' => $this->total_items,
             'desc' => $this->desc,
-            'outstanding_balance' => $this->cash_change < 0 ? $this->cash_change : 0
+            'outstanding_balance' => $this->cash_change < 0 ? -1 * $this->cash_change : 0
         ]);
 
         foreach ($this->cart as $productStock) {
@@ -260,7 +260,7 @@ class CreatePurchase extends Component
 
         $this->reset();
         $this->alert('success', 'Purchase Order Succesfully Created');
-        $this->mount();
+        return redirect()->route('purchase');
     }
 
     public function edit()
@@ -285,14 +285,12 @@ class CreatePurchase extends Component
         $this->discount_type = $this->purchase->discount_type;
         $this->tax = $this->purchase->tax;
         $this->ship = $this->purchase->ship;
-        $this->payment_type = $this->purchase->purchasePayments->first()?->payment_type->key;
-        $this->cash_received = $this->purchase->purchasePayments->first()?->cash_received;
-        $this->cash_change = $this->purchase->purchasePayments->first()?->cash_change;
+        $this->payment_type = strtolower($this->purchase->purchasePayment?->payment_type);
+        $this->cash_received = $this->purchase->purchasePayment?->cash_received;
+        $this->cash_change = $this->purchase->purchasePayment?->cash_change;
     }
     public function update()
     {
-        $this->payment_type = PaymentType::CASH;
-        $this->cash_received = 0;
         $this->validate();
         $this->purchase->update([
             'user_id' => Auth::user()->id,
@@ -306,7 +304,7 @@ class CreatePurchase extends Component
             'total_price' => $this->total_price,
             'total_items' => $this->total_items,
             'desc' => $this->desc,
-            'outstanding_balance' => -1 * $this->total_price
+            'outstanding_balance' => $this->cash_change < 0 ? -1 * $this->cash_change : 0
         ]);
 
         $productStockHistories = [];
@@ -362,9 +360,19 @@ class CreatePurchase extends Component
             ]);
         }
 
-        foreach ($this->purchase->purchasePayments as $purchasePayments) {
-            $purchasePayments->delete();
-        }
+        $this->purchase->purchasePayment->update([
+            'user_id' => Auth::user()->id,
+            'date' => Carbon::now(),
+            'reference' => 'First Payment',
+            'amount' => $this->cash_change > 0 ? $this->total_price : $this->cash_received,
+            'cash_received' => $this->cash_received,
+            'cash_change' => $this->cash_change,
+            'payment_type' => strtolower($this->payment_type),
+            'account_number' => $this->account_number,
+            'account_name' => $this->account_name,
+            'desc' => $this->desc,
+            'bank_id' => $this->bank_id
+        ]);
 
         $this->alert('success', 'Purchase Order Succesfully Updated');
         $this->mount();

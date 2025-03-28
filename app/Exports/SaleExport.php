@@ -36,7 +36,7 @@ class SaleExport implements FromView
         foreach ($this->sales as $sale) {
             $discount = $sale->discount_type === DiscountType::PERSEN ? $sale->sub_total * (int) $sale->discount / 100 : $sale->discount;
             $tax = $sale->tax / 100 * ($sale->sub_total - $discount);
-            $payment = $sale->purchasePayments->sum('amount');
+            $payment = $sale->salePayment->amount;
             $this->total_discount += $discount;
             $this->total_tax += $tax;
             $this->total_payment += $payment;

@@ -12,13 +12,11 @@ use App\Livewire\PreOrder\ListPreOrder;
 use App\Livewire\Product\Category;
 use App\Livewire\Product\Color;
 use App\Livewire\Cost;
-use App\Livewire\Product\CreateProduct;
-use App\Livewire\Product\CreateTransferProductStock;
+use App\Livewire\Product\ImportProduct;
 use App\Livewire\Product\Product;
 use App\Livewire\Product\Size;
 use App\Livewire\Product\StockIn\CreateStockIn;
 use App\Livewire\Product\StockIn\ListStockIn;
-use App\Livewire\Product\TransferProductStock;
 use App\Livewire\Product\TransferStock\CreateTransferStock;
 use App\Livewire\Product\TransferStock\ListTransferStock;
 use App\Livewire\Public\ProductStock;
@@ -33,10 +31,8 @@ use App\Livewire\Sale\OnlineSales;
 use App\Livewire\Sale\Shipping;
 use App\Livewire\Sale\Withdrawal;
 use App\Livewire\Setting;
-use App\Livewire\StockManagement\Dashboard as StockManagementDashboard;
 use App\Livewire\StockManagement\ListStock;
 use App\Livewire\Supplier\Supplier;
-use App\Models\StockIn;
 use Illuminate\Support\Facades\Route;
 use Illuminate\Support\Facades\Session;
 
@@ -59,6 +55,7 @@ Route::middleware([
     Route::get('/create-transfer-stock/{transferstock?}', CreateTransferStock::class)->name('create-transfer-stock');
     Route::get('/stock-in', ListStockIn::class)->name('stock-in');
     Route::get('/create-stock-in/{stockin?}', CreateStockIn::class)->name('create-stock-in');
+    Route::get('/import-product', ImportProduct::class)->name('import-product');
 
     //stock management
     Route::get('/stock-management', ListStock::class)->name('stock-management');

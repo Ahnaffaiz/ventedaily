@@ -23,7 +23,14 @@
                 Close
             </button>
             @if ($saveButton)
-                <button class="text-white btn bg-primary" wire:click="{{ $saveButton }}">Save</button>
+                <button wire:click="{{ $saveButton }}" class="inline gap-2 text-white transition-all btn bg-primary" wire:target="{{ $saveButton }}" wire:loading.attr="disabled">
+                    <div class="flex gap-2" wire:loading.remove wire:target="{{ $saveButton }}">
+                        Save
+                    </div>
+                    <div class="flex gap-2" wire:loading wire:target="{{ $saveButton }}">
+                        <div class="animate-spin w-4 h-4 border-[3px] border-current border-t-transparent text-light rounded-full"></div>
+                    </div>
+                </button>
             @endif
         </div>
     </div>

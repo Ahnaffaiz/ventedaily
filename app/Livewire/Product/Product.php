@@ -195,9 +195,8 @@ class Product extends Component
             $this->reset();
             $this->mount();
         } catch (Exception $th) {
-            dd($th);
             $this->alert('error', 'Can\'t Create Product', [
-                'text' => $th
+                'text' => $th->getMessage()
             ]);
         }
     }

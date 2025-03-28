@@ -2,20 +2,24 @@
 
 namespace App\Livewire\Product;
 
+use App\Imports\CategoryImport;
 use App\Models\Category as ModelsCategory;
+use App\Models\CategoryPreview;
 use Carbon\Carbon;
 use Jantinnerezo\LivewireAlert\LivewireAlert;
 use Livewire\Attributes\Title;
 use Livewire\Component;
+use Livewire\WithFileUploads;
 use Livewire\WithoutUrlPagination;
 use Livewire\WithPagination;
+use Maatwebsite\Excel\Facades\Excel;
 
 class Category extends Component
 {
-    use LivewireAlert;
+    use LivewireAlert, WithFileUploads;
     use WithPagination, WithoutUrlPagination;
-    public $isOpen = false;
-    public $category, $name, $desc;
+    public $isOpen = false, $isImport = false;
+    public $category, $name, $desc, $category_file, $categoryPreviews;
     public $query = '', $perPage = 10, $sortBy = 'name', $sortDirection = 'asc';
     public $showColumns = [
         'desc' => true,
@@ -66,6 +70,17 @@ class Category extends Component
     public function openModal()
     {
         $this->reset();
+        $this->isOpen = true;
+    }
+
+    public function openModalImport()
+    {
+        $this->reset();
+        $this->categoryPreviews = CategoryPreview::get();
+        if($this->categoryPreviews->count() <= 0) {
+            $this->categoryPreviews = null;
+        }
+        $this->isImport = true;
         $this->isOpen = true;
     }
 
@@ -134,5 +149,40 @@ class Category extends Component
     public function cancel()
     {
         $this->reset();
+    }
+
+    public function previewImport()
+    {
+        try {
+            CategoryPreview::truncate();
+            Excel::import(new CategoryImport, $this->category_file);
+            $this->categoryPreviews = CategoryPreview::get();
+        } catch (\Throwable $th) {
+            $this->alert('error', $th->getMessage());
+        }
+    }
+
+    public function saveCategory()
+    {
+        $error = CategoryPreview::where('error', '!=', null)->first();
+        if($error) {
+            $this->alert('error', 'Please solve the error first');
+        } else {
+            foreach ($this->categoryPreviews as $category) {
+                ModelsCategory::firstOrCreate([
+                    'name' => $category->name,
+                    'desc' => $category->desc,
+                ]);
+            }
+            CategoryPreview::truncate();
+            $this->alert('success','Category Successfully Imported');
+            $this->reset();
+        }
+    }
+
+    public function resetCategoryPreview()
+    {
+        CategoryPreview::truncate();
+        $this->categoryPreviews = null;
     }
 }

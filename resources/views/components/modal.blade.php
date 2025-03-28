@@ -1,4 +1,4 @@
-@props(['title' => 'Modal Title', 'isOpen' => false, 'closeButton' => null, 'saveButton' => null, 'large' => false])
+@props(['title' => 'Modal Title', 'isOpen' => false, 'closeButton' => null, 'saveButton' => null, 'large' => false, 'saveLabel' => 'save'])
 
 <div x-data="{ open: @entangle($attributes->wire('model')) }" x-show="open"
     class="fixed top-0 left-0 z-50 w-full h-full overflow-y-auto transition-all duration-500 bg-gray-800 bg-opacity-50"
@@ -25,7 +25,7 @@
             @if ($saveButton)
                 <button wire:click="{{ $saveButton }}" class="inline gap-2 text-white transition-all btn bg-primary" wire:target="{{ $saveButton }}" wire:loading.attr="disabled">
                     <div class="flex gap-2" wire:loading.remove wire:target="{{ $saveButton }}">
-                        Save
+                        {{ $saveLabel }}
                     </div>
                     <div class="flex gap-2" wire:loading wire:target="{{ $saveButton }}">
                         <div class="animate-spin w-4 h-4 border-[3px] border-current border-t-transparent text-light rounded-full"></div>

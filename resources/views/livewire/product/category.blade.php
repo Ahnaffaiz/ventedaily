@@ -1,18 +1,20 @@
 <div>
     @php
         $saveButton = null;
+        $saveLabel = 'save';
         if($isImport) {
             if($categoryPreviews) {
                 $saveButton = 'saveCategory';
             } else {
                 $saveButton = 'previewImport';
+                $saveLabel = 'import';
             }
         } else {
             $saveButton = $category ? 'update' : 'save';
         }
     @endphp
     <x-modal wire:model="isOpen" title="{{ $category ? 'Edit ' . $category?->name : 'Create Category' }}"
-        saveButton="{{ $saveButton }}" closeButton="closeModal">
+        saveButton="{{ $saveButton }}" saveLabel="{{ $saveLabel }}" closeButton="closeModal">
         @if ($isImport)
         <div class="gap-4">
             @if ($categoryPreviews)

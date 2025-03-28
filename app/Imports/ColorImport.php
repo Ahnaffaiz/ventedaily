@@ -2,12 +2,12 @@
 
 namespace App\Imports;
 
-use App\Models\CategoryPreview;
+use App\Models\ColorPreview;
 use Illuminate\Support\Collection;
 use Maatwebsite\Excel\Concerns\ToCollection;
 use Maatwebsite\Excel\Concerns\WithHeadingRow;
 
-class CategoryImport implements ToCollection, WithHeadingRow
+class ColorImport implements ToCollection, WithHeadingRow
 {
     /**
     * @param Collection $collection
@@ -22,7 +22,7 @@ class CategoryImport implements ToCollection, WithHeadingRow
             if($row['name'] == null) {
                 $error = 'name is required';
             }
-            CategoryPreview::firstOrCreate([
+            ColorPreview::firstOrCreate([
                 'name' => $row['name'],
                 'desc' => $row['description'],
                 'error' => $error,

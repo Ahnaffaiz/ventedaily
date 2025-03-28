@@ -2,20 +2,24 @@
 
 namespace App\Livewire\Product;
 
+use App\Imports\SizeImport;
 use App\Models\Size as ModelsSize;
+use App\Models\SizePreview;
 use Carbon\Carbon;
 use Jantinnerezo\LivewireAlert\LivewireAlert;
 use Livewire\Attributes\Title;
 use Livewire\Component;
+use Livewire\Features\SupportFileUploads\WithFileUploads;
 use Livewire\WithoutUrlPagination;
 use Livewire\WithPagination;
+use Maatwebsite\Excel\Facades\Excel;
 
 class Size extends Component
 {
-    use LivewireAlert;
+    use LivewireAlert, WithFileUploads;
     use WithPagination, WithoutUrlPagination;
-    public $isOpen = false;
-    public $size, $name, $desc;
+    public $isOpen = false, $isImport = false;
+    public $size, $name, $desc, $size_file, $sizePreviews;
     public $query = '', $perPage = 10, $sortBy = 'name', $sortDirection = 'asc';
     public $showColumns = [
         'desc' => true,
@@ -66,6 +70,17 @@ class Size extends Component
     public function openModal()
     {
         $this->reset();
+        $this->isOpen = true;
+    }
+
+    public function openModalImport()
+    {
+        $this->reset();
+        $this->sizePreviews = SizePreview::get();
+        if($this->sizePreviews->count() <= 0) {
+            $this->sizePreviews = null;
+        }
+        $this->isImport = true;
         $this->isOpen = true;
     }
 
@@ -133,5 +148,40 @@ class Size extends Component
     public function cancel()
     {
         $this->reset();
+    }
+
+    public function previewImport()
+    {
+        try {
+            SizePreview::truncate();
+            Excel::import(new SizeImport, $this->size_file);
+            $this->sizePreviews = SizePreview::get();
+        } catch (\Throwable $th) {
+            $this->alert('error', $th->getMessage());
+        }
+    }
+
+    public function saveSize()
+    {
+        $error = SizePreview::where('error', '!=', null)->first();
+        if($error) {
+            $this->alert('error', 'Please solve the error first');
+        } else {
+            foreach ($this->sizePreviews as $size) {
+                ModelsSize::firstOrCreate([
+                    'name' => $size->name,
+                    'desc' => $size->desc,
+                ]);
+            }
+            SizePreview::truncate();
+            $this->alert('success','Size Successfully Imported');
+            $this->reset();
+        }
+    }
+
+    public function resetSizePreview()
+    {
+        SizePreview::truncate();
+        $this->sizePreviews = null;
     }
 }

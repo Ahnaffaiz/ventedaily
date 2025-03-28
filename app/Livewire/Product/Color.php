@@ -2,20 +2,24 @@
 
 namespace App\Livewire\Product;
 
+use App\Imports\ColorImport;
 use App\Models\Color as ModelsColor;
+use App\Models\ColorPreview;
 use Carbon\Carbon;
 use Jantinnerezo\LivewireAlert\LivewireAlert;
 use Livewire\Attributes\Title;
 use Livewire\Component;
+use Livewire\WithFileUploads;
 use Livewire\WithoutUrlPagination;
 use Livewire\WithPagination;
+use Maatwebsite\Excel\Facades\Excel;
 
 class Color extends Component
 {
-    use LivewireAlert;
+    use LivewireAlert, WithFileUploads;
     use WithPagination, WithoutUrlPagination;
-    public $isOpen = false;
-    public $color, $name, $desc;
+    public $isOpen = false, $isImport = false;
+    public $color, $name, $desc, $color_file, $colorPreviews;
     public $query = '', $perPage = 10, $sortBy = 'name', $sortDirection = 'asc';
     public $showColumns = [
         'desc' => true,
@@ -66,6 +70,17 @@ class Color extends Component
     public function openModal()
     {
         $this->reset();
+        $this->isOpen = true;
+    }
+
+    public function openModalImport()
+    {
+        $this->reset();
+        $this->colorPreviews = ColorPreview::get();
+        if($this->colorPreviews->count() <= 0) {
+            $this->colorPreviews = null;
+        }
+        $this->isImport = true;
         $this->isOpen = true;
     }
 
@@ -133,5 +148,40 @@ class Color extends Component
     public function cancel()
     {
         $this->reset();
+    }
+
+    public function previewImport()
+    {
+        try {
+            ColorPreview::truncate();
+            Excel::import(new ColorImport, $this->color_file);
+            $this->colorPreviews = ColorPreview::get();
+        } catch (\Throwable $th) {
+            $this->alert('error', $th->getMessage());
+        }
+    }
+
+    public function saveColor()
+    {
+        $error = ColorPreview::where('error', '!=', null)->first();
+        if($error) {
+            $this->alert('error', 'Please solve the error first');
+        } else {
+            foreach ($this->colorPreviews as $color) {
+                ModelsColor::firstOrCreate([
+                    'name' => $color->name,
+                    'desc' => $color->desc,
+                ]);
+            }
+            ColorPreview::truncate();
+            $this->alert('success','Color Successfully Imported');
+            $this->reset();
+        }
+    }
+
+    public function resetColorPreview()
+    {
+        ColorPreview::truncate();
+        $this->colorPreviews = null;
     }
 }

@@ -419,25 +419,29 @@ class Product extends Component
 
     public function saveProduct()
     {
-        $error = ProductPreview::where('error', '==', [])->first();
-        if($error) {
-            $this->alert('error', 'Please solve the error first');
-        } else {
-            foreach ($this->productPreviews as $product) {
-                ModelsProduct::firstOrCreate(
+        try {
+            $error = ProductPreview::where('error', '==', [])->first();
+            if($error) {
+                $this->alert('error', 'Please solve the error first');
+            } else {
+                foreach ($this->productPreviews as $product) {
+                    ModelsProduct::firstOrCreate(
+                        [
+                        'name' => $product->name,
+                        'category_id' => $product->category_id],
                     [
-                    'name' => $product->name,
-                    'category_id' => $product->category_id],
-                [
-                    'imei' => $product->imei,
-                    'code' => $product->code,
-                    'status' => $product->status,
-                    'desc' => $product->desc
-                ]);
+                        'imei' => $product->imei,
+                        'code' => $product->code,
+                        'status' => $product->status,
+                        'desc' => $product->desc
+                    ]);
+                }
+                ProductPreview::truncate();
+                $this->alert('success','Product Successfully Imported');
+                return $this->reset();
             }
-            ProductPreview::truncate();
-            $this->alert('success','Product Successfully Imported');
-            return $this->reset();
+        } catch (\Throwable $th) {
+            $this->alert('error', 'Silahkan Perbaiki Errornya terlebih dahulu');
         }
     }
 

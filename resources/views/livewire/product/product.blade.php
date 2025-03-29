@@ -7,6 +7,7 @@
             <div class="flex">
                 <div class="relative w-full">
                     <button class="text-white btn bg-primary" wire:click="openModal" type="button"> Create </button>
+                    <button class="text-white btn bg-primary" wire:click="openImportModal" type="button"> Import </button>
                 </div>
             </div>
             <div class="flex justify-end mb-4">

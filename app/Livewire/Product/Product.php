@@ -7,9 +7,11 @@ use App\Enums\ProductStatus;
 use App\Enums\StockActivity;
 use App\Enums\StockStatus;
 use App\Exports\TransferStockExport;
+use App\Imports\ProductImport;
 use App\Models\Category;
 use App\Models\KeepProduct;
 use App\Models\Product as ModelsProduct;
+use App\Models\ProductPreview;
 use App\Models\ProductStock;
 use Carbon\Carbon;
 use Exception;
@@ -45,10 +47,16 @@ class Product extends Component
     public $stockFrom='home_stock', $stockTo='store_stock', $stockAmount, $stockTotal;
 
     public $isOpen = false;
-    public $categories, $product, $isProductStock = false, $isStock = false;
+    public $categories, $product, $isProductStock = false, $isStock = false, $isImport = false;
 
     public $query = '', $perPage = 10, $sortBy = 'name', $sortDirection = 'asc';
     public $transferToStores, $transferToHomes;
+
+    //import
+    #[Validate('required')]
+    public $product_file;
+
+    public $productPreviews;
     public $openRows = [];
 
     public $showColumns = [
@@ -62,7 +70,8 @@ class Product extends Component
     #[Title('Product')]
 
     protected $listeners = [
-        'delete'
+        'delete',
+        'saveProduct'
     ];
 
     public function updatedQuery()
@@ -387,5 +396,72 @@ class Product extends Component
         $tranfer = $transferTo == 'store' ? ' Toko ' : ' Rumah ';
         $name = "Tranfser Produk Ke " . $tranfer . Carbon::now()->format('d F Y')  .".xlsx";
         return Excel::download(new TransferStockExport($transferTo), $name);
+    }
+
+    public function openImportModal()
+    {
+        $this->isImport = true;
+        $this->productPreviews = ProductPreview::get();
+        $this->isOpen = true;
+    }
+
+    public function previewProduct()
+    {
+        try {
+            $this->validateOnly('product_file');
+            ProductPreview::truncate();
+            Excel::import(new ProductImport, $this->product_file);
+            $this->productPreviews = ProductPreview::get();
+        } catch (\Throwable $th) {
+            $this->alert('error', $th->getMessage());
+        }
+    }
+
+    public function saveProduct()
+    {
+        $error = ProductPreview::where('error', '==', [])->first();
+        if($error) {
+            $this->alert('error', 'Please solve the error first');
+        } else {
+            foreach ($this->productPreviews as $product) {
+                ModelsProduct::firstOrCreate(
+                    [
+                    'name' => $product->name,
+                    'category_id' => $product->category_id],
+                [
+                    'imei' => $product->imei,
+                    'code' => $product->code,
+                    'status' => $product->status,
+                    'desc' => $product->desc
+                ]);
+            }
+            ProductPreview::truncate();
+            $this->alert('success','Product Successfully Imported');
+            return $this->reset();
+        }
+    }
+
+    public function resetProductPreview()
+    {
+        ProductPreview::truncate();
+        $this->productPreviews = null;
+    }
+
+    public function saveProductAlert()
+    {
+        $this->alert('question', 'Yakin melakukan Import Product ?', [
+            'toast' => false,
+            'text' => 'Import Product tidak bisa dibatalkan',
+            'position' => 'center',
+            'showConfirmButton' => true,
+            'confirmButtonText' => 'Yes',
+            'showCancelButton' => true,
+            'cancelButtonText' => 'cancel',
+            'icon' => 'warning',
+            'onConfirmed' => 'saveProduct',
+            'timer' => null,
+            'confirmButtonColor' => '#3085d6',
+            'cancelButtonColor' => '#d33'
+        ]);
     }
 }

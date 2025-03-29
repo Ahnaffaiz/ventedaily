@@ -2,13 +2,20 @@
     $saveButton = null;
     if ($isStock) {
         $saveButton = 'saveStock';
-    } else {
+    } elseif($isImport) {
+        if($productPreviews?->count() > 0) {
+            $saveButton = 'saveProductAlert';
+        } else {
+            $saveButton = 'previewProduct';
+        }
+    }
+     else {
         $saveButton = $product ? 'update' : 'save';
     }
 @endphp
 <x-modal wire:model="isOpen" title="{{ $product ? 'Edit ' . $product?->name : 'Create Product' }}"
     saveButton="{{ $saveButton }}" closeButton="closeModal"
-    large="{{ $isProductStock ? true : false}}">
+    large="{{ $isProductStock || $isImport ? true : false}}">
     @if ($isProductStock)
         @livewire('product.product-stock', ['product' => $product], key($product->id))
     @elseif($isStock)
@@ -18,6 +25,8 @@
             <x-input-select id="stockTo" name="stockTo" title="Transfer To" :options="$stockTypes" />
         </div>
         <x-input-text type="number" name="stockAmount" id="stockAmount" title="Stock" prepend="Max Stock: {{ $stockTotal }} "/>
+    @elseif($isImport)
+        @include('livewire.product.import-product')
     @else
         <div>
             <form>

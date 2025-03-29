@@ -55,7 +55,6 @@ Route::middleware([
     Route::get('/create-transfer-stock/{transferstock?}', CreateTransferStock::class)->name('create-transfer-stock');
     Route::get('/stock-in', ListStockIn::class)->name('stock-in');
     Route::get('/create-stock-in/{stockin?}', CreateStockIn::class)->name('create-stock-in');
-    Route::get('/import-product', ImportProduct::class)->name('import-product');
 
     //stock management
     Route::get('/stock-management', ListStock::class)->name('stock-management');

@@ -127,7 +127,7 @@
             {{-- product --}}
             <li class="menu-item">
                 @php
-                    $activeRoutes = ['product', 'category', 'color', 'size', 'create-product', 'transfer-stock', 'create-transfer-stock', 'stock-in', 'create-stock-in', 'import-product'];
+                    $activeRoutes = ['product', 'category', 'color', 'size', 'create-product', 'transfer-stock', 'create-transfer-stock', 'stock-in', 'create-stock-in'];
                     $isActive = in_array(request()->route()->getName(), $activeRoutes);
                 @endphp
                 <a href="javascript:void(0)" data-fc-type="collapse" class="menu-link">
@@ -140,7 +140,6 @@
 
                 <ul class="hidden sub-menu">
                     <x-menu-item activeRoute="product" text="Product" />
-                    <x-menu-item activeRoute="import-product" text="Import Product" />
                     <x-menu-item activeRoute="transfer-stock" text="Transfer Stock" />
                     <x-menu-item activeRoute="stock-in" text="Stock In" />
                     <x-menu-item activeRoute="category" text="Category" />

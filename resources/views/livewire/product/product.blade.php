@@ -7,7 +7,20 @@
             <div class="flex">
                 <div class="relative w-full">
                     <button class="text-white btn bg-primary" wire:click="openModal" type="button"> Create </button>
-                    <button class="text-white btn bg-primary" wire:click="openImportModal" type="button"> Import </button>
+                </div>
+                <div class="ms-2">
+                    <a href="javascript:void(0)" data-fc-type="dropdown" class="text-sm text-white btn bg-primary">
+                        Import <i class="ri-arrow-down-s-fill ms-1"></i>
+                    </a>
+
+                    <div class="fc-dropdown fc-dropdown-open:opacity-100 opacity-0 min-w-[10rem] z-50 transition-all duration-300 bg-white dark:bg-gray-800 shadow-lg border border-gray-200 dark:border-gray-700 rounded-md py-1 hidden">
+                        <a wire:click="openImportModal('product')" class="flex items-center py-1.5 px-5 text-sm text-gray-500 hover:bg-light hover:text-gray-800 dark:text-gray-400 dark:hover:bg-gray-700 dark:hover:text-gray-300">
+                            Product
+                        </a>
+                        <a wire:click="openImportModal('stock')" class="flex items-center py-1.5 px-5 text-sm text-gray-500 hover:bg-light hover:text-gray-800 dark:text-gray-400 dark:hover:bg-gray-700 dark:hover:text-gray-300">
+                            Stock
+                        </a>
+                    </div>
                 </div>
             </div>
             <div class="flex justify-end mb-4">

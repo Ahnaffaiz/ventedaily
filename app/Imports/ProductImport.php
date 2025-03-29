@@ -28,7 +28,7 @@ class ProductImport implements ToCollection, WithHeadingRow
             }
 
             //check category
-            $category_id = Category::where('name', $row['category'])->first();
+            $category_id = Category::where('name', strtolower($row['category']))->first();
             if($category_id == null) {
                 array_push($error,'Kategori Tidak Ditemukan');
             }

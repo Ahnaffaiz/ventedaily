@@ -8,11 +8,13 @@ use App\Enums\StockActivity;
 use App\Enums\StockStatus;
 use App\Exports\TransferStockExport;
 use App\Imports\ProductImport;
+use App\Imports\ProductStockImport;
 use App\Models\Category;
 use App\Models\KeepProduct;
 use App\Models\Product as ModelsProduct;
 use App\Models\ProductPreview;
 use App\Models\ProductStock;
+use App\Models\ProductStockPreview;
 use Carbon\Carbon;
 use Exception;
 use Illuminate\Support\Facades\Storage;
@@ -47,7 +49,7 @@ class Product extends Component
     public $stockFrom='home_stock', $stockTo='store_stock', $stockAmount, $stockTotal;
 
     public $isOpen = false;
-    public $categories, $product, $isProductStock = false, $isStock = false, $isImport = false;
+    public $categories, $product, $isProductStock = false, $isStock = false, $isImport = false, $importType = 'product';
 
     public $query = '', $perPage = 10, $sortBy = 'name', $sortDirection = 'asc';
     public $transferToStores, $transferToHomes;
@@ -57,6 +59,11 @@ class Product extends Component
     public $product_file;
 
     public $productPreviews;
+
+    #[Validate('required')]
+    public $stock_file;
+
+    public $stockPreviews;
     public $openRows = [];
 
     public $showColumns = [
@@ -71,7 +78,8 @@ class Product extends Component
 
     protected $listeners = [
         'delete',
-        'saveProduct'
+        'saveProduct',
+        'saveProductStock',
     ];
 
     public function updatedQuery()
@@ -163,6 +171,7 @@ class Product extends Component
 
     public function closeModal()
     {
+        $this->reset();
         $this->isOpen = false;
     }
 
@@ -398,10 +407,15 @@ class Product extends Component
         return Excel::download(new TransferStockExport($transferTo), $name);
     }
 
-    public function openImportModal()
+    public function openImportModal($importType)
     {
+        $this->importType = $importType;
         $this->isImport = true;
-        $this->productPreviews = ProductPreview::get();
+        if($this->importType == 'product') {
+            $this->productPreviews = ProductPreview::get();
+        } else {
+            $this->stockPreviews = ProductStockPreview::get();
+        }
         $this->isOpen = true;
     }
 
@@ -463,6 +477,77 @@ class Product extends Component
             'cancelButtonText' => 'cancel',
             'icon' => 'warning',
             'onConfirmed' => 'saveProduct',
+            'timer' => null,
+            'confirmButtonColor' => '#3085d6',
+            'cancelButtonColor' => '#d33'
+        ]);
+    }
+
+    public function previewProductStock()
+    {
+        try {
+            $this->validateOnly('stock_file');
+            ProductStockPreview::truncate();
+            Excel::import(new ProductStockImport, $this->stock_file);
+            $this->stockPreviews = ProductStockPreview::get();
+        } catch (\Throwable $th) {
+            $this->alert('error', $th->getMessage());
+        }
+    }
+
+    public function saveProductStock()
+    {
+        try {
+            $error = ProductStockPreview::where('error', '==', [])->first();
+            if($error) {
+                $this->alert('error', 'Please solve the error first');
+            } else {
+                foreach ($this->stockPreviews as $productStock) {
+                    ProductStock::firstOrCreate(
+                        [
+                        'product_id' => $productStock->product_id,
+                        'color_id' => $productStock->color_id,
+                        'size_id' => $productStock->size_id],
+                    [
+                        'status' => $productStock->status,
+                        'purchase_price' => $productStock->purchase_price,
+                        'selling_price' => $productStock->selling_price,
+                        'home_stock' => $productStock->home_stock,
+                        'store_stock' => $productStock->store_stock,
+                        'pre_order_stock' => $productStock->pre_order_stock,
+                        'all_stock' => $productStock->all_stock,
+                        'qc_stock' => 0,
+                        'vermak_stock' => 0,
+                    ]);
+                }
+                ProductStockPreview::truncate();
+                $this->alert('success','Product Stock Successfully Imported');
+                return $this->reset();
+            }
+        } catch (\Throwable $th) {
+            dd($th);
+            $this->alert('error', 'Silahkan Perbaiki Errornya terlebih dahulu');
+        }
+    }
+
+    public function resetProductStockPreview()
+    {
+        ProductStockPreview::truncate();
+        $this->stockPreviews = null;
+    }
+
+    public function saveProductStockAlert()
+    {
+        $this->alert('question', 'Yakin melakukan Import Stock ?', [
+            'toast' => false,
+            'text' => 'Import Stock tidak bisa dibatalkan',
+            'position' => 'center',
+            'showConfirmButton' => true,
+            'confirmButtonText' => 'Yes',
+            'showCancelButton' => true,
+            'cancelButtonText' => 'cancel',
+            'icon' => 'warning',
+            'onConfirmed' => 'saveProductStock',
             'timer' => null,
             'confirmButtonColor' => '#3085d6',
             'cancelButtonColor' => '#d33'

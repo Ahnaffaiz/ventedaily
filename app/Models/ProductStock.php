@@ -3,6 +3,7 @@
 namespace App\Models;
 
 use App\Enums\KeepStatus;
+use App\Enums\ProductStatus;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 
@@ -23,6 +24,10 @@ class ProductStock extends Model
         'selling_price',
         'purchase_price',
         'status',
+    ];
+
+    protected $casts = [
+        'status' => ProductStatus::class,
     ];
 
     public function product()

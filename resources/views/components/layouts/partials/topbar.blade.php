@@ -54,22 +54,22 @@
 
         <div
             class="z-50 hidden py-2 transition-all duration-300 bg-white border border-gray-200 rounded-lg shadow-lg opacity-0 fc-dropdown fc-dropdown-open:opacity-100 w-44 dark:border-gray-700 dark:bg-gray-800">
-            <!-- item-->
-            <h6 class="flex items-center px-3 py-2 text-xs text-gray-800 dark:text-gray-400">Welcome !</h6>
 
-            <!-- item-->
-            <a href="{{ route('user') }}"
-                class="flex items-center gap-2 py-1.5 px-4 text-sm text-gray-800 hover:bg-gray-100 dark:text-gray-400 dark:hover:bg-gray-700 dark:hover:text-gray-300">
-                <i class="text-lg align-middle ri-account-circle-line"></i>
-                <span>User</span>
-            </a>
+            @if (auth()->user()->hasRole('Admin'))
+                <!-- item-->
+                <a href="{{ route('user') }}"
+                    class="flex items-center gap-2 py-1.5 px-4 text-sm text-gray-800 hover:bg-gray-100 dark:text-gray-400 dark:hover:bg-gray-700 dark:hover:text-gray-300">
+                    <i class="text-lg align-middle ri-account-circle-line"></i>
+                    <span>User</span>
+                </a>
 
-            <!-- item-->
-            <a href="{{ route('settings') }}"
-                class="flex items-center gap-2 py-1.5 px-4 text-sm text-gray-800 hover:bg-gray-100 dark:text-gray-400 dark:hover:bg-gray-700 dark:hover:text-gray-300">
-                <i class="text-lg align-middle ri-settings-4-line"></i>
-                <span>Settings</span>
-            </a>
+                <!-- item-->
+                <a href="{{ route('settings') }}"
+                    class="flex items-center gap-2 py-1.5 px-4 text-sm text-gray-800 hover:bg-gray-100 dark:text-gray-400 dark:hover:bg-gray-700 dark:hover:text-gray-300">
+                    <i class="text-lg align-middle ri-settings-4-line"></i>
+                    <span>Settings</span>
+                </a>
+            @endif
 
             <!-- item-->
             <form action="{{ route('logout') }}" method="post" class="flex items-center gap-2 py-1.5 px-4 hover:bg-gray-100 dark:text-gray-400 dark:hover:bg-gray-700 dark:hover:text-gray-300">

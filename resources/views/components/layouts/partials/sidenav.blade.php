@@ -130,7 +130,7 @@
 
                 <ul class="hidden sub-menu">
                     <x-menu-item activeRoute="customer" text="Customer" />
-                    <x-menu-item activeRoute="group" text="Group" />
+                    {{-- <x-menu-item activeRoute="group" text="Group" /> --}}
                 </ul>
             </li>
             @endif

@@ -246,7 +246,7 @@ class CreatePreOrder extends Component
 
             $this->reset();
             $this->alert('success', 'PreOrder Order Succesfully Created');
-            $this->mount();
+            return redirect()->route('pre-order');
         } catch (\Throwable $th) {
             $this->alert('warning', $th);
         }

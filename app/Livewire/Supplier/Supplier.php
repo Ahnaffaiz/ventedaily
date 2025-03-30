@@ -6,6 +6,7 @@ use App\Models\Supplier as ModelsSupplier;
 use Carbon\Carbon;
 use Jantinnerezo\LivewireAlert\LivewireAlert;
 use Livewire\Attributes\Title;
+use Livewire\Attributes\Validate;
 use Livewire\Component;
 use Livewire\WithoutUrlPagination;
 use Livewire\WithPagination;
@@ -15,6 +16,7 @@ class Supplier extends Component
     use LivewireAlert;
     use WithPagination, WithoutUrlPagination;
     public $isOpen = false;
+
     public $supplier, $name, $phone, $address;
     public $query = '', $perPage = 10, $sortBy = 'name', $sortDirection = 'asc';
     public $showColumns = [
@@ -28,7 +30,8 @@ class Supplier extends Component
 
     protected $rules = [
         'name' => 'required|unique:suppliers',
-        'phone' => 'regex:/^8\d+$/'
+        'phone' => 'regex:/^8\d+$/',
+        'address'=> 'required',
     ];
 
     protected $listeners = [

@@ -128,7 +128,7 @@ Route::middleware([
     'auth:sanctum',
     config('jetstream.auth_session'),
     'verified',
-    RoleMiddleware::class . 'Admin|Sales|Warehouse|Accounting'
+    RoleMiddleware::class . ':Admin|Sales|Warehouse|Accounting'
 ])->group(function () {
     //retur
     Route::get('/retur', ListRetur::class)->name('retur');

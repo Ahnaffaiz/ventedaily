@@ -40,7 +40,7 @@
             {{-- end of Sale --}}
 
             {{-- Keep Booking --}}
-            @if (auth()->user()->hasAnyRole(['Admin', 'Sales', 'Accounting', 'User']))
+            @if (auth()->user()->hasAnyRole(['Admin', 'Sales', 'Accounting', 'User', 'Warehouse']))
             <li class="menu-item">
                 @php
                     $activeRoutes = ['create-keep', 'keep'];

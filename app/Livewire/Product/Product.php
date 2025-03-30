@@ -179,7 +179,6 @@ class Product extends Component
     {
 
         try {
-            $this->validate();
             $image = null;
             if($this->image){
                 $width_image = intval(round($this->width_image));

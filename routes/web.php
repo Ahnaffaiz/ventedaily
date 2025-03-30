@@ -12,7 +12,8 @@ use App\Livewire\PreOrder\ListPreOrder;
 use App\Livewire\Product\Category;
 use App\Livewire\Product\Color;
 use App\Livewire\Cost;
-use App\Livewire\Product\ImportProduct;
+use App\Livewire\User;
+use App\Livewire\Role;
 use App\Livewire\Product\Product;
 use App\Livewire\Product\Size;
 use App\Livewire\Product\StockIn\CreateStockIn;
@@ -20,7 +21,6 @@ use App\Livewire\Product\StockIn\ListStockIn;
 use App\Livewire\Product\TransferStock\CreateTransferStock;
 use App\Livewire\Product\TransferStock\ListTransferStock;
 use App\Livewire\Public\ProductStock;
-use App\Livewire\Public\StockOverview;
 use App\Livewire\Purchase\CreatePurchase;
 use App\Livewire\Purchase\ListPurchase;
 use App\Livewire\Retur\CreateRetur;
@@ -123,3 +123,6 @@ Route::get('/product-stock', ProductStock::class)->name('product-stock');
 Route::get('/database-error', function () {
     return view('errors.database');
 })->name('database.error');
+
+Route::get('/user', User::class)->name('user');
+Route::get('/role', Role::class)->name('role');

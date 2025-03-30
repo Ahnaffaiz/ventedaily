@@ -15,7 +15,9 @@
             class="form-input {{ $errors->first($name) ? 'border-2 border-danger' : '' }}" wire:model.live="{{ $name }}"
             placeholder="{{ $placeholder }}" accept="{{ $accept }}">
     @endif
-    <span class="font-normal is-invalid text-small" wire:loading wire:target={{ $name }}>Uploading..</span>
+    @if ($type == 'file')
+        <span class="font-normal is-invalid text-small" wire:loading wire:target={{ $name }}>Uploading..</span>
+    @endif
     @error($name)
         <span class="font-normal is-invalid text-danger text-small" id="is-invalid">{{ $message }}</span>
     @enderror

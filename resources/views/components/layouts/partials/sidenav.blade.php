@@ -210,6 +210,11 @@
             <li class="menu-title">Master</li>
 
             <x-menu-item activeRoute="settings" text="Settings" iconClass="ri-settings-line" />
+
+            <li class="menu-title">User and Role</li>
+            <x-menu-item activeRoute="user" text="User" iconClass="ri-group-line" />
+            <x-menu-item activeRoute="role" text="Role" iconClass="ri-briefcase-line" />
+            <div class="mb-10"></div>
         </ul>
 
     </div>

@@ -14,12 +14,6 @@ class DatabaseSeeder extends Seeder
      */
     public function run(): void
     {
-        User::factory()->create([
-            'name' => 'Admin',
-            'email' => 'admin@gmail.com',
-            'password' => Hash::make('password'),
-        ]);
-
         if (env('APP_ENV') === 'local') {
             $this->call(ColorSeeder::class);
             $this->call(SizeSeeder::class);
@@ -33,12 +27,14 @@ class DatabaseSeeder extends Seeder
             $this->call(ProductStockSeeder::class);
             $this->call(CustomerSeeder::class);
             $this->call(MarketplaceSeeder::class);
+            $this->call(UserSeeder::class);
         } else {
             $this->call(BankSeeder::class);
             $this->call(TermOfPaymentSeeder::class);
             $this->call(SettingSeeder::class);
             $this->call(GroupSeeder::class);
             $this->call(MarketplaceSeeder::class);
+            $this->call(UserSeeder::class);
         }
 
     }

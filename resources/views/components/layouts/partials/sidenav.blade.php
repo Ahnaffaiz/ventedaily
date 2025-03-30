@@ -13,30 +13,34 @@
         <ul class="menu" data-fc-type="accordion">
             <x-menu-item activeRoute="dashboard" text="Dashboard" iconClass="ri-home-3-line" />
 
-            <li class="menu-title">Sales</li>
-
             {{-- Sale --}}
-            <li class="menu-item">
-                @php
-                    $activeRoutes = ['create-sale', 'sale'];
-                    $isActive = in_array(request()->route()->getName(), $activeRoutes);
-                @endphp
-                <a href="javascript:void(0)" data-fc-type="collapse" class="menu-link">
-                    <span class="menu-icon">
-                        <i class="ri-calculator-line {{ $isActive ? 'text-white font-bold' : 'text-gray-300' }}"></i>
-                    </span>
-                    <span class="menu-text {{ $isActive ? 'text-white font-bold' : 'text-gray-300' }}"> Sale </span>
-                    <span class="menu-arrow"></span>
-                </a>
+            @if (auth()->user()->hasAnyRole(['Admin', 'Sales', 'Accounting']))
+                <li class="menu-title">Sales</li>
+                <li class="menu-item">
+                    @php
+                        $activeRoutes = ['create-sale', 'sale'];
+                        $isActive = in_array(request()->route()->getName(), $activeRoutes);
+                    @endphp
+                    <a href="javascript:void(0)" data-fc-type="collapse" class="menu-link">
+                        <span class="menu-icon">
+                            <i class="ri-calculator-line {{ $isActive ? 'text-white font-bold' : 'text-gray-300' }}"></i>
+                        </span>
+                        <span class="menu-text {{ $isActive ? 'text-white font-bold' : 'text-gray-300' }}"> Sale </span>
+                        <span class="menu-arrow"></span>
+                    </a>
 
-                <ul class="hidden sub-menu">
-                    <x-menu-item activeRoute="create-sale" text="Cashier" />
-                    <x-menu-item activeRoute="sale" text="Sale List" />
-                </ul>
-            </li>
+                    <ul class="hidden sub-menu">
+                        @if (auth()->user()->canAny(['Create Sale', 'Update Sale']))
+                            <x-menu-item activeRoute="create-sale" text="Cashier" />
+                        @endif
+                        <x-menu-item activeRoute="sale" text="Sale List" />
+                    </ul>
+                </li>
+            @endif
             {{-- end of Sale --}}
 
             {{-- Keep Booking --}}
+            @if (auth()->user()->hasAnyRole(['Admin', 'Sales', 'Accounting', 'User']))
             <li class="menu-item">
                 @php
                     $activeRoutes = ['create-keep', 'keep'];
@@ -51,13 +55,17 @@
                 </a>
 
                 <ul class="hidden sub-menu">
-                    <x-menu-item activeRoute="create-keep" text="Create Keep" />
+                    @if (auth()->user()->canAny(['Create Keep', 'Update Keep']))
+                        <x-menu-item activeRoute="create-keep" text="Create Keep" />
+                    @endif
                     <x-menu-item activeRoute="keep" text="Keep List" />
                 </ul>
             </li>
+            @endif
             {{-- end of Keep Booking --}}
 
             {{-- Pre Order --}}
+            @if (auth()->user()->hasAnyRole(['Admin', 'Sales', 'Accounting', 'User']))
             <li class="menu-item">
                 @php
                     $activeRoutes = ['create-pre-order', 'pre-order'];
@@ -72,13 +80,17 @@
                 </a>
 
                 <ul class="hidden sub-menu">
-                    <x-menu-item activeRoute="create-pre-order" text="Create Pre Order" />
+                    @if (auth()->user()->canAny(['Create Pre Order', 'Update Pre Order']))
+                        <x-menu-item activeRoute="create-pre-order" text="Create Pre Order" />
+                    @endif
                     <x-menu-item activeRoute="pre-order" text="Pre Order List" />
                 </ul>
             </li>
+            @endif
             {{-- end of Pre Order --}}
 
             {{-- Ventedaily --}}
+            @if (auth()->user()->hasAnyRole(['Admin', 'Sales', 'Accounting']))
             <li class="menu-item">
                 @php
                     $activeRoutes = ['shipping', 'withdrawal', 'online-sales'];
@@ -98,9 +110,11 @@
                     <x-menu-item activeRoute="withdrawal" text="Withdrawal" />
                 </ul>
             </li>
+            @endif
             {{-- end of Ventedaily --}}
 
             {{-- customer --}}
+            @if (auth()->user()->hasAnyRole(['Admin', 'Sales', 'Accounting']))
             <li class="menu-item">
                 @php
                     $activeRoutes = ['customer', 'group'];
@@ -119,8 +133,11 @@
                     <x-menu-item activeRoute="group" text="Group" />
                 </ul>
             </li>
+            @endif
             {{-- end of customer --}}
-            <x-menu-item activeRoute="discount" text="Discount" iconClass="ri-price-tag-3-line" />
+            @if (auth()->user()->hasAnyRole(['Admin', 'Sales', 'Accounting']))
+                <x-menu-item activeRoute="discount" text="Discount" iconClass="ri-price-tag-3-line" />
+            @endif
 
             <li class="menu-title">Inventory</li>
 
@@ -139,12 +156,18 @@
                 </a>
 
                 <ul class="hidden sub-menu">
-                    <x-menu-item activeRoute="product" text="Product" />
-                    <x-menu-item activeRoute="transfer-stock" text="Transfer Stock" />
-                    <x-menu-item activeRoute="stock-in" text="Stock In" />
-                    <x-menu-item activeRoute="category" text="Category" />
-                    <x-menu-item activeRoute="color" text="Color" />
-                    <x-menu-item activeRoute="size" text="Size" />
+                    @if (auth()->user()->hasAnyRole(['Admin', 'User', 'Warehouse']))
+                        <x-menu-item activeRoute="product" text="Product" />
+                    @endif
+                    @if (auth()->user()->canAny(['Create Product Stock', 'Update Product Stock', 'Delete Product Stock']))
+                        <x-menu-item activeRoute="transfer-stock" text="Transfer Stock" />
+                        <x-menu-item activeRoute="stock-in" text="Stock In" />
+                    @endif
+                    @if (auth()->user()->hasRole('Admin'))
+                        <x-menu-item activeRoute="category" text="Category" />
+                        <x-menu-item activeRoute="color" text="Color" />
+                        <x-menu-item activeRoute="size" text="Size" />
+                    @endif
                     <li class="menu-item">
                         <a target="_blank" href="{{ route('product-stock') }}" class="menu-link">
                             <span class="text-sm text-secondary">Product Stock</span>
@@ -155,6 +178,7 @@
             {{-- end of product --}}
 
             {{-- Purchase --}}
+            @if (auth()->user()->hasAnyRole(['Admin', 'Accounting']))
             <li class="menu-item">
                 @php
                     $activeRoutes = ['create-purchase', 'purchase'];
@@ -170,12 +194,16 @@
                 </a>
 
                 <ul class="hidden sub-menu">
-                    <x-menu-item activeRoute="create-purchase" text="Create Purchase" />
+                    @if (auth()->user()->canAny(['Create Purchase', 'Update Purchase']))
+                        <x-menu-item activeRoute="create-purchase" text="Create Purchase" />
+                    @endif
                     <x-menu-item activeRoute="purchase" text="Purchase" />
                 </ul>
             </li>
+            @endif
 
             {{-- Retur --}}
+            @if (auth()->user()->hasAnyRole(['Admin', 'Accounting', 'Warehouse', 'Sales']))
             <li class="menu-item">
                 @php
                     $activeRoutes = ['retur', 'create-retur'];
@@ -190,27 +218,32 @@
                 </a>
 
                 <ul class="hidden sub-menu">
-                    <x-menu-item activeRoute="create-retur" text="Create Retur" />
+                    @if (auth()->user()->canAny(['Create Retur', 'Update Retur']))
+                        <x-menu-item activeRoute="create-retur" text="Create Retur" />
+                    @endif
                     <x-menu-item activeRoute="retur" text="Retur" />
                 </ul>
             </li>
+            @endif
             {{-- end of Retur --}}
+            @if (auth()->user()->hasAnyRole(['Admin', 'Warehouse' ,'Accounting']))
+                <x-menu-item activeRoute="supplier" text="Supplier" iconClass="ri-user-line" />
+            @endif
 
-            <x-menu-item activeRoute="supplier" text="Supplier" iconClass="ri-user-line" />
+            @if (auth()->user()->hasAnyRole(['Admin', 'Sales' ,'Accounting']))
+                <li class="menu-title">Finance</li>
+                <x-menu-item activeRoute="cost" text="Cost" iconClass="ri-money-dollar-box-line" />
+                <x-menu-item activeRoute="expense" text="Expense" iconClass="ri-bank-line" />
+            @endif
 
-            <li class="menu-title">Finance</li>
+            @if (auth()->user()->hasRole('Admin'))
+                <x-menu-item activeRoute="settings" text="Settings" iconClass="ri-settings-line" />
+                <li class="menu-title">User and Role</li>
+                <x-menu-item activeRoute="user" text="User" iconClass="ri-group-line" />
+                <x-menu-item activeRoute="role" text="Role" iconClass="ri-briefcase-line" />
+                <div class="mb-10"></div>
+            @endif
 
-            <x-menu-item activeRoute="cost" text="Cost" iconClass="ri-money-dollar-box-line" />
-            <x-menu-item activeRoute="expense" text="Expense" iconClass="ri-bank-line" />
-
-            <li class="menu-title">Master</li>
-
-            <x-menu-item activeRoute="settings" text="Settings" iconClass="ri-settings-line" />
-
-            <li class="menu-title">User and Role</li>
-            <x-menu-item activeRoute="user" text="User" iconClass="ri-group-line" />
-            <x-menu-item activeRoute="role" text="Role" iconClass="ri-briefcase-line" />
-            <div class="mb-10"></div>
         </ul>
 
     </div>

@@ -5,10 +5,12 @@
     <div class="relative mt-4 overflow-hidden bg-white shadow-md dark:bg-gray-800 sm:rounded-lg">
         <div class="flex items-center justify-between p-4 d">
             <div class="flex">
-                <div class="relative w-full">
-                    <a class="text-white btn bg-primary" wire:navigate href="{{ route('create-pre-order') }}" type="button">
-                        Create </a>
-                </div>
+                @if(auth()->user()->can('Create Pre Order'))
+                    <div class="relative w-full">
+                        <a class="text-white btn bg-primary" wire:navigate href="{{ route('create-pre-order') }}" type="button">
+                            Create </a>
+                    </div>
+                @endif
             </div>
             <div class="flex justify-end mb-4">
                 <div class="relative mr-4 ms-auto">
@@ -176,13 +178,17 @@
                                         <button wire:click="show({{ $preOrder->id }})" class="text-primary">
                                             <i class="ri-eye-line"></i>
                                         </button>
-                                        <a wire:navigate href="{{ route('create-pre-order', ['preorder' => $preOrder->id]) }}"
-                                            class="text-info">
-                                            <i class="ri-edit-circle-line"></i>
-                                        </a>
-                                        <button wire:click="deleteAlert({{ $preOrder->id }})" class="text-danger">
-                                            <i class="text-base ri-delete-bin-2-line"></i>
-                                        </button>
+                                        @if(auth()->user()->can('Update Pre Order'))
+                                            <a wire:navigate href="{{ route('create-pre-order', ['preorder' => $preOrder->id]) }}"
+                                                class="text-info">
+                                                <i class="ri-edit-circle-line"></i>
+                                            </a>
+                                        @endif
+                                        @if(auth()->user()->can('Delete Pre Order'))
+                                            <button wire:click="deleteAlert({{ $preOrder->id }})" class="text-danger">
+                                                <i class="text-base ri-delete-bin-2-line"></i>
+                                            </button>
+                                        @endif
                                     </div>
                                 </td>
                             </tr>

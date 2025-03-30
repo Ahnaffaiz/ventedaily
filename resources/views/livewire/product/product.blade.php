@@ -5,23 +5,25 @@
     <div class="relative mt-4 overflow-hidden bg-white shadow-md dark:bg-gray-800 sm:rounded-lg">
         <div class="flex items-center justify-between p-4 d">
             <div class="flex">
-                <div class="relative w-full">
-                    <button class="text-white btn bg-primary" wire:click="openModal" type="button"> Create </button>
-                </div>
-                <div class="ms-2">
-                    <a href="javascript:void(0)" data-fc-type="dropdown" class="text-sm text-white btn bg-primary">
-                        Import <i class="ri-arrow-down-s-fill ms-1"></i>
-                    </a>
-
-                    <div class="fc-dropdown fc-dropdown-open:opacity-100 opacity-0 min-w-[10rem] z-50 transition-all duration-300 bg-white dark:bg-gray-800 shadow-lg border border-gray-200 dark:border-gray-700 rounded-md py-1 hidden">
-                        <a wire:click="openImportModal('product')" class="flex items-center py-1.5 px-5 text-sm text-gray-500 hover:bg-light hover:text-gray-800 dark:text-gray-400 dark:hover:bg-gray-700 dark:hover:text-gray-300">
-                            Product
-                        </a>
-                        <a wire:click="openImportModal('stock')" class="flex items-center py-1.5 px-5 text-sm text-gray-500 hover:bg-light hover:text-gray-800 dark:text-gray-400 dark:hover:bg-gray-700 dark:hover:text-gray-300">
-                            Stock
-                        </a>
+                @if (auth()->user()->canAny(['Create Product', 'Update Product']))
+                    <div class="relative w-full">
+                        <button class="text-white btn bg-primary" wire:click="openModal" type="button"> Create </button>
                     </div>
-                </div>
+                    <div class="ms-2">
+                        <a href="javascript:void(0)" data-fc-type="dropdown" class="text-sm text-white btn bg-primary">
+                            Import <i class="ri-arrow-down-s-fill ms-1"></i>
+                        </a>
+
+                        <div class="fc-dropdown fc-dropdown-open:opacity-100 opacity-0 min-w-[10rem] z-50 transition-all duration-300 bg-white dark:bg-gray-800 shadow-lg border border-gray-200 dark:border-gray-700 rounded-md py-1 hidden">
+                            <a wire:click="openImportModal('product')" class="flex items-center py-1.5 px-5 text-sm text-gray-500 hover:bg-light hover:text-gray-800 dark:text-gray-400 dark:hover:bg-gray-700 dark:hover:text-gray-300">
+                                Product
+                            </a>
+                            <a wire:click="openImportModal('stock')" class="flex items-center py-1.5 px-5 text-sm text-gray-500 hover:bg-light hover:text-gray-800 dark:text-gray-400 dark:hover:bg-gray-700 dark:hover:text-gray-300">
+                                Stock
+                            </a>
+                        </div>
+                    </div>
+                @endif
             </div>
             <div class="flex justify-end mb-4">
                 <div class="relative mr-4 ms-auto">
@@ -181,15 +183,21 @@
                                 @endif
                                 <td class="px-4 py-4">
                                     <div class="flex items-center justify-center space-x-3">
-                                        <button wire:click="addProductStock({{ $product->id }})" class="text-primary">
-                                            <i class="ri-archive-line"></i>
-                                        </button>
-                                        <button wire:click="edit({{ $product->id }})" class="text-info">
-                                            <i class="ri-edit-circle-line"></i>
-                                        </button>
+                                        @if (auth()->user()->canAny(['Create Product Stock', 'Update Product Stock', 'Delete Product Stock',]))
+                                            <button wire:click="addProductStock({{ $product->id }})" class="text-primary">
+                                                <i class="ri-archive-line"></i>
+                                            </button>
+                                        @endif
+                                        @if (auth()->user()->can('Update Product'))
+                                            <button wire:click="edit({{ $product->id }})" class="text-info">
+                                                <i class="ri-edit-circle-line"></i>
+                                            </button>
+                                        @endif
+                                        @if (auth()->user()->can('Delete Product'))
                                         <button wire:click="deleteAlert({{ $product->id }})" class="text-danger">
                                             <i class="text-base ri-delete-bin-2-line"></i>
                                         </button>
+                                        @endif
                                         <button wire:click="toggleRow({{ $product->id }})" type="button"
                                             class="inline-flex transition-all duration-300">
                                             <i class="text-xl transition-all text-warning ri-arrow-down-s-line
@@ -234,9 +242,11 @@
                                                     </td>
                                                     <td class="w-2/12 px-4 py-2 text-sm text-center text-gray-800 whitespace-nowrap dark:text-gray-200">
                                                         <div class="flex items-center justify-center space-x-3">
-                                                            <button wire:click="transferStock({{ $productStock->id }})" class="text-primary">
-                                                                <i class="ri-arrow-left-right-line"></i>
-                                                            </button>
+                                                            @if (auth()->user()->can('Update Product Stock'))
+                                                                <button wire:click="transferStock({{ $productStock->id }})" class="text-primary">
+                                                                    <i class="ri-arrow-left-right-line"></i>
+                                                                </button>
+                                                            @endif
                                                         </div>
                                                     </td>
                                                 </tr>

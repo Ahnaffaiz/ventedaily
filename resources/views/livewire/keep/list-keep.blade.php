@@ -6,10 +6,11 @@
     <div class="relative mt-4 overflow-hidden bg-white shadow-md dark:bg-gray-800 sm:rounded-lg">
         <div class="flex items-center justify-between p-4 d">
             <div class="flex">
-                <div class="relative w-full">
-                    <a class="text-white btn bg-primary" wire:navigate href="{{ route('create-keep') }}" type="button">
-                        Create </a>
-                </div>
+                @if (auth()->user()->canAny(['Update Keep', 'Create Keep']))
+                    <div class="relative w-full">
+                        <a class="text-white btn bg-primary" wire:navigate href="{{ route('create-keep') }}" type="button"> Create </a>
+                    </div>
+                @endif
             </div>
             <div class="flex justify-end mb-4">
                 <div class="relative mr-4 ms-auto">
@@ -267,15 +268,19 @@
                                         <button wire:click="show({{ $keep->id }})" class="text-primary">
                                             <i class="ri-eye-line"></i>
                                         </button>
-                                        @if (strtolower($keep->status) === strtolower(App\Enums\KeepStatus::ACTIVE))
-                                            <a wire:navigate href="{{ route('create-keep', ['keep' => $keep->id]) }}"
-                                                class="text-info">
-                                                <i class="ri-edit-circle-line"></i>
-                                            </a>
+                                        @if (auth()->user()->can('Update Keep'))
+                                            @if (strtolower($keep->status) === strtolower(App\Enums\KeepStatus::ACTIVE))
+                                                <a wire:navigate href="{{ route('create-keep', ['keep' => $keep->id]) }}"
+                                                    class="text-info">
+                                                    <i class="ri-edit-circle-line"></i>
+                                                </a>
+                                            @endif
                                         @endif
-                                        <button wire:click="deleteAlert({{ $keep->id }})" class="text-danger">
-                                            <i class="text-base ri-delete-bin-2-line"></i>
-                                        </button>
+                                        @if (auth()->user()->can('Delete Keep'))
+                                            <button wire:click="deleteAlert({{ $keep->id }})" class="text-danger">
+                                                <i class="text-base ri-delete-bin-2-line"></i>
+                                            </button>
+                                        @endif
                                     </div>
                                 </td>
                             </tr>

@@ -48,7 +48,7 @@
             class="nav-link flex items-center gap-2.5 px-3 bg-black/5 border-x border-black/10">
             <img src="{{ asset('assets/images/users/avatar-1.jpg') }}" alt="user-image" class="h-8 rounded-full">
             <span class="md:flex flex-col gap-0.5 text-start hidden">
-                <h5 class="text-sm">{{ auth()->user()->name }}</h5>
+                <h5 class="text-sm">{{ auth()?->user()?->name }}</h5>
             </span>
         </button>
 

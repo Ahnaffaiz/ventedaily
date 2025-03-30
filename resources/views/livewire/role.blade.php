@@ -1,6 +1,6 @@
 <div>
     <x-modal wire:model="isOpen" title="{{ $role ? 'Edit ' . $role?->name : 'Create User' }}"
-        saveButton="{{ $role ? 'update' : 'save' }}" saveLabel="{{ $role ? 'Update User' : 'Create User' }}" closeButton="closeModal" large="true">
+        saveButton="{{ 'update' }}" saveLabel="{{ 'Save' }}" closeButton="closeModal" large="true">
         <form>
             <x-input-text id="name" name="name" title="Name" placeholder="your name" disabled/>
             @if ($permissions)
@@ -24,8 +24,8 @@
                 @if ($roles->count() > 0)
                     <thead>
                         <tr>
-                            <th scope="col" class="px-4 py-4 text-sm font-medium text-center text-gray-500">No</th>
-                            <th scope="col" class="px-4 py-4 text-sm font-medium text-gray-500 text-start"
+                            <th scope="col" class="w-2/12 px-4 py-4 text-sm font-medium text-center text-gray-500">No</th>
+                            <th scope="col" class="w-8/12 px-4 py-4 text-sm font-medium text-gray-500 text-start"
                                 wire:click="sortByColumn('name')">
                                 Name
                                 @if ($sortBy === 'name')
@@ -38,7 +38,7 @@
                                     <i class="ri-expand-up-down-line"></i>
                                 @endif
                             </th>
-                            <th scope="col" class="justify-end px-4 py-4 pr-3 text-sm font-medium text-gray-500">Action</th>
+                            <th scope="col" class="justify-end w-2/12 px-4 py-4 pr-3 text-sm font-medium text-gray-500">Action</th>
                         </tr>
                     </thead>
                     <tbody class="divide-y divide-gray-200 dark:divide-gray-700">

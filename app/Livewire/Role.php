@@ -76,7 +76,7 @@ class Role extends Component
     {
         $this->role = ModelsRole::find($role);
         $this->name = $this->role->name;
-        $this->permissions = Permission::all()->pluck('name','id')->toArray();
+        $this->permissions = Permission::orderBy('created_at', 'asc')->pluck('name','id')->toArray();
         $this->permission_ids = $this->role->permissions->pluck('name');
         $this->isOpen = true;
     }

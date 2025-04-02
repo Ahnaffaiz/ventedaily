@@ -1,6 +1,6 @@
 <?php
 
-namespace App\Livewire;
+namespace App\Livewire\CostExpense;
 
 use App\Models\Cost as ModelsCost;
 use Carbon\Carbon;
@@ -56,7 +56,7 @@ class Cost extends Component
 
     public function render()
     {
-        return view('livewire.cost', [
+        return view('livewire.cost-expense.cost', [
             'costs' =>ModelsCost::orderBy($this->sortBy, $this->sortDirection)
                     ->where('name', 'like', '%'.$this->query.'%')
                     ->paginate($this->perPage)

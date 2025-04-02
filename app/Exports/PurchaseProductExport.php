@@ -5,6 +5,7 @@ namespace App\Exports;
 use App\Models\Purchase;
 use App\Models\PurchaseItem;
 use App\Models\Setting;
+use App\Models\Supplier;
 use Carbon\Carbon;
 use Illuminate\Contracts\View\View;
 use Illuminate\Support\Facades\DB;
@@ -12,16 +13,23 @@ use Maatwebsite\Excel\Concerns\FromView;
 
 class PurchaseProductExport implements FromView
 {
-    protected $purchaseItems, $start_date, $end_date, $setting;
+    protected $purchaseItems, $start_date, $end_date, $setting, $supplier, $supplier_id;
 
-    public function __construct($start_date, $end_date)
+    public function __construct($start_date, $end_date, $supplier_id = null)
     {
         $this->setting = Setting::first();
+        $this->supplier_id = $supplier_id;
         $this->start_date = Carbon::parse($start_date)->format('d/m/Y');
         $this->end_date = Carbon::parse($end_date)->format('d/m/Y');
         $start_date = Carbon::parse($start_date)->startOfDay();
         $end_date = Carbon::parse($end_date)->endOfDay();
-        $purchases = Purchase::whereBetween('created_at', [$start_date, $end_date])->get();
+        if($supplier_id) {
+            $this->supplier = Supplier::where('id', $this->supplier_id)->first();
+            $purchases = Purchase::where('supplier_id', $this->supplier_id)
+                    ->whereBetween('created_at', [$start_date, $end_date])->get();
+        } else {
+            $purchases = Purchase::whereBetween('created_at', [$start_date, $end_date])->get();
+        }
         $this->purchaseItems = PurchaseItem::whereIn('purchase_id', $purchases->pluck('id'))
             ->with([
                 'productStock.product',
@@ -49,7 +57,8 @@ class PurchaseProductExport implements FromView
             'products' => $this->purchaseItems,
             'start_date' => $this->start_date,
             'end_date' => $this->end_date,
-            'setting' => $this->setting
+            'setting' => $this->setting,
+            'supplier' => $this->supplier
         ]);
     }
 }

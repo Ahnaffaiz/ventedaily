@@ -11,15 +11,23 @@
                     <input type="radio" class="form-radio text-primary" wire:model.live="exportType" value="purchase" id="purchase">
                     <label class="ms-1.5" for="purchase">Rekap Transaksi Pembelian</label>
                 </div>
+                <div class="flex items-center">
+                    <input type="radio" class="form-radio text-primary" wire:model.live="exportType" value="by_product" id="by_product">
+                    <label class="ms-1.5" for="by_product">Rekap Transaksi By Produk</label>
+                </div>
             </div>
             <div class="grid grid-cols-2 gap-2">
                 <x-input-text id="start_date" name="start_date" title="Start Date" type="date"/>
                 <x-input-text id="end_date" name="end_date" title="End Date" type="date"/>
             </div>
-            @if ($exportType == 'purchase')
-                <div class="grid grid-cols-1">
-                    <x-input-select-search id="supplier_id" name="supplier_id" title="Supplier" placeholder="Select Supplier" :options="$suppliers" searchFunction="searchSupplier"/>
+            @if ($exportType == 'by_product')
+                <div class="pb-32">
+                    <x-input-select-search id="product_id" name="product_id" title="Product" placeholder="All Product" :options="$products" searchFunction="searchProduct"/>
                 </div>
+            @else
+            <div class="grid grid-cols-1 pb-32">
+                <x-input-select-search id="supplier_id" name="supplier_id" title="Supplier" placeholder="Select Supplier" :options="$suppliers" searchFunction="searchSupplier"/>
+            </div>
             @endif
         </form>
         <div class="flex items-center justify-end gap-2 mt-4">

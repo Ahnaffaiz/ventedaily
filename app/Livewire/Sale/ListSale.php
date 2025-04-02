@@ -88,6 +88,11 @@ class ListSale extends Component
         ]);
     }
 
+    public function updatedGroupId()
+    {
+        $this->customers = Customer::where('group_id', $this->group_id)->pluck('name', 'id')->toArray();
+    }
+
     public function addPayment($sale)
     {
         $this->isPayment = true;
@@ -97,6 +102,8 @@ class ListSale extends Component
 
     public function show($sale_id) {
         $this->isOpen = true;
+        $this->isPayment = false;
+        $this->isExport = false;
         $this->sale = Sale::find($sale_id);
         $this->getTotalPrice();
     }
@@ -196,11 +203,7 @@ class ListSale extends Component
         } elseif($this->exportType == 'sale') {
             $this->validate();
             $name = "Data Penjualan Tanggal " . Carbon::parse($this->start_date)->translatedFormat('d F Y') ." - ". Carbon::parse($this->end_date)->translatedFormat('d F Y') .".xlsx";
-            if($this->customer_id) {
-                return Excel::download(new SaleExport($this->start_date, $this->end_date, $this->supplier_id), $name);
-            } else {
-                return Excel::download(new SaleExport($this->start_date, $this->end_date), $name);
-            }
+            return Excel::download(new SaleExport($this->start_date, $this->end_date, $this->group_id, $this->customer_id), $name);
         }
         $this->start_date = null;
         $this->end_date = null;

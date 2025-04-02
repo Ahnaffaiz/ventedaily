@@ -3,30 +3,43 @@
 namespace App\Exports;
 
 use App\Enums\DiscountType;
-use App\Models\Purchase;
+use App\Models\Sale;
 use App\Models\Setting;
-use App\Models\Supplier;
+use App\Models\Customer;
+use App\Models\Group;
 use Carbon\Carbon;
 use Illuminate\Contracts\View\View;
 use Maatwebsite\Excel\Concerns\FromView;
 
 class SaleExport implements FromView
 {
-    protected $start_date, $end_date, $sales, $customer;
+    protected $start_date, $end_date, $sales, $customer, $group_id, $customer_id, $group;
     protected $sub_total, $total_price, $total_ship, $total_tax, $total_discount, $total_out_balance, $total_payment;
-    public function __construct($start_date, $end_date, $supplier_id = null)
+    public function __construct($start_date, $end_date, $group_id=null, $customer_id=null)
     {
         $this->start_date = Carbon::parse($start_date)->format('d/m/Y');
         $this->end_date = Carbon::parse($end_date)->format('d/m/Y');
+        $this->group_id = $group_id;
+        $this->customer_id = $customer_id;
         $start_date = Carbon::parse($start_date)->startOfDay();
         $end_date = Carbon::parse($end_date)->endOfDay();
-        if ($supplier_id) {
-            $this->customer = Supplier::where('id', $supplier_id)->first();
-            $this->sales = Purchase::where('supplier_id', $this->customer->id)
-                ->whereBetween('created_at', [$start_date, $end_date])->get();
-
+        $this->sales = Sale::whereBetween('created_at', [$start_date, $end_date])->get();
+        if ($this->group_id) {
+            $this->group = Group::find($this->group_id);
+            if ($this->customer_id) {
+                $this->customer = Customer::find($this->customer_id);
+                $this->sales = Sale::whereBetween('created_at', [$start_date, $end_date])
+                    ->where('customer_id', $this->customer_id)
+                    ->get();
+            } else {
+                $this->sales = Sale::whereBetween('created_at', [$start_date, $end_date])
+                    ->whereHas('customer', function($query){
+                        $query->where('group_id', $this->group_id);
+                    })->get();
+            }
         } else {
-            $this->sales = Purchase::whereBetween('created_at', [$start_date, $end_date])->get();
+            $this->sales = Sale::whereBetween('created_at', [$start_date, $end_date])
+                ->get();
         }
 
         $this->sub_total = $this->sales->sum('sub_total');
@@ -58,6 +71,7 @@ class SaleExport implements FromView
             'total_tax' => $this->total_tax,
             'total_payment' => $this->total_payment,
             'total_out_balance' => $this->total_out_balance,
+            'group' => $this->group,
         ]);
     }
 }

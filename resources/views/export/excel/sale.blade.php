@@ -12,16 +12,22 @@
         <tr></tr>
         <tr>
             <td width="20px"></td>
-            <td style="font-size:16px; font-weight:500;">PURCHASE REPORT {{ $supplier ? 'BY SUPPLIER' : ''}}</td>
+            <td style="font-size:16px; font-weight:500;">SALE REPORT {{ $customer ? 'BY CUSTOMER' : ''}}</td>
         </tr>
         <tr>
             <td width="20px"></td>
             <td style="font-size: 12px;">Periode : {{ $start_date }} s.d {{ $end_date }}</td>
         </tr>
-        @if ($supplier)
+        @if ($group)
             <tr>
                 <td width="20px"></td>
-                <td style="font-size: 12px;">Supplier : {{ $supplier->name }}</td>
+                <td style="font-size: 12px;">Grup : {{ $group->name }}</td>
+            </tr>
+        @endif
+        @if ($customer)
+            <tr>
+                <td width="20px"></td>
+                <td style="font-size: 12px;">Customer : {{ $customer->name }}</td>
             </tr>
         @endif
     </thead>
@@ -32,7 +38,7 @@
             <th></th>
             <th style="border: 1px solid black; text-align:center; font-weight: bold;">ID</th>
             <th style="border: 1px solid black; text-align:center; font-weight: bold;">Tanggal</th>
-            <th style="border: 1px solid black; text-align:center; font-weight: bold;">Supplier</th>
+            <th style="border: 1px solid black; text-align:center; font-weight: bold;">Customer</th>
             <th style="border: 1px solid black; text-align:center; font-weight: bold;">Term</th>
             <th style="border: 1px solid black; text-align:center; font-weight: bold;">Tax</th>
             <th style="border: 1px solid black; text-align:center; font-weight: bold;">Discount</th>
@@ -45,24 +51,24 @@
         </tr>
     </thead>
     <tbody>
-        @foreach ($purchases as $purchase)
+        @foreach ($sales as $sale)
             <tr>
                 <td></td>
                 <td style="border: 1px solid black; text-align:center;">{{ $loop->iteration }}</td>
-                <td style="border: 1px solid black;width:100px;">{{ date('d-m-Y', strtotime($purchase->created_at))}}</td>
-                <td style="border: 1px solid black;width:100px;">{{ $purchase->supplier->name }}</td>
-                <td style="border: 1px solid black; text-align: center; width:200px;"> {{ $purchase->termOfPayment->name }}</td>
+                <td style="border: 1px solid black;width:100px;">{{ date('d-m-Y', strtotime($sale->created_at))}}</td>
+                <td style="border: 1px solid black;width:100px;">{{ $sale->customer->name }}</td>
+                <td style="border: 1px solid black; text-align: center; width:200px;"> {{ $sale->termOfPayment->name }}</td>
                 @php
-                    $discount = $purchase->discount_type === App\Enums\DiscountType::PERSEN ? $purchase->sub_total * (int) $purchase->discount / 100 : $purchase->discount;
+                    $discount = $sale->discount_type === App\Enums\DiscountType::PERSEN ? $sale->sub_total * (int) $sale->discount / 100 : $sale->discount;
                 @endphp
-                <td style="border: 1px solid black; width:100px; text-align: right;"> Rp. {{ number_format($purchase->tax / 100 * ($purchase->sub_total - $discount), 0, ',', '.') }}</td>
+                <td style="border: 1px solid black; width:100px; text-align: right;"> Rp. {{ number_format($sale->tax / 100 * ($sale->sub_total - $discount), 0, ',', '.') }}</td>
                 <td style="border: 1px solid black; width:100px; text-align: right;"> Rp. {{ number_format($discount, 0, ',', '.') }}</td>
-                <td style="border: 1px solid black; width:100px; text-align: right;"> Rp. {{ number_format($purchase->ship, 0, ',', '.') }}</td>
-                <td style="border: 1px solid black; width:100px; text-align: right;"> Rp. {{ number_format($purchase->sub_total, 0, ',', '.') }}</td>
-                <td style="border: 1px solid black; width:100px; text-align: right;"> Rp. {{ number_format($purchase->total_price, 0, ',', '.') }}</td>
-                <td style="border: 1px solid black; width:100px; text-align: right;"> Rp. {{ number_format($purchase->payment, 0, ',', '.') }}</td>
-                <td style="border: 1px solid black; width:100px; text-align: right;"> Rp. {{ number_format($purchase->outstand_payment, 0, ',', '.') }}</td>
-                <td style="border: 1px solid black; width:100px;">{{ $purchase->user->name }}</td>
+                <td style="border: 1px solid black; width:100px; text-align: right;"> Rp. {{ number_format($sale->ship, 0, ',', '.') }}</td>
+                <td style="border: 1px solid black; width:100px; text-align: right;"> Rp. {{ number_format($sale->sub_total, 0, ',', '.') }}</td>
+                <td style="border: 1px solid black; width:100px; text-align: right;"> Rp. {{ number_format($sale->total_price, 0, ',', '.') }}</td>
+                <td style="border: 1px solid black; width:100px; text-align: right;"> Rp. {{ number_format($sale->payment, 0, ',', '.') }}</td>
+                <td style="border: 1px solid black; width:100px; text-align: right;"> Rp. {{ number_format($sale->outstand_payment, 0, ',', '.') }}</td>
+                <td style="border: 1px solid black; width:100px;">{{ $sale->user->name }}</td>
             </tr>
             <tr>
                 <td></td>
@@ -73,14 +79,14 @@
                 <th style="border: 1px solid black; text-align: center; font-weight: bold;">Total</th>
                 <td colspan="5" style="border: 1px solid black"></td>
             </tr>
-            @foreach ($purchase->purchaseItems as $purchaseItem)
+            @foreach ($sale->saleItems as $saleItem)
             <tr>
                 <td></td>
                 <td colspan="3" style="border: 1px solid black"></td>
-                <td style="border: 1px solid black">{{ $purchaseItem->productStock->product->name }} {{ $purchaseItem->productStock->color->name }} {{ $purchaseItem->productStock->size->name }}</td>
-                <td style="border: 1px solid black; text-align: center;">{{ $purchaseItem->total_items }}</td>
-                <td style="border: 1px solid black; text-align: right;"> Rp. {{ number_format($purchaseItem->price, 0, ',', '.') }}</td>
-                <td style="border: 1px solid black; text-align: right;"> Rp. {{ number_format($purchaseItem->total_price, 0, ',', '.') }}</td>
+                <td style="border: 1px solid black">{{ $saleItem->productStock->product->name }} {{ $saleItem->productStock->color->name }} {{ $saleItem->productStock->size->name }}</td>
+                <td style="border: 1px solid black; text-align: center;">{{ $saleItem->total_items }}</td>
+                <td style="border: 1px solid black; text-align: right;"> Rp. {{ number_format($saleItem->price, 0, ',', '.') }}</td>
+                <td style="border: 1px solid black; text-align: right;"> Rp. {{ number_format($saleItem->total_price, 0, ',', '.') }}</td>
                 <td colspan="5" style="border: 1px solid black"></td>
             </tr>
             @endforeach

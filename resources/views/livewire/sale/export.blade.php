@@ -11,17 +11,27 @@
                     <input type="radio" class="form-radio text-primary" wire:model.live="exportType" value="sale" id="sale">
                     <label class="ms-1.5" for="sale">Rekap Transaksi Penjualan</label>
                 </div>
+                <div class="flex items-center">
+                    <input type="radio" class="form-radio text-primary" wire:model.live="exportType" value="by_product" id="by_product">
+                    <label class="ms-1.5" for="by_product">Rekap Transaksi By Produk</label>
+                </div>
             </div>
             <div class="grid grid-cols-2 gap-2">
                 <x-input-text id="start_date" name="start_date" title="Start Date" type="date"/>
                 <x-input-text id="end_date" name="end_date" title="End Date" type="date"/>
             </div>
-            <div class="grid grid-cols-2 gap-2 pb-32">
-                <x-input-select id="group_id" name="group_id" title="Customer Group" placeholder="All Group" :options="$groups"/>
-                @if ($group_id)
-                    <x-input-select-search id="customer_id" name="customer_id" title="Customer" placeholder="All Customer" :options="$customers" searchFunction="searchCustomer"/>
-                @endif
-            </div>
+            @if ($exportType == 'by_product')
+                <div class="pb-32">
+                    <x-input-select-search id="product_id" name="product_id" title="Product" placeholder="All Product" :options="$products" searchFunction="searchProduct"/>
+                </div>
+            @else
+                <div class="grid grid-cols-2 gap-2 pb-32">
+                    <x-input-select id="group_id" name="group_id" title="Customer Group" placeholder="All Group" :options="$groups"/>
+                    @if ($group_id)
+                        <x-input-select-search id="customer_id" name="customer_id" title="Customer" placeholder="All Customer" :options="$customers" searchFunction="searchCustomer"/>
+                    @endif
+                </div>
+            @endif
         </form>
         <div class="flex items-center justify-end gap-2 mt-4">
             <button wire:click="exportExcel" class="inline gap-2 text-white transition-all btn bg-success" wire:target="exportExcel" wire:loading.attr="disabled">

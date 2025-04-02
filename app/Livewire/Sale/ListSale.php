@@ -4,11 +4,13 @@ namespace App\Livewire\Sale;
 
 use App\Enums\DiscountType;
 use App\Enums\KeepStatus;
+use App\Exports\SaleByProductExport;
 use App\Exports\SaleExport;
 use App\Exports\SaleProductExport;
 use App\Models\Customer;
 use App\Models\Group;
 use App\Models\Keep;
+use App\Models\Product;
 use App\Models\Sale;
 use Carbon\Carbon;
 use Exception;
@@ -31,7 +33,7 @@ class ListSale extends Component
 
     #[Rule('required')]
     public $start_date, $end_date, $exportType = 'product';
-    public $customer_id, $customers, $group_id, $groups;
+    public $customer_id, $customers, $group_id, $groups, $product_id, $products;
 
     public $total_price, $sub_total_after_discount;
     public $showColumns = [
@@ -179,6 +181,7 @@ class ListSale extends Component
     {
         $this->customers = Customer::all()->pluck('name', 'id')->toArray();
         $this->groups = Group::all()->pluck('name', 'id')->toArray();
+        $this->products = Product::all()->pluck('name', 'id')->toArray();
         $this->isExport = true;
         $this->isOpen = true;
     }
@@ -194,6 +197,18 @@ class ListSale extends Component
         }
     }
 
+    public function searchProduct($query)
+    {
+        $this->products = Product::all()->pluck('name', 'id')->toArray();
+        if ($query) {
+            $this->products = collect(Product::all()->pluck('name', 'id')->toArray())
+                ->filter(function ($label, $value) use ($query) {
+                    return stripos($label, $query) !== false;
+                })
+                ->toArray();
+            }
+    }
+
     public function exportExcel()
     {
         if($this->exportType == 'product') {
@@ -204,6 +219,14 @@ class ListSale extends Component
             $this->validate();
             $name = "Data Penjualan Tanggal " . Carbon::parse($this->start_date)->translatedFormat('d F Y') ." - ". Carbon::parse($this->end_date)->translatedFormat('d F Y') .".xlsx";
             return Excel::download(new SaleExport($this->start_date, $this->end_date, $this->group_id, $this->customer_id), $name);
+        } elseif($this->exportType == "by_product") {
+            $this->validate();
+            $product = null;
+            if($this->product_id) {
+                $product = Product::where('id', $this->product_id)->first();
+            }
+            $name = "Data Penjualan Produk " . $product?->name . ' ' . Carbon::parse($this->start_date)->translatedFormat('d F Y') ." - ". Carbon::parse($this->end_date)->translatedFormat('d F Y') .".xlsx";
+            return Excel::download(new SaleByProductExport($this->start_date, $this->end_date, $this->product_id), $name);
         }
         $this->start_date = null;
         $this->end_date = null;

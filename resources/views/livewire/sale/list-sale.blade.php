@@ -332,12 +332,12 @@
                                 @endif
                                 @if ($showColumns['created_at'])
                                     <td class="px-4 py-4 text-sm text-gray-500 whitespace-nowrap dark:text-gray-200">
-                                        {{ $sale->created_at }}
+                                        {{ \Carbon\Carbon::parse($sale->created_at)->format('d/m/Y') }}
                                     </td>
                                 @endif
                                 @if ($showColumns['updated_at'])
                                     <td class="px-4 py-4 text-sm text-gray-500 whitespace-nowrap dark:text-gray-200">
-                                        {{ $sale->updated_at }}
+                                        {{ \Carbon\Carbon::parse($sale->updated_at)->format('d/m/Y') }}
                                     </td>
                                 @endif
                                 <td class="px-4 py-4">

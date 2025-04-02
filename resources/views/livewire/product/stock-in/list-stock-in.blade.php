@@ -66,7 +66,7 @@
                                     {{($stockIns->currentpage() - 1) * $stockIns->perpage() + $loop->index + 1}}
                                 </th>
                                 <td class="px-4 py-4 text-sm text-gray-500 whitespace-nowrap dark:text-gray-200">
-                                    {{ \Carbon\Carbon::parse($stockIn->created_at)->translatedFormat('H:i d F Y') }}
+                                    {{ \Carbon\Carbon::parse($stockIn->created_at)->format('d/m/Y') }}
                                 </td>
                                 <td class="px-4 py-4 text-sm text-gray-500 whitespace-nowrap dark:text-gray-200">
                                     {{ App\Enums\StockType::getLabel($stockIn->stock_type) }}
@@ -75,7 +75,7 @@
                                     {{ $stockIn->total_items }}
                                 </td>
                                 <td class="px-4 py-4 text-sm text-gray-500 whitespace-nowrap dark:text-gray-200">
-                                    {{ \Carbon\Carbon::parse($stockIn->updated_at)->translatedFormat('H:i d F Y') }}
+                                    {{ \Carbon\Carbon::parse($stockIn->updated_at)->format('H:i d F Y') }}
                                 </td>
                                 <td class="px-4 py-4">
                                     <div class="flex items-center justify-center space-x-3">

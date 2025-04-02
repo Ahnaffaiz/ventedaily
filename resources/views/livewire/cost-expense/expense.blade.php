@@ -29,7 +29,7 @@
                 <div class="relative w-full">
                     <button class="text-white btn bg-primary" wire:click="openModal" type="button">
                         Create </button>
-                <button class="text-white btn bg-success" wire:click="openModalExport" type="button">
+                    <button class="text-white btn bg-success" wire:click="openModalExport" type="button">
                         <i class="ri-file-download-line me-1"></i>
                         Export </button>
                 </div>

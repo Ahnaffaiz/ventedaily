@@ -2,20 +2,22 @@
 
 namespace App\Livewire\Retur;
 
-use App\Enums\KeepStatus;
 use App\Enums\ReturStatus;
-use App\Models\Group;
+use App\Exports\ReturExport;
+use App\Exports\ReturProductExport;
 use App\Models\ProductStock;
 use App\Models\Retur;
-use App\Models\Purchase;
 use App\Models\Setting;
+use Carbon\Carbon;
 use Exception;
 use Illuminate\Support\Facades\Session;
 use Jantinnerezo\LivewireAlert\LivewireAlert;
 use Livewire\Attributes\Title;
+use Livewire\Attributes\Validate;
 use Livewire\Component;
 use Livewire\WithoutUrlPagination;
 use Livewire\WithPagination;
+use Maatwebsite\Excel\Facades\Excel;
 
 class ListRetur extends Component
 {
@@ -23,6 +25,9 @@ class ListRetur extends Component
     use WithPagination, WithoutUrlPagination;
 
     public $isOpen = false, $modal;
+
+    #[Validate('required')]
+    public $start_date, $end_date, $exportType = 'product';
     public $retur;
     public $query = '', $perPage = 10, $sortBy = 'no_retur', $sortDirection = 'desc', $status, $returStatus;
     public $total_price;
@@ -169,5 +174,28 @@ class ListRetur extends Component
         Session::put('retur', $retur);
         Session::put('setting', $setting);
         $this->dispatch('print-retur-payment',route('print-retur-payment', ['retur' => $retur->id]));
+    }
+
+    public function openModalExport()
+    {
+        $this->modal = 'export';
+        $this->isOpen = true;
+    }
+
+    public function exportExcel()
+    {
+        if($this->exportType == 'product') {
+            $this->validate();
+            $name = "Data Retur Produk Tanggal " . Carbon::parse($this->start_date)->translatedFormat('d F Y') ." - ". Carbon::parse($this->end_date)->translatedFormat('d F Y') .".xlsx";
+            return Excel::download(new ReturProductExport($this->start_date, $this->end_date), $name);
+        } elseif($this->exportType == 'retur') {
+            $this->validate();
+            $name = "Data Penjualan Tanggal " . Carbon::parse($this->start_date)->translatedFormat('d F Y') ." - ". Carbon::parse($this->end_date)->translatedFormat('d F Y') .".xlsx";
+            return Excel::download(new ReturExport($this->start_date, $this->end_date), $name);
+        }
+        $this->start_date = null;
+        $this->end_date = null;
+        $this->exportType = 'product';
+        $this->modal = null;
     }
 }

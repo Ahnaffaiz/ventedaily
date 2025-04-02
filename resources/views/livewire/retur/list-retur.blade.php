@@ -3,6 +3,8 @@
         @if ($modal == 'status')
             <x-input-select id="returStatus" name="returStatus" title="Retur Status" placeholder="Select Status"
                 :options="App\Enums\ReturStatus::asSelectArray()" />
+        @elseif ($modal == 'export')
+            @include('livewire.retur.export')
         @else
             @include('livewire.retur.detail-retur')
         @endif
@@ -13,6 +15,10 @@
                 <div class="relative w-full">
                     <a class="text-white btn bg-primary" wire:navigate href="{{ route('create-retur') }}" type="button">
                         Create </a>
+                    <button type="button" class="inline text-white btn bg-success gaps-2" wire:click="openModalExport" type="button">
+                        <i class="ri-file-download-line"></i>
+                        Export
+                    </button>
                 </div>
             </div>
             <div class="flex justify-end mb-4">
@@ -282,12 +288,12 @@
                                 @endif
                                 @if ($showColumns['created_at'])
                                     <td class="px-4 py-4 text-sm text-gray-500 whitespace-nowrap dark:text-gray-200">
-                                        {{ $retur->created_at }}
+                                        {{ \Carbon\Carbon::parse($retur->created_at)->format('d/m/Y') }}
                                     </td>
                                 @endif
                                 @if ($showColumns['updated_at'])
                                     <td class="px-4 py-4 text-sm text-gray-500 whitespace-nowrap dark:text-gray-200">
-                                        {{ $retur->updated_at }}
+                                        {{ \Carbon\Carbon::parse($retur->updated_at)->format('d/m/Y') }}
                                     </td>
                                 @endif
                                 <td class="px-4 py-4">

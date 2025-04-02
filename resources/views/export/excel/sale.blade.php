@@ -43,8 +43,8 @@
             <th style="border: 1px solid black; text-align:center; font-weight: bold;">Tax</th>
             <th style="border: 1px solid black; text-align:center; font-weight: bold;">Discount</th>
             <th style="border: 1px solid black; text-align:center; font-weight: bold;">Ship</th>
-            <th style="border: 1px solid black; text-align:center; font-weight: bold;">Tot.Pch</th>
-            <th style="border: 1px solid black; text-align:center; font-weight: bold;">Net.Pch</th>
+            <th style="border: 1px solid black; text-align:center; font-weight: bold;">Tot.Sale</th>
+            <th style="border: 1px solid black; text-align:center; font-weight: bold;">Net.Sale</th>
             <th style="border: 1px solid black; text-align:center; font-weight: bold;">Payment</th>
             <th style="border: 1px solid black; text-align:center; font-weight: bold;">Sisa</th>
             <th style="border: 1px solid black; text-align:center; font-weight: bold;">User</th>
@@ -54,7 +54,7 @@
         @foreach ($sales as $sale)
             <tr>
                 <td></td>
-                <td style="border: 1px solid black; text-align:center;">{{ $loop->iteration }}</td>
+                <td style="border: 1px solid black; text-align:center;">{{ $sale->no_sale }}</td>
                 <td style="border: 1px solid black;width:100px;">{{ date('d-m-Y', strtotime($sale->created_at))}}</td>
                 <td style="border: 1px solid black;width:100px;">{{ $sale->customer->name }}</td>
                 <td style="border: 1px solid black; text-align: center; width:200px;"> {{ $sale->termOfPayment->name }}</td>

@@ -51,12 +51,6 @@ Route::middleware([
     RoleMiddleware::class . ':Admin|Sales|Accounting|Warehouse|User'
 ])->group(function() {
     Route::get('/dashboard', Dashboard::class)->name('dashboard');
-    Route::get('/stock-history/{productStockId}', function () {
-        $stockHistories = Session::get('stockHistories');
-        $setting = Session::get('setting');
-        return view('print.stock-history', compact('stockHistories', 'setting'));
-    })->name('stock-history');
-    Route::get('/product-stock-history/{productStockId}/{startDate}/{endDate}', [ExportController::class, 'stockHistory'])->name('product-stock-history');
 });
 
 Route::middleware([
@@ -136,6 +130,7 @@ Route::middleware([
 ])->group(function () {
     //product
     Route::get('/product', Product::class)->name('product');
+    Route::get('/product-stock-history/{productStockId}/{startDate}/{endDate}', [ExportController::class, 'stockHistory'])->name('product-stock-history');
 });
 
 Route::middleware([

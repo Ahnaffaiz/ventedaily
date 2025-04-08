@@ -207,6 +207,19 @@ class CreateRetur extends Component
                     $stockType => $productStock->$stockType + $returItem['total_items'],
                     'all_stock' => $productStock->all_stock + $returItem['total_items']
                 ]);
+                setStockHistory(
+                    $productStock->id,
+                    StockActivity::RETUR,
+                    $stockStatus,
+                    NULL,
+                    $stockType,
+                    $returItem['total_items'],
+                    $retur->no_retur,
+                    $productStock->all_stock,
+                    $productStock->home_stock,
+                    $productStock->store_stock,
+                    $productStock->pre_order_stock,
+                );
             }
             $returItem = ReturItem::create([
                 'retur_id' => $retur_id,
@@ -216,14 +229,6 @@ class CreateRetur extends Component
                 'total_price' => $returItem['total_price'],
                 'status' => $returItem['item_status'],
             ]);
-            setStockHistory(
-                $returItem->productStock->id,
-                StockActivity::RETUR,
-                $stockStatus,
-                NULL,
-                $stockType,
-                $returItem->total_items,
-            );
         }
     }
 
@@ -325,6 +330,11 @@ class CreateRetur extends Component
                         $stockType,
                         NULL,
                         $returItem->total_items,
+                        $this->retur->no_retur,
+                        $productStock->all_stock,
+                        $productStock->home_stock,
+                        $productStock->store_stock,
+                        $productStock->pre_order_stock,
                     );
                     $returItem->delete();
                 }

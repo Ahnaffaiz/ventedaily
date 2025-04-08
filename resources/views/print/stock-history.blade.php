@@ -14,7 +14,7 @@
         </div>
         <div class="mt-6 overflow-x-auto bg-white border border-gray-200 dark:bg-gray-800">
             <table class="min-w-full divide-y divide-gray-200 dark:divide-gray-700">
-                @if ($stockHistories)
+                @if ($stockHistories->count() > 0)
                     <thead>
                         <tr>
                             <th scope="col" class="px-4 py-2 text-sm font-bold text-center text-gray-800 dark:text-gray-200">No</th>
@@ -75,9 +75,9 @@
                         @endforeach
                     </tbody>
                 @else
-                    <div class="text-center">
+                    <div class="py-5 text-center">
                         <i class="text-4xl ri-file-warning-line"></i>
-                        <p class="my-5 text-base">No Product Found</p>
+                        <p class="my-5 text-base">No Stock History Found</p>
                     </div>
                 @endif
             </table>

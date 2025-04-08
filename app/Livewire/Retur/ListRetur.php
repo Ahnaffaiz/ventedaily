@@ -116,8 +116,9 @@ class ListRetur extends Component
                 foreach ($this->retur->returItems as $returItem) {
                     $returItem->productStock->update([
                         $stockType => $returItem->productStock->$stockType - $returItem->total_items,
-                        'all_stock' => $returItem->productStock->all_stock + $returItem->total_items,
+                        'all_stock' => $returItem->productStock->all_stock - $returItem->total_items,
                     ]);
+                    $productStock = ProductStock::where('id', $returItem->product_stock_id)->first();
                     setStockHistory(
                         $returItem->productStock->id,
                         StockActivity::RETUR,
@@ -125,6 +126,11 @@ class ListRetur extends Component
                         $stockType,
                         NULL,
                         $returItem->total_items,
+                        $this->retur->no_retur,
+                        $productStock->all_stock,
+                        $productStock->home_stock,
+                        $productStock->store_stock,
+                        $productStock->pre_order_stock,
                     );
                 }
             }

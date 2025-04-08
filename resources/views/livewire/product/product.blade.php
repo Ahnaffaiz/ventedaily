@@ -246,9 +246,11 @@
                                                                     <i class="ri-arrow-left-right-line"></i>
                                                                 </button>
                                                             @endif
-                                                            <button wire:click="openModelHistory({{ $productStock->id }})" class="text-warning">
-                                                                <i class="ri-time-line"></i>
-                                                            </button>
+                                                            @if (auth()->user()->can('Show History Stock'))
+                                                                <button wire:click="openModelHistory({{ $productStock->id }})" class="text-warning">
+                                                                    <i class="ri-time-line"></i>
+                                                                </button>
+                                                            @endif
                                                         </div>
                                                     </td>
                                                 </tr>

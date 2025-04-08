@@ -23,7 +23,7 @@ class UserSeeder extends Seeder
             'Create Customer', 'Read Customer', 'Update Customer', 'Delete Customer',
             'Create Discount', 'Read Discount', 'Update Discount', 'Delete Discount',
             'Create Product', 'Read Product', 'Update Product', 'Delete Product',
-            'Create Product Stock', 'Read Product Stock', 'Update Product Stock', 'Delete Product Stock',
+            'Create Product Stock', 'Read Product Stock', 'Update Product Stock', 'Delete Product Stock', 'Show History Stock',
             'Create Category', 'Read Category', 'Update Category', 'Delete Category',
             'Create Color', 'Read Color', 'Update Color', 'Delete Color',
             'Create Size', 'Read Size', 'Update Size', 'Delete Size',
@@ -62,7 +62,7 @@ class UserSeeder extends Seeder
             'Warehouse' => [
                 'Read Keep',
                 'Create Product', 'Read Product', 'Update Product', 'Delete Product',
-                'Create Product Stock', 'Read Product Stock', 'Update Product Stock', 'Delete Product Stock',
+                'Create Product Stock', 'Read Product Stock', 'Update Product Stock', 'Delete Product Stock', 'Show History Stock',
                 'Create Retur', 'Read Retur', 'Update Retur', 'Delete Retur',
                 'Create Supplier', 'Read Supplier', 'Update Supplier', 'Delete Supplier',
             ],

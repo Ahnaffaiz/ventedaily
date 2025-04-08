@@ -34,4 +34,9 @@ class PreOrder extends Model
     {
         return $this->hasMany(PreOrderProduct::class);
     }
+
+    public function stockHistories()
+    {
+        return $this->morphMany(ProductStockHistory::class, 'reference');
+    }
 }

@@ -4,6 +4,8 @@ namespace App\Livewire\Retur;
 
 use App\Enums\ReturReason;
 use App\Enums\ReturStatus;
+use App\Enums\StockActivity;
+use App\Enums\StockStatus;
 use App\Models\ProductStock;
 use App\Models\Retur;
 use App\Models\ReturItem;
@@ -197,6 +199,7 @@ class CreateRetur extends Component
     {
         $retur = Retur::where('id', $retur_id)->first();
         $stockType = $retur->sale->customer->group_id == 1 ? 'store_stock' : 'home_stock';
+        $stockStatus = $this->isEdit ? StockStatus::CHANGE_ADD : StockStatus::ADD;
         foreach ($this->returItems as $returItem) {
             $productStock = ProductStock::where('id', $returItem['id'])->first();
             if($retur->status == strtolower(ReturStatus::BACK_TO_STOCK)) {
@@ -205,7 +208,7 @@ class CreateRetur extends Component
                     'all_stock' => $productStock->all_stock + $returItem['total_items']
                 ]);
             }
-            ReturItem::create([
+            $returItem = ReturItem::create([
                 'retur_id' => $retur_id,
                 'product_stock_id' => $returItem['id'],
                 'total_items' => $returItem['total_items'],
@@ -213,6 +216,14 @@ class CreateRetur extends Component
                 'total_price' => $returItem['total_price'],
                 'status' => $returItem['item_status'],
             ]);
+            setStockHistory(
+                $returItem->productStock->id,
+                StockActivity::RETUR,
+                $stockStatus,
+                NULL,
+                $stockType,
+                $returItem->total_items,
+            );
         }
     }
 
@@ -307,6 +318,14 @@ class CreateRetur extends Component
                         $stockType => $productStock->$stockType - $returItem->total_items,
                         'all_stock' => $productStock->all_stock - $returItem->total_items
                     ]);
+                    setStockHistory(
+                        $returItem->productStock->id,
+                        StockActivity::RETUR,
+                        StockStatus::CHANGE_REMOVE,
+                        $stockType,
+                        NULL,
+                        $returItem->total_items,
+                    );
                     $returItem->delete();
                 }
 

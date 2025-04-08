@@ -4,6 +4,8 @@ namespace App\Livewire\Sale;
 
 use App\Enums\DiscountType;
 use App\Enums\KeepStatus;
+use App\Enums\StockActivity;
+use App\Enums\StockStatus;
 use App\Exports\SaleByProductExport;
 use App\Exports\SaleExport;
 use App\Exports\SaleProductExport;
@@ -163,6 +165,19 @@ class ListSale extends Component
                     'all_stock' => $saleItem->productStock->all_stock + $saleItem->total_items,
                     $stockStype => $saleItem->productStock->$stockStype + $saleItem->total_items,
                 ]);
+                setStockHistory(
+                    $saleItem->productStock->id,
+                    StockActivity::SALES,
+                    StockStatus::REMOVE,
+                    $stockStype,
+                    NULL,
+                    $saleItem->total_items,
+                    $this->sale->no_sale,
+                    $saleItem->productStock->all_stock,
+                    $saleItem->productStock->home_stock,
+                    $saleItem->productStock->store_stock,
+                    $saleItem->productStock->pre_order_stock,
+                );
             }
             if($this->sale->Keep()->exists()){
                 $this->sale->keep->update([

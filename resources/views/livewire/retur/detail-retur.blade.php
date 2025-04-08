@@ -9,8 +9,8 @@
                 </tr>
                 <tr>
                     <td class="font-bold text-md text-start text-success">{{ $retur?->no_retur }}</td>
-                    <td class="font-bold text-md text-start">{{ $retur?->sale->customer?->name }}</td>
-                    <td class="font-bold text-md text-start">{{ $retur?->sale->customer?->group?->name }}</td>
+                    <td class="font-bold text-md text-start">{{ $retur?->sale?->customer?->name }}</td>
+                    <td class="font-bold text-md text-start">{{ $retur?->sale?->customer?->group?->name }}</td>
                 </tr>
             </tbody>
         </table>

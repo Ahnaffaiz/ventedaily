@@ -6,13 +6,13 @@ use App\Enums\KeepStatus;
 use App\Enums\KeepType;
 use App\Enums\StockActivity;
 use App\Enums\StockStatus;
+use App\Enums\StockType;
 use App\Models\Customer;
 use App\Models\Group;
 use App\Models\Keep;
 use App\Models\KeepProduct;
 use App\Models\Product;
 use App\Models\ProductStock;
-use App\Models\ProductStockHistory;
 use App\Models\Setting;
 use Carbon\Carbon;
 use Illuminate\Support\Facades\Auth;
@@ -273,61 +273,79 @@ class CreateKeep extends Component
 
     public function createKeepProduct($keep_id)
     {
+        $keep = Keep::where('id', $keep_id)->first();
         foreach ($this->cart as $productStock) {
             $stock = ProductStock::where('id', $productStock['id'])->first();
             $stockType = $this->group_id == 2 ? 'home_stock' : 'store_stock';
             $notStockType = $this->group_id == 2 ? 'store_stock' : 'home_stock';
             $keepStock[$stockType] = 0;
             $keepStock[$notStockType] = 0;
+            $stockStatus = $this->isEdit ? StockStatus::CHANGE_ADD : StockStatus::ADD;
             if ($productStock[$stockType] < $productStock['quantity']) {
                 $keepStock[$stockType] = $stock->$stockType;
                 $keepStock[$notStockType] = $productStock['quantity'] - $stock->$stockType;
-                if($this->isEdit) {
-                    if($keepStock[$stockType] > 0) {
-                        $this->updateKeepProductHistory($stockType, $stock, $productStock);
-                    }
-                    if ($keepStock[$notStockType] > 0) {
-                        $this->updateKeepProductHistory($notStockType, $stock, $productStock);
-                    }
-                }
+
+                $stock->update([
+                    $stockType => 0,
+                    'all_stock' => $stock->all_stock - $keepStock[$stockType],
+                ]);
+
+                setStockHistory(
+                    $stock->id,
+                    StockActivity::KEEP,
+                    $stockStatus,
+                    NULL,
+                    $stockType,
+                    $keepStock[$stockType],
+                    $keep->no_keep,
+                    $stock->all_stock,
+                    $stock->home_stock,
+                    $stock->store_stock,
+                    $stock->pre_order_stock,
+                    true
+                );
+
                 $stock->update([
                     $notStockType => $stock->$notStockType - $keepStock[$notStockType],
-                    $stockType => 0,
-                    'all_stock' => $stock->all_stock - $productStock['quantity'],
+                    'all_stock' => $stock->all_stock - $keepStock[$notStockType],
                 ]);
+
+                setStockHistory(
+                    $stock->id,
+                    StockActivity::KEEP,
+                    $stockStatus,
+                    NULL,
+                    $notStockType,
+                    $keepStock[$notStockType],
+                    $keep->no_keep,
+                    $stock->all_stock,
+                    $stock->home_stock,
+                    $stock->store_stock,
+                    $stock->pre_order_stock,
+                    true
+                );
+
             } else {
                 $keepStock[$stockType] = $productStock['quantity'];
-                if($this->isEdit) {
-                    if($keepStock[$stockType] > 0) {
-                        $this->updateKeepProductHistory($stockType, $stock, $productStock);
-                    }
-                }
                 $stock->update([
                     $stockType => $stock->$stockType - $productStock['quantity'],
                     'all_stock' => $stock->all_stock - $productStock['quantity'],
                 ]);
-            }
 
-            if(!$this->isEdit) {
-                if($keepStock[$stockType] > 0) {
-                    setStockHistory(
-                        $stock->id,
-                        $stockType,
-                        StockActivity::KEEP,
-                        StockStatus::ADD,
-                        $stock->$stockType + $keepStock[$stockType],
-                        $stock->$stockType);
-                }
-
-                if($keepStock[$notStockType] > 0) {
-                    setStockHistory(
-                        $stock->id,
-                        $notStockType,
-                        StockActivity::KEEP,
-                        StockStatus::ADD,
-                        $stock->$notStockType + $keepStock[$notStockType],
-                        $stock->$notStockType);
-                }
+                setStockHistory(
+                    $stock->id,
+                    StockActivity::KEEP,
+                    $stockStatus,
+                    NULL,
+                    $stockType,
+                    $productStock['quantity'],
+                    $keep->no_keep,
+                    $stock->all_stock,
+                    $stock->home_stock,
+                    $stock->store_stock,
+                    $stock->pre_order_stock,
+                    true
+                );
             }
 
             KeepProduct::create([
@@ -414,23 +432,44 @@ class CreateKeep extends Component
 
         foreach ($this->keep->keepProducts as $keepProduct) {
             $productStock = ProductStock::where('id', $keepProduct->product_stock_id)->first();
-            $this->deleteKeepProductHistory(
-                $keepProduct,
-                'home_stock',
-                $productStock->home_stock,
-                $productStock->home_stock+$keepProduct->home_stock);
-
-            $this->deleteKeepProductHistory(
-                $keepProduct,
-                'store_stock',
-                $productStock->store_stock,
-                $productStock->store_stock+$keepProduct->store_stock);
-
             $productStock->update([
                 'home_stock' => $productStock['home_stock'] + $keepProduct->home_stock,
                 'store_stock' => $productStock['store_stock'] + $keepProduct->store_stock,
                 'all_stock' => $productStock['all_stock'] + $keepProduct->total_items
             ]);
+            if($keepProduct->home_stock > 0) {
+                setStockHistory(
+                    $productStock->id,
+                    StockActivity::KEEP,
+                    StockStatus::CHANGE_REMOVE,
+                    StockType::HOME_STOCK,
+                    NULL,
+                    $keepProduct->home_stock,
+                    $this->keep->no_keep,
+                    $productStock->all_stock,
+                    $productStock->home_stock,
+                    $productStock->store_stock,
+                    $productStock->pre_order_stock,
+                    true
+                );
+            }
+
+            if($keepProduct->store_stock > 0) {
+                setStockHistory(
+                    $productStock->id,
+                    StockActivity::KEEP,
+                    StockStatus::CHANGE_REMOVE,
+                    StockType::STORE_STOCK,
+                    NULL,
+                    $keepProduct->store_stock,
+                    $this->keep->no_keep,
+                    $productStock->all_stock,
+                    $productStock->home_stock,
+                    $productStock->store_stock,
+                    $productStock->pre_order_stock,
+                    true
+                );
+            }
             $keepProduct->delete();
         }
 
@@ -444,47 +483,5 @@ class CreateKeep extends Component
         $this->reset();
         $this->mount();
         $this->alert('success', 'Form Reset Successfully');
-    }
-
-    public function deleteKeepProductHistory($keepProduct, $stockType, $stockBefore, $stockAfter)
-    {
-        if($keepProduct[$stockType] > 0) {
-            $history = setStockHistory(
-                $keepProduct['product_stock_id'],
-                $stockType,
-                StockActivity::KEEP,
-                StockStatus::CHANGE,
-                $stockBefore,
-                $stockAfter
-            );
-            $this->productStockHistories[$history->id] = $history->toArray();
-        }
-    }
-
-    public function updateKeepProductHistory($stockType, $stock, $productStock)
-    {
-        $filtered = array_filter($this->productStockHistories, function ($item) use ($stockType) {
-            return $item["stock_type"] === $stockType;
-        });
-        $keyProductHistories = array_keys($filtered);
-        $productSockHistory = ProductStockHistory::whereIn('id', $keyProductHistories)->where('product_stock_id', $productStock['id'])->first();
-            if($productSockHistory) {
-                if($productSockHistory->stock_before != $stock->$stockType - $productStock['quantity']) {
-                    $productSockHistory->update([
-                        'stock_before' => $productSockHistory->stock_before,
-                        'stock_after' => $stock->$stockType - $productStock['quantity'],
-                    ]);
-                } else {
-                    $productSockHistory->delete();
-                }
-            } else {
-                setStockHistory(
-                    $stock->id,
-                    $stockType,
-                    StockActivity::KEEP,
-                    StockStatus::CHANGE,
-                    $stock->$stockType,
-                    $stock->$stockType - $productStock['quantity']);
-            }
     }
 }

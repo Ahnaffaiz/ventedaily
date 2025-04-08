@@ -148,9 +148,9 @@
                                 <td class="px-4 py-4">
                                     <div class="flex items-center justify-center space-x-3">
                                         <button wire:click="edit({{ $supplier->id }})"><i
-                                                class="ri-edit-circle-line"></i></button>
+                                                class="ri-edit-circle-line text-info"></i></button>
                                         <button wire:click="deleteAlert({{ $supplier->id }})"><i
-                                                class="text-base ri-delete-bin-2-line"></i></button>
+                                                class="text-base ri-delete-bin-2-line text-danger"></i></button>
                                     </div>
                                 </td>
                             </tr>

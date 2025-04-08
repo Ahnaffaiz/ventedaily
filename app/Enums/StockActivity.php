@@ -6,12 +6,14 @@ use BenSampo\Enum\Enum;
 final class StockActivity extends Enum {
     const PURCHASE = 'purchase';
     const KEEP = 'keep';
-    const PRE_ORDER = 'pre_order';
-    const SALE = 'sale';
+    const PRE_ORDER = 'pre order';
+    const SALES = 'sales';
     const TRANSFER = 'transfer';
+    const STOCK_IN = 'stock in';
     const RETUR = 'retur';
     const ADD = 'add';
     const REMOVE = 'remove';
+    const IMPORT = 'import';
 
     public static function asSelectArray(): array
     {

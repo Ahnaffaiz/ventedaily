@@ -3,6 +3,8 @@
 namespace App\Livewire\Retur;
 
 use App\Enums\ReturStatus;
+use App\Enums\StockActivity;
+use App\Enums\StockStatus;
 use App\Exports\ReturExport;
 use App\Exports\ReturProductExport;
 use App\Models\ProductStock;
@@ -116,6 +118,14 @@ class ListRetur extends Component
                         $stockType => $returItem->productStock->$stockType - $returItem->total_items,
                         'all_stock' => $returItem->productStock->all_stock + $returItem->total_items,
                     ]);
+                    setStockHistory(
+                        $returItem->productStock->id,
+                        StockActivity::RETUR,
+                        StockStatus::REMOVE,
+                        $stockType,
+                        NULL,
+                        $returItem->total_items,
+                    );
                 }
             }
             $this->retur->delete();

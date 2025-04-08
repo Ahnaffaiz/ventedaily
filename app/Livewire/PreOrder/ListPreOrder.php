@@ -2,6 +2,9 @@
 
 namespace App\Livewire\PreOrder;
 
+use App\Enums\StockActivity;
+use App\Enums\StockStatus;
+use App\Enums\StockType;
 use App\Models\PreOrder;
 use App\Models\Purchase;
 use Exception;
@@ -18,7 +21,7 @@ class ListPreOrder extends Component
 
     public $isOpen = false;
     public $preOrder;
-    public $query = '', $perPage = 10, $sortBy = 'no_pre_order', $sortDirection = 'asc';
+    public $query = '', $perPage = 10, $sortBy = 'no_pre_order', $sortDirection = 'desc';
     public $total_price;
     public $showColumns = [
         'total_items' => true,
@@ -99,6 +102,19 @@ class ListPreOrder extends Component
                     'all_stock' => $preOrderProduct->productStock->all_stock + $preOrderProduct->total_items,
                     'pre_order_stock' => $preOrderProduct->productStock->pre_order_stock + $preOrderProduct->total_items,
                 ]);
+                setStockHistory(
+                    $preOrderProduct->productStock->id,
+                    StockActivity::PRE_ORDER,
+                    StockStatus::REMOVE,
+                    StockType::PRE_ORDER_STOCK,
+                    NULL,
+                    $preOrderProduct->total_items,
+                    $this->preOrder->no_pre_order,
+                    $preOrderProduct->productStock->all_stock,
+                    $preOrderProduct->productStock->home_stock,
+                    $preOrderProduct->productStock->store_stock,
+                    $preOrderProduct->productStock->pre_order_stock,
+                );
             }
             $this->preOrder->delete();
             $this->alert('success', 'PreOrder Data Succesfully Deleted');

@@ -6,6 +6,8 @@ use App\Enums\DiscountType;
 use App\Enums\KeepStatus;
 use App\Enums\KeepType;
 use App\Enums\PaymentType;
+use App\Enums\StockActivity;
+use App\Enums\StockStatus;
 use App\Models\Customer;
 use App\Models\Discount;
 use App\Models\Group;
@@ -13,6 +15,7 @@ use App\Models\Marketplace;
 use App\Models\Keep;
 use App\Models\PreOrder;
 use App\Models\PreOrderProduct;
+use App\Models\ProductStockHistory;
 use App\Models\Sale;
 use App\Models\KeepProduct;
 use App\Models\Product;
@@ -87,7 +90,7 @@ class CreateSale extends Component
         $this->discount_type = DiscountType::PERSEN;
         $this->discount_programs = Discount::all()->pluck('name', 'id')->toArray();
         $this->keeps = Keep::where('keep_time', '>=', Carbon::now())->where('status', strtolower(KeepStatus::ACTIVE))->pluck('no_keep', 'id')->toArray();
-        $this->preOrders = PreOrder::whereNotIn('id', Sale::pluck('pre_order_id'))->pluck('no_pre_order', 'id')->toArray();
+        $this->preOrders = PreOrder::whereNotIn('id', Sale::where('pre_order_id', '!=', null)->pluck('pre_order_id'))->pluck('no_pre_order', 'id')->toArray();
         $this->groups = Group::all()->pluck('name', 'id')->toArray();
         $this->customers = Customer::all()->pluck('name', 'id')->toArray();
 
@@ -467,33 +470,111 @@ class CreateSale extends Component
                         $stockType => $saleItem->productStock->$stockType - $productStock['quantity'],
                         'all_stock' => $saleItem->productStock->all_stock - $productStock['quantity'],
                     ]);
+                    setStockHistory(
+                        $saleItem->productStock->id,
+                        StockActivity::SALES,
+                        StockStatus::ADD,
+                        NULL,
+                        $stockType,
+                        $productStock['quantity'],
+                        $sale->no_sale,
+                        $saleItem->productStock->all_stock,
+                        $saleItem->productStock->home_stock,
+                        $saleItem->productStock->store_stock,
+                        $saleItem->productStock->pre_order_stock,
+                    );
                 } elseif($this->keep) {
                     $keepProduct = $this->keep->keepProducts->where('product_stock_id', $saleItem->product_stock_id)->first();
+                    $keepHistories = ProductStockHistory::where('reference', $this->keep->no_keep)->get();
+                    foreach($keepHistories as $keepHistory) {
+                        $keepHistory->update([
+                            'is_temporary' => false,
+                        ]);
+                    }
+
                     if($keepProduct != null) {
                         $additionalStock = $keepProduct->total_items - $saleItem->total_items;
                         $keepProduct->productStock->update([
                             $stockType => $keepProduct->productStock->$stockType + $additionalStock,
                             'all_stock' => $keepProduct->productStock->all_stock + $additionalStock,
                         ]);
+                        setStockHistory(
+                            $keepProduct->productStock->id,
+                            StockActivity::SALES,
+                            StockStatus::ADD,
+                            NULL,
+                            $stockType,
+                            $additionalStock,
+                            $sale->no_sale,
+                            $keepProduct->productStock->all_stock,
+                            $keepProduct->productStock->home_stock,
+                            $keepProduct->productStock->store_stock,
+                            $keepProduct->productStock->pre_order_stock,
+                        );
                     } else {
                         $saleItem->productStock->update([
                             $stockType => $saleItem->productStock->$stockType - $saleItem->total_items,
                             'all_stock' => $saleItem->productStock->all_stock - $saleItem->total_items,
                         ]);
+                        setStockHistory(
+                            $saleItem->productStock->id,
+                            StockActivity::SALES,
+                            StockStatus::ADD,
+                            NULL,
+                            $stockType,
+                            $saleItem->total_items,
+                            $sale->no_sale,
+                            $saleItem->productStock->all_stock,
+                            $saleItem->productStock->home_stock,
+                            $saleItem->productStock->store_stock,
+                            $saleItem->productStock->pre_order_stock,
+                        );
                     }
                 } elseif($this->preOrder) {
                     $preOrderProduct = $this->preOrder->preOrderProducts->where('product_stock_id', $saleItem->product_stock_id)->first();
+                    $preOrderHistories = ProductStockHistory::where('reference', $this->preOrder->no_pre_order_id)->get();
+                    foreach($preOrderHistories as $preOrderHistory) {
+                        $preOrderHistory->update([
+                            'is_temporary' => false,
+                        ]);
+                    }
                     if($preOrderProduct != null) {
                         $additionalStock = $preOrderProduct->total_items - $saleItem->total_items;
                         $preOrderProduct->productStock->update([
                             $stockType => $preOrderProduct->productStock->$stockType + $additionalStock,
                             'all_stock' => $preOrderProduct->productStock->all_stock + $additionalStock,
                         ]);
+                        setStockHistory(
+                            $preOrderProduct->productStock->id,
+                            StockActivity::SALES,
+                            StockStatus::ADD,
+                            NULL,
+                            $stockType,
+                            $additionalStock,
+                            $sale->no_sale,
+                            $preOrderProduct->productStock->all_stock,
+                            $preOrderProduct->productStock->home_stock,
+                            $preOrderProduct->productStock->store_stock,
+                            $preOrderProduct->productStock->pre_order_stock,
+                        );
                     } else {
                         $saleItem->productStock->update([
                             $stockType => $saleItem->productStock->$stockType - $saleItem->total_items,
                             'all_stock' => $saleItem->productStock->all_stock - $saleItem->total_items,
                         ]);
+                        setStockHistory(
+                            $saleItem->productStock->id,
+                            StockActivity::SALES,
+                            StockStatus::ADD,
+                            NULL,
+                            $stockType,
+                            $saleItem->total_items,
+                            $sale->no_sale,
+                            $saleItem->productStock->all_stock,
+                            $saleItem->productStock->home_stock,
+                            $saleItem->productStock->store_stock,
+                            $saleItem->productStock->pre_order_stock,
+                        );
                     }
                 }
             }
@@ -508,6 +589,19 @@ class CreateSale extends Component
                         $stockType => $keepNotSale->productStock->$stockType + $keepNotSale->total_items,
                         'all_stock' => $keepNotSale->productStock->all_stock + $keepNotSale->total_items
                     ]);
+                    setStockHistory(
+                        $keepNotSale->productStock->id,
+                        StockActivity::SALES,
+                        StockStatus::ADD,
+                        NULL,
+                        $stockType,
+                        $keepNotSale->total_items,
+                        $sale->no_sale,
+                        $keepNotSale->productStock->all_stock,
+                        $keepNotSale->productStock->home_stock,
+                        $keepNotSale->productStock->store_stock,
+                        $keepNotSale->productStock->pre_order_stock,
+                    );
                 }
             }
 
@@ -518,6 +612,19 @@ class CreateSale extends Component
                         $stockType => $preOrderNotSale->productStock->$stockType + $preOrderNotSale->total_items,
                         'all_stock' => $preOrderNotSale->productStock->all_stock + $preOrderNotSale->total_items
                     ]);
+                    setStockHistory(
+                        $preOrderNotSale->productStock->id,
+                        StockActivity::SALES,
+                        StockStatus::ADD,
+                        NULL,
+                        $stockType,
+                        $preOrderNotSale->total_items,
+                        $sale->no_sale,
+                        $preOrderNotSale->productStock->all_stock,
+                        $preOrderNotSale->productStock->home_stock,
+                        $preOrderNotSale->productStock->store_stock,
+                        $preOrderNotSale->productStock->pre_order_stock,
+                    );
                 }
             }
 
@@ -544,7 +651,6 @@ class CreateSale extends Component
             $this->alert('success', 'Sale Succesfully Created');
             return redirect()->route('sale');
         } catch (\Throwable $th) {
-            dd($th);
             $this->alert('error', $th->getMessage());
         }
     }
@@ -622,6 +728,19 @@ class CreateSale extends Component
                 $stockType => $stock->$stockType + $saleItem->total_items,
                 'all_stock' => $stock->all_stock + $saleItem->total_items,
             ]);
+            setStockHistory(
+                $stock->id,
+                StockActivity::SALES,
+                StockStatus::CHANGE_REMOVE,
+                $stockType,
+                NULL,
+                $saleItem->total_items,
+                $this->sale->no_sale,
+                $stock->all_stock,
+                $stock->home_stock,
+                $stock->store_stock,
+                $stock->pre_order_stock,
+            );
             $saleItem->delete();
         }
 
@@ -640,6 +759,20 @@ class CreateSale extends Component
                     $stockType => $stock->$stockType - $productStock['quantity'],
                     'all_stock' => $stock->all_stock - $productStock['quantity'],
                 ]);
+
+                setStockHistory(
+                    $saleItem->productStock->id,
+                    StockActivity::SALES,
+                    StockStatus::CHANGE_ADD,
+                    NULL,
+                    $stockType,
+                    $productStock['quantity'],
+                    $this->sale->no_sale,
+                    $stock->all_stock,
+                    $stock->home_stock,
+                    $stock->store_stock,
+                    $stock->pre_order_stock,
+                );
             }
         }
 

@@ -2,6 +2,8 @@
 
 namespace App\Livewire\Product\StockIn;
 
+use App\Enums\StockActivity;
+use App\Enums\StockStatus;
 use App\Enums\StockType;
 use App\Models\Product;
 use App\Models\ProductStock;
@@ -169,11 +171,25 @@ class CreateStockIn extends Component
 
     public function createStockInProduct($StockInId)
     {
+        $stockStatus = $this->isEdit ? StockStatus::CHANGE_ADD : StockStatus::ADD;
         foreach ($this->cart as $productStock) {
             $stock = ProductStock::where('id', $productStock['id'])->first();
             $stock->update([
                 $this->stock_type => $stock[$this->stock_type] + $productStock['stock'],
             ]);
+            setStockHistory(
+                $stock->id,
+                StockActivity::STOCK_IN,
+                $stockStatus,
+                NULL,
+                $this->stock_type,
+                $productStock['stock'],
+                NULL,
+                $stock->all_stock,
+                $stock->home_stock,
+                $stock->store_stock,
+                $stock->pre_order_stock,
+            );
 
             StockInProduct::create([
                 'stock_in_id' => $StockInId,
@@ -225,6 +241,19 @@ class CreateStockIn extends Component
             $productStock->update([
                 $this->stockIn->stock_type->value => $productStock[$this->stockIn->stock_type->value] - $stockInProduct->stock,
             ]);
+            setStockHistory(
+                $productStock->id,
+                StockActivity::STOCK_IN,
+                StockStatus::CHANGE_REMOVE,
+                $this->stockIn->stock_type->value,
+                NULL,
+                $stockInProduct->stock,
+                NULL,
+                $productStock->all_stock,
+                $productStock->home_stock,
+                $productStock->store_stock,
+                $productStock->pre_order_stock,
+            );
             $stockInProduct->delete();
         }
         $this->stockIn->update([

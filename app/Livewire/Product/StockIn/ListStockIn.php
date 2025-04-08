@@ -2,6 +2,8 @@
 
 namespace App\Livewire\Product\StockIn;
 
+use App\Enums\StockActivity;
+use App\Enums\StockStatus;
 use App\Models\ProductStock;
 use App\Models\StockIn;
 use Exception;
@@ -85,6 +87,19 @@ class ListStockIn extends Component
                 $productStock->update([
                     $this->stockIn->stock_type->value => $productStock[$this->stockIn->stock_type->value] - $stockInProduct->stock,
                 ]);
+                setStockHistory(
+                    $productStock->id,
+                    StockActivity::STOCK_IN,
+                    StockStatus::REMOVE,
+                    $this->stockIn->stock_type->value,
+                    NULL,
+                    $stockInProduct->stock,
+                    NULL,
+                    $productStock->all_stock,
+                    $productStock->home_stock,
+                    $productStock->store_stock,
+                    $productStock->pre_order_stock,
+                );
                 $stockInProduct->delete();
             }
             $this->stockIn->delete();

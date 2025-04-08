@@ -2,6 +2,8 @@
 
 namespace App\Livewire\Product\TransferStock;
 
+use App\Enums\StockActivity;
+use App\Enums\StockStatus;
 use App\Enums\StockType;
 use App\Models\Product;
 use App\Models\ProductStock;
@@ -240,6 +242,7 @@ class CreateTransferStock extends Component
 
     public function createTransferProductStock($transferStockId)
     {
+        $stockStatus = $this->isEdit ? StockStatus::CHANGE_ADD : StockStatus::ADD;
         foreach ($this->cart as $productStock) {
             $stock = ProductStock::where('id', $productStock['id'])->first();
             if ($productStock['max_stock'] < $productStock['stock']) {
@@ -249,6 +252,20 @@ class CreateTransferStock extends Component
                     $this->transfer_from => $stock[$this->transfer_from] - $productStock['stock'],
                     $this->transfer_to => $stock[$this->transfer_to] + $productStock['stock'],
                 ]);
+
+                setStockHistory(
+                    $stock->id,
+                    StockActivity::TRANSFER,
+                    $stockStatus,
+                    $this->transfer_from,
+                    $this->transfer_to,
+                    $productStock['stock'],
+                    NULL,
+                    $stock->all_stock,
+                    $stock->home_stock,
+                    $stock->store_stock,
+                    $stock->pre_order_stock,
+                );
             }
             TransferProductStock::create([
                 'transfer_stock_id' => $transferStockId,
@@ -304,6 +321,19 @@ class CreateTransferStock extends Component
                 $this->transferStock->transfer_from => $productStock[$this->transferStock->transfer_from] + $transferProduct->stock,
                 $this->transferStock->transfer_to => $productStock[$this->transferStock->transfer_to] - $transferProduct->stock,
             ]);
+            setStockHistory(
+                $productStock->id,
+                StockActivity::TRANSFER,
+                StockStatus::CHANGE_REMOVE,
+                $this->transferStock->transfer_from,
+                $this->transferStock->transfer_to,
+                $transferProduct->stock,
+                NULL,
+                $productStock->all_stock,
+                $productStock->home_stock,
+                $productStock->store_stock,
+                $productStock->pre_order_stock,
+            );
             $transferProduct->delete();
         }
         $this->transferStock->update([

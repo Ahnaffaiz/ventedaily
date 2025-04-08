@@ -2,6 +2,8 @@
 
 namespace App\Livewire\Product\TransferStock;
 
+use App\Enums\StockActivity;
+use App\Enums\StockStatus;
 use App\Models\ProductStock;
 use App\Models\TransferStock;
 use Exception;
@@ -86,6 +88,20 @@ class ListTransferStock extends Component
                     $this->transferStock->transfer_from => $productStock[$this->transferStock->transfer_from] + $transferProduct->stock,
                     $this->transferStock->transfer_to => $productStock[$this->transferStock->transfer_to] - $transferProduct->stock,
                 ]);
+                setStockHistory(
+                    $productStock->id,
+                    StockActivity::TRANSFER,
+                    StockStatus::REMOVE,
+                    $this->transferStock->transfer_to,
+                    $this->transferStock->transfer_from,
+                    $transferProduct->stock,
+                    NULL,
+                    $productStock->all_stock,
+                    $productStock->home_stock,
+                    $productStock->store_stock,
+                    $productStock->pre_order_stock,
+                );
+
                 $transferProduct->delete();
             }
             $this->transferStock->delete();

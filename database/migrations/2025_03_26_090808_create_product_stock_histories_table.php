@@ -14,13 +14,17 @@ return new class extends Migration
         Schema::create('product_stock_histories', function (Blueprint $table) {
             $table->id();
             $table->foreignId('product_stock_id')->constrained('product_stocks')->onDelete('cascade');
-            $table->enum('stock_type', ['home_stock', 'store_stock', 'pre_order_stock']);
-            $table->enum('stock_activity', ['purchase', 'keep', 'pre_order', 'sales', 'transfer', 'add', 'retur', 'remove']);
-            $table->enum('status', ['add', 'remove', 'change']);
-            $table->enum('stock_transfer_from', ['home_stock', 'store_stock', 'pre_order_stock'])->nullable();
-            $table->enum('stock_transfer_to', ['home_stock', 'store_stock', 'pre_order_stock'])->nullable();
-            $table->integer('stock_before');
-            $table->integer('stock_after');
+            $table->enum('stock_activity', ['purchase', 'keep', 'pre order', 'sales', 'transfer', 'stock in' ,'add', 'retur', 'remove', 'import']);
+            $table->enum('status', ['add', 'remove', 'change', 'change remove', 'change add']);
+            $table->enum('from_stock_type', ['home_stock', 'store_stock', 'pre_order_stock'])->nullable();
+            $table->enum('to_stock_type', ['home_stock', 'store_stock', 'pre_order_stock'])->nullable();
+            $table->string('reference')->nullable();
+            $table->integer('qty');
+            $table->integer('final_all_stock')->default(0);
+            $table->integer('final_home_stock')->default(0);
+            $table->integer('final_store_stock')->default(0);
+            $table->integer('final_pre_order_stock')->default(0);
+            $table->integer('is_temporary')->default(false);
             $table->timestamps();
         });
     }

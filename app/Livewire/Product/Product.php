@@ -3,20 +3,23 @@
 namespace App\Livewire\Product;
 
 use App\Enums\KeepStatus;
-use App\Enums\ProductStatus;
 use App\Enums\StockActivity;
 use App\Enums\StockStatus;
+use App\Enums\StockType;
 use App\Exports\TransferStockExport;
 use App\Imports\ProductImport;
 use App\Imports\ProductStockImport;
 use App\Models\Category;
 use App\Models\KeepProduct;
+use App\Models\Setting;
 use App\Models\Product as ModelsProduct;
 use App\Models\ProductPreview;
 use App\Models\ProductStock;
+use App\Models\ProductStockHistory;
 use App\Models\ProductStockPreview;
 use Carbon\Carbon;
 use Exception;
+use Illuminate\Support\Facades\Session;
 use Illuminate\Support\Facades\Storage;
 use Intervention\Image\Facades\Image;
 use Jantinnerezo\LivewireAlert\LivewireAlert;
@@ -49,10 +52,12 @@ class Product extends Component
     public $stockFrom='home_stock', $stockTo='store_stock', $stockAmount, $stockTotal;
 
     public $isOpen = false;
-    public $categories, $product, $isProductStock = false, $isStock = false, $isImport = false, $importType = 'product';
+    public $categories, $product, $isProductStock = false, $isStock = false, $isImport = false, $importType = 'product', $isHistory = false;
 
     public $query = '', $perPage = 10, $sortBy = 'name', $sortDirection = 'asc';
     public $transferToStores, $transferToHomes;
+
+    public $start_date, $end_date;
 
     //import
     #[Validate('required')]
@@ -364,31 +369,26 @@ class Product extends Component
         } else {
             $stockTo = $this->stockTo;
             $stockFrom = $this->stockFrom;
-            setStockHistory(
-                $this->productStock->id,
-                $this->stockTo,
-                StockActivity::TRANSFER,
-                StockStatus::CHANGE,
-                $this->productStock->$stockTo,
-                $this->productStock->$stockTo + $this->stockAmount,
-                $this->stockFrom,
-                $this->stockTo
-            );
 
-            setStockHistory(
-                $this->productStock->id,
-                $this->stockFrom,
-                StockActivity::TRANSFER,
-                StockStatus::CHANGE,
-                $this->productStock->$stockFrom,
-                $this->productStock->$stockFrom - $this->stockAmount,
-                $this->stockFrom,
-                $this->stockTo
-            );
             $this->productStock->update([
                 $this->stockTo => $this->productStock->$stockTo + $this->stockAmount,
                 $this->stockFrom => $this->productStock->$stockFrom - $this->stockAmount,
             ]);
+
+            setStockHistory(
+                $this->productStock->id,
+                StockActivity::TRANSFER,
+                StockStatus::CHANGE,
+                $this->stockFrom,
+                $this->stockTo,
+                $this->stockAmount,
+                NULL,
+                $this->productStock->all_stock,
+                $this->productStock->home_stock,
+                $this->productStock->store_stock,
+                $this->productStock->pre_order_stock,
+            );
+
             $this->alert('success','Stock successfully transfered');
             $this->stockAmount = null;
             $this->stockTotal = null;
@@ -502,7 +502,7 @@ class Product extends Component
                 $this->alert('error', 'Please solve the error first');
             } else {
                 foreach ($this->stockPreviews as $productStock) {
-                    ProductStock::firstOrCreate(
+                    $stock = ProductStock::firstOrCreate(
                         [
                         'product_id' => $productStock->product_id,
                         'color_id' => $productStock->color_id,
@@ -518,13 +518,27 @@ class Product extends Component
                         'qc_stock' => 0,
                         'vermak_stock' => 0,
                     ]);
+
+                    setStockHistory(
+                        $stock->id,
+                        StockActivity::IMPORT,
+                        StockStatus::ADD,
+                        NULL,
+                        NULL,
+                        $stock->all_stock,
+                        NULL,
+                        $stock->all_stock,
+                        $stock->home_stock,
+                        $stock->store_stock,
+                        $stock->pre_order_stock,
+                    );
                 }
                 ProductStockPreview::truncate();
                 $this->alert('success','Product Stock Successfully Imported');
                 return $this->reset();
             }
         } catch (\Throwable $th) {
-            dd($th);
+            info($th);
             $this->alert('error', 'Silahkan Perbaiki Errornya terlebih dahulu');
         }
     }
@@ -551,5 +565,23 @@ class Product extends Component
             'confirmButtonColor' => '#3085d6',
             'cancelButtonColor' => '#d33'
         ]);
+    }
+
+    public function openModelHistory($productStockId)
+    {
+        $this->productStock = ProductStock::find($productStockId);
+        $this->isHistory = true;
+        $this->isOpen = true;
+    }
+
+    public function showHistory()
+    {
+        $url = route('product-stock-history', [
+            'productStockId' => $this->productStock->id,
+            'startDate' => $this->start_date,
+            'endDate' => $this->end_date,
+        ]);
+
+        $this->dispatch('openStockHistoryTab', $url);
     }
 }

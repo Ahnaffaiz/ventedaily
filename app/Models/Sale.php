@@ -73,4 +73,9 @@ class Sale extends Model
     {
         return $this->hasOne(SaleWithdrawal::class);
     }
+
+    public function stockHistories()
+    {
+        return $this->morphMany(ProductStockHistory::class, 'reference');
+    }
 }

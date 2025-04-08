@@ -18,6 +18,9 @@
                 $saveButton = 'previewProductStock';
             }
         }
+    } elseif($isHistory) {
+        $saveButton = 'showHistory';
+        $saveLabel = 'Show History';
     }
     else {
         $saveButton = $product ? 'update' : 'save';
@@ -41,6 +44,11 @@
         @elseif($importType == 'stock')
             @include('livewire.product.import-product-stock')
         @endif
+    @elseif($isHistory)
+        <div class="grid grid-cols-2 gap-2">
+            <x-input-text id="start_date" name="start_date" title="Start Date" type="date"/>
+            <x-input-text id="end_date" name="end_date" title="End Date" type="date"/>
+        </div>
     @else
         <div>
             <form>

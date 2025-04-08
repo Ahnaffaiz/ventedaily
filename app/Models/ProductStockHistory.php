@@ -15,21 +15,25 @@ class ProductStockHistory extends Model
 
     protected $fillable = [
         'product_stock_id',
-        'stock_type',
         'stock_activity',
-        'stock_transfer_from',
-        'stock_transfer_to',
         'status',
-        'stock_before',
-        'stock_after',
+        'from_stock_type',
+        'to_stock_type',
+        'qty',
+        'reference',
+        'final_all_stock',
+        'final_home_stock',
+        'final_store_stock',
+        'final_pre_order_stock',
+        'is_temporary',
     ];
 
     protected $casts = [
         'stock_type' => StockType::class,
         'stock_activity' => StockActivity::class,
-        'stock_transfer_from' => StockType::class,
-        'stock_transfer_to' => StockType::class,
         'status' => StockStatus::class,
+        'from_stock_type' => StockType::class,
+        'to_stock_type' => StockType::class,
     ];
 
     /**

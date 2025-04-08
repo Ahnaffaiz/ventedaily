@@ -24,6 +24,6 @@ class ProductStock extends Component
             'productStocks' => ModelsProductStock::whereHas('product', function($query) {
                 $query->where('name', 'like', '%'.$this->query.'%');
             })->paginate($this->perPage)
-        ]);
+        ])->layout('layouts.public');
     }
 }

@@ -5,6 +5,7 @@ namespace App\Livewire\Purchase;
 use App\Enums\DiscountType;
 use App\Enums\StockActivity;
 use App\Enums\StockStatus;
+use App\Enums\StockType;
 use App\Exports\PurchaseByProductExport;
 use App\Exports\PurchaseExport;
 use App\Exports\PurchaseProductExport;
@@ -144,11 +145,17 @@ class ListPurchase extends Component
                 $productStock = $purchaseItem->productStock;
                 setStockHistory(
                     $productStock->id,
-                    'home_stock',
                     StockActivity::PURCHASE,
                     StockStatus::REMOVE,
-                    $productStock->home_stock,
-                    $productStock->home_stock - $purchaseItem->total_items);
+                    StockType::HOME_STOCK,
+                    NULL,
+                    $purchaseItem->total_items,
+                    NULL,
+                    $productStock->all_stock - $purchaseItem->total_items,
+                    $productStock->home_stock - $purchaseItem->total_items,
+                    $productStock->store_stock,
+                    $productStock->pre_order_stock,
+                );
                 $productStock->update([
                     'all_stock' => $productStock->all_stock - $purchaseItem->total_items,
                     'home_stock' => $productStock->home_stock - $purchaseItem->total_items,

@@ -6,6 +6,7 @@ use App\Enums\DiscountType;
 use App\Enums\PaymentType;
 use App\Enums\StockActivity;
 use App\Enums\StockStatus;
+use App\Enums\StockType;
 use App\Models\Product;
 use App\Models\ProductStock;
 use App\Models\ProductStockHistory;
@@ -231,12 +232,17 @@ class CreatePurchase extends Component
             $stock = ProductStock::where('id', $productStock['id'])->first();
             setStockHistory(
                 $stock->id,
-                'home_stock',
                 StockActivity::PURCHASE,
                 StockStatus::ADD,
-                $stock->home_stock,
-                $stock->home_stock+$productStock['quantity']);
-
+                NULL,
+                StockType::HOME_STOCK,
+                $productStock['quantity'],
+                NULL,
+                $stock->all_stock+$productStock['quantity'],
+                $stock->home_stock+$productStock['quantity'],
+                $stock->store_stock,
+                $stock->pre_order_stock,
+            );
             $stock->update([
                 'home_stock' => $stock->home_stock+$productStock['quantity'],
                 'all_stock' => $stock->all_stock+$productStock['quantity'],
@@ -307,22 +313,26 @@ class CreatePurchase extends Component
             'outstanding_balance' => $this->cash_change < 0 ? -1 * $this->cash_change : 0
         ]);
 
-        $productStockHistories = [];
         foreach ($this->purchase->purchaseItems as $purchaseItem) {
             $stock = ProductStock::where('id', $purchaseItem->product_stock_id)->first();
-
-            $productStockHistory = setStockHistory(
+            setStockHistory(
                 $stock->id,
-                'home_stock',
                 StockActivity::PURCHASE,
-                StockStatus::CHANGE,
-                $stock->home_stock,
-                $stock->home_stock-$purchaseItem->total_items);
-            $productStockHistories[$productStockHistory->id] = $productStockHistory->stock_after;
+                StockStatus::CHANGE_REMOVE,
+                StockType::HOME_STOCK,
+                NULL,
+                $purchaseItem->total_items,
+                NULL,
+                $stock->all_stock-$purchaseItem->total_items,
+                $stock->home_stock-$purchaseItem->total_items,
+                $stock->store_stock,
+                $stock->pre_order_stock,
+            );
             $stock->update([
                 'home_stock' => $stock->home_stock-$purchaseItem->total_items,
                 'all_stock' => $stock->all_stock-$purchaseItem->total_items,
             ]);
+
             $purchaseItem->delete();
         }
 
@@ -335,25 +345,20 @@ class CreatePurchase extends Component
                 'total_price' => $productStock['total_price']
             ]);
             $stock = ProductStock::where('id', $productStock['id'])->first();
-            $productSockHistory = ProductStockHistory::whereIn('id', array_keys($productStockHistories))->where('product_stock_id', $productStock['id'])->first();
-            if($productSockHistory) {
-                if($productSockHistory->stock_before != $stock->home_stock+$productStock['quantity']) {
-                    $productSockHistory->update([
-                        'stock_before' => $productSockHistory->stock_before,
-                        'stock_after' => $stock->home_stock+$productStock['quantity'],
-                    ]);
-                } else {
-                    $productSockHistory->delete();
-                }
-            } else {
-                setStockHistory(
-                    $stock->id,
-                    'home_stock',
-                    StockActivity::PURCHASE,
-                    StockStatus::CHANGE,
-                    $stock->home_stock,
-                    $stock->home_stock+$productStock['quantity']);
-            }
+            setStockHistory(
+                $stock->id,
+                StockActivity::PURCHASE,
+                StockStatus::CHANGE_ADD,
+                NULL,
+                StockType::HOME_STOCK,
+                $productStock['quantity'],
+                NULL,
+                $stock->all_stock+$productStock['quantity'],
+                $stock->home_stock+$productStock['quantity'],
+                $stock->store_stock,
+                $stock->pre_order_stock,
+
+            );
             $stock->update([
                 'home_stock' => $stock->home_stock+$productStock['quantity'],
                 'all_stock' => $stock->all_stock+$productStock['quantity'],

@@ -3,6 +3,9 @@
 namespace App\Livewire\Keep;
 
 use App\Enums\KeepStatus;
+use App\Enums\StockActivity;
+use App\Enums\StockStatus;
+use App\Enums\StockType;
 use App\Models\Group;
 use App\Models\Keep;
 use App\Models\Purchase;
@@ -118,11 +121,45 @@ class ListKeep extends Component
         try {
             if ($this->keep->status == KeepStatus::ACTIVE) {
                 foreach ($this->keep->keepProducts as $keepProduct) {
-                    $keepProduct->productStock->update([
-                        'all_stock' => $keepProduct->productStock->all_stock + $keepProduct->total_items,
-                        'home_stock' => $keepProduct->productStock->home_stock + $keepProduct->home_stock,
-                        'store_stock' => $keepProduct->productStock->store_stock + $keepProduct->store_stock,
-                    ]);
+                    if($keepProduct->home_stock > 0) {
+                        $keepProduct->productStock->update([
+                            'all_stock' => $keepProduct->productStock->all_stock + $keepProduct->home_stock,
+                            'home_stock' => $keepProduct->productStock->home_stock + $keepProduct->home_stock,
+                        ]);
+                        setStockHistory(
+                            $keepProduct->productStock->id,
+                            StockActivity::KEEP,
+                            StockStatus::REMOVE,
+                            StockType::HOME_STOCK,
+                            NULL,
+                            $keepProduct->home_stock,
+                            $this->keep->no_keep,
+                            $keepProduct->productStock->all_stock,
+                            $keepProduct->productStock->home_stock,
+                            $keepProduct->productStock->store_stock,
+                            $keepProduct->productStock->pre_order_stock,
+                        );
+                    }
+
+                    if($keepProduct->store_stock > 0) {
+                        $keepProduct->productStock->update([
+                            'all_stock' => $keepProduct->productStock->all_stock + $keepProduct->store_stock,
+                            'store_stock' => $keepProduct->productStock->store_stock + $keepProduct->store_stock,
+                        ]);
+                        setStockHistory(
+                            $keepProduct->productStock->id,
+                            StockActivity::KEEP,
+                            StockStatus::REMOVE,
+                            StockType::STORE_STOCK,
+                            NULL,
+                            $keepProduct->store_stock,
+                            $this->keep->no_keep,
+                            $keepProduct->productStock->all_stock,
+                            $keepProduct->productStock->home_stock,
+                            $keepProduct->productStock->store_stock,
+                            $keepProduct->productStock->pre_order_stock,
+                        );
+                    }
                 }
             }
             $this->keep->delete();

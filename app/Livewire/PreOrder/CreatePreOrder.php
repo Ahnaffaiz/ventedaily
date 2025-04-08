@@ -2,6 +2,9 @@
 
 namespace App\Livewire\PreOrder;
 
+use App\Enums\StockActivity;
+use App\Enums\StockStatus;
+use App\Enums\StockType;
 use App\Models\Customer;
 use App\Models\Group;
 use App\Models\PreOrder;
@@ -242,6 +245,21 @@ class CreatePreOrder extends Component
                     'purchase_price' => $productStock['purchase_price'],
                     'total_price' => $productStock['total_price']
                 ]);
+
+                setStockHistory(
+                    $preOrderProduct->productStock->id,
+                    StockActivity::PRE_ORDER,
+                    StockStatus::ADD,
+                    NULL,
+                    StockType::PRE_ORDER_STOCK,
+                    $productStock['quantity'],
+                    $preorder->no_pre_order,
+                    $preOrderProduct->productStock->all_stock,
+                $preOrderProduct->productStock->home_stock,
+                $preOrderProduct->productStock->store_stock,
+                $preOrderProduct->productStock->pre_order_stock,
+                true,
+                );
             }
 
             $this->reset();
@@ -290,6 +308,20 @@ class CreatePreOrder extends Component
                 'pre_order_stock' => $productStock['pre_order_stock'] + $preOrderProduct->total_items,
                 'all_stock' => $productStock['all_stock'] + $preOrderProduct->total_items
             ]);
+            setStockHistory(
+                $productStock->id,
+                StockActivity::PRE_ORDER,
+                StockStatus::CHANGE_REMOVE,
+                StockType::PRE_ORDER_STOCK,
+                NULL,
+                $preOrderProduct->total_items,
+                $this->preOrder->no_pre_order,
+                $productStock->all_stock,
+                $productStock->home_stock,
+                $productStock->store_stock,
+                $productStock->pre_order_stock,
+                true,
+            );
             $preOrderProduct->delete();
         }
 
@@ -315,6 +347,22 @@ class CreatePreOrder extends Component
                 'purchase_price' => $productStock['purchase_price'],
                 'total_price' => $productStock['total_price']
             ]);
+
+            setStockHistory(
+                $preOrderProduct->productStock->id,
+                StockActivity::PRE_ORDER,
+                StockStatus::CHANGE_ADD,
+                NULL,
+                StockType::PRE_ORDER_STOCK,
+                $preOrderProduct->total_items,
+                $this->preOrder->no_pre_order,
+                $preOrderProduct->productStock->all_stock,
+                $preOrderProduct->productStock->home_stock,
+                $preOrderProduct->productStock->store_stock,
+                $preOrderProduct->productStock->pre_order_stock,
+                true,
+            );
+
         }
 
         $this->alert('success', 'Purchase Order Succesfully Updated');

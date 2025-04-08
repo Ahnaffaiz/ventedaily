@@ -1,5 +1,6 @@
 <?php
 
+use App\Http\Controllers\ExportController;
 use App\Livewire\Customer\Customer;
 use App\Livewire\Customer\Group;
 use App\Livewire\Dashboard;
@@ -31,7 +32,6 @@ use App\Livewire\Sale\OnlineSales;
 use App\Livewire\Sale\Shipping;
 use App\Livewire\Sale\Withdrawal;
 use App\Livewire\Setting;
-use App\Livewire\StockManagement\ListStock;
 use App\Livewire\Supplier\Supplier;
 use Illuminate\Support\Facades\Route;
 use Illuminate\Support\Facades\Session;
@@ -42,8 +42,22 @@ Route::get('/', function () {
     return redirect('/login');
 });
 
-Route::get('/dashboard', Dashboard::class)->name('dashboard');
 Route::get('/product-stock', ProductStock::class)->name('product-stock');
+
+Route::middleware([
+    'auth:sanctum',
+    config('jetstream.auth_session'),
+    'verified',
+    RoleMiddleware::class . ':Admin|Sales|Accounting|Warehouse|User'
+])->group(function() {
+    Route::get('/dashboard', Dashboard::class)->name('dashboard');
+    Route::get('/stock-history/{productStockId}', function () {
+        $stockHistories = Session::get('stockHistories');
+        $setting = Session::get('setting');
+        return view('print.stock-history', compact('stockHistories', 'setting'));
+    })->name('stock-history');
+    Route::get('/product-stock-history/{productStockId}/{startDate}/{endDate}', [ExportController::class, 'stockHistory'])->name('product-stock-history');
+});
 
 Route::middleware([
     'auth:sanctum',

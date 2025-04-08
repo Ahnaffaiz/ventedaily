@@ -16,24 +16,32 @@ if (! function_exists('setStockHistory')) {
      */
     function setStockHistory(
         int $productStockId,
-        string $stockType,
         string $stockActivity,
         string $status,
-        int $stockBefore,
-        int $stockAfter,
-        string $stockTransferFrom = null,
-        string $stockTransferTo = null,
+        string $fromStockType = NULL,
+        string $toStockType = NULL,
+        int $qty,
+        string $reference = NULL,
+        int $finalAllStock = 0,
+        int $finalHomeStock = 0,
+        int $finalStoreStock = 0,
+        int $finalPreOrderStock = 0,
+        bool $isTemporary = false
     ): ?ProductStockHistory {
         try {
             return ProductStockHistory::create([
                 'product_stock_id' => $productStockId,
-                'stock_type' => $stockType,
                 'stock_activity' => $stockActivity,
                 'status' => $status,
-                'stock_transfer_from' => $stockTransferFrom,
-                'stock_transfer_to' => $stockTransferTo,
-                'stock_before' => $stockBefore,
-                'stock_after' => $stockAfter,
+                'from_stock_type' => $fromStockType,
+                'to_stock_type' => $toStockType,
+                'qty' => $qty,
+                'reference'=> $reference,
+                'final_all_stock' => $finalAllStock,
+                'final_home_stock' => $finalHomeStock,
+                'final_store_stock' => $finalStoreStock,
+                'final_pre_order_stock' => $finalPreOrderStock,
+                'is_temporary' => $isTemporary,
             ]);
         } catch (\Exception $e) {
             return null;

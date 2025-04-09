@@ -3,41 +3,40 @@
 namespace App\Exports;
 
 use App\Models\Setting;
+use App\Models\StockIn;
 use App\Models\TransferStock;
 use Carbon\Carbon;
 use Illuminate\Contracts\View\View;
 use Maatwebsite\Excel\Concerns\FromView;
 
-class TransferStockInExport implements FromView
+class StockInExport implements FromView
 {
-    protected $transferStocks, $start_date, $end_date, $setting, $stockFrom, $stockTo;
+    protected $stockIns, $start_date, $end_date, $setting, $stockType;
 
-    public function __construct($start_date, $end_date, $stockFrom = null, $stockTo = null)
+    public function __construct($start_date, $end_date, $stockType = null)
     {
         $this->setting = Setting::first();
-        $this->stockFrom = $stockFrom;
-        $this->stockTo = $stockTo;
+        $this->stockType = $stockType;
         $this->start_date = Carbon::parse($start_date)->format('d/m/Y');
         $this->end_date = Carbon::parse($end_date)->format('d/m/Y');
         $start_date = Carbon::parse($start_date)->startOfDay();
         $end_date = Carbon::parse($end_date)->endOfDay();
-        if($stockFrom != null && $stockTo != null) {
-            $this->transferStocks = TransferStock::where('transfer_from', $this->stockFrom)->where('transfer_to', $this->stockTo)
+        if($stockType != null) {
+            $this->stockIns = StockIn::where('stock_type', $this->stockType)
                 ->whereBetween('created_at', [$start_date, $end_date])->get();
         } else {
-            $this->transferStocks = TransferStock::whereBetween('created_at', [$start_date, $end_date])->get();
+            $this->stockIns = StockIn::whereBetween('created_at', [$start_date, $end_date])->get();
         }
     }
 
     public function view() : View
     {
-        return view('export.excel.transfer-stock-in', [
-            'transferStocks' => $this->transferStocks,
+        return view('export.excel.stock-in', [
+            'stockIns' => $this->stockIns,
             'start_date' => $this->start_date,
             'end_date' => $this->end_date,
             'setting' => Setting::first(),
-            'stockFrom' => $this->stockFrom,
-            'stockTo' => $this->stockTo,
+            'stockType' => $this->stockType,
         ]);
     }
 }

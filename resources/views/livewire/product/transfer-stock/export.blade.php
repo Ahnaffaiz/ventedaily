@@ -4,15 +4,15 @@
         <form>
             <div class="flex gap-5 mt-4">
                 <div class="flex items-center">
-                    <input type="radio" class="form-radio text-primary" wire:model.live="isStockFrom" value="{{ false }}" id="false">
-                    <label class="ms-1.5" for="false">Semua Stock</label>
+                    <input type="radio" class="form-radio text-primary" wire:model.live="isStockFrom" value="all_stock" id="all_stock">
+                    <label class="ms-1.5" for="all_stock">Semua Stock</label>
                 </div>
                 <div class="flex items-center">
-                    <input type="radio" class="form-radio text-primary" wire:model.live="isStockFrom" value="{{ true }}" id="true">
-                    <label class="ms-1.5" for="true">Stok Tertentu</label>
+                    <input type="radio" class="form-radio text-primary" wire:model.live="isStockFrom" value="specific_stock" id="specific_stock">
+                    <label class="ms-1.5" for="specific_stock">Stok Tertentu</label>
                 </div>
             </div>
-            @if ($isStockFrom)
+            @if ($isStockFrom == 'specific_stock')
                 <div class="grid grid-cols-2 gap-2">
                     <x-input-select id="stockFrom" name="stockFrom" title="Transfer From" :options="App\Enums\StockType::asSelectArray()" />
                     <x-input-select id="stockTo" name="stockTo" title="Transfer To" :options="App\Enums\StockType::asSelectArray()" />

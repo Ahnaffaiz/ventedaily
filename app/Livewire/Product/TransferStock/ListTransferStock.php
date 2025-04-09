@@ -4,6 +4,7 @@ namespace App\Livewire\Product\TransferStock;
 
 use App\Enums\StockActivity;
 use App\Enums\StockStatus;
+use App\Enums\StockType;
 use App\Exports\TransferStockInExport;
 use App\Models\ProductStock;
 use App\Models\TransferStock;
@@ -31,7 +32,7 @@ class ListTransferStock extends Component
     public $start_date, $end_date;
     public $stockFrom, $stockTo;
 
-    public $isStockFrom = true;
+    public $isStockFrom = "all_stock";
 
     protected $listeners = [
         'delete'
@@ -41,9 +42,8 @@ class ListTransferStock extends Component
 
     public function closeModal()
     {
+        $this->reset();
         $this->isOpen = false;
-        $this->isExport = false;
-        $this->transferStock = null;
     }
 
     public function sortByColumn($column)
@@ -128,11 +128,19 @@ class ListTransferStock extends Component
         $this->isOpen = true;
     }
 
+    public function updatedIsStockFrom()
+    {
+        if($this->isStockFrom == 'specific_stock') {
+            $this->stockFrom = StockType::HOME_STOCK;
+            $this->stockTo = StockType::STORE_STOCK;
+        }
+    }
+
     public function exportExcel()
     {
         $this->validate();
         $name = "Transfer Produk ". ucwords(str_replace('_', ' ', $this->stockFrom)) . "Ke " . ucwords(str_replace('_', ' ', $this->stockTo)) .  " Tanggal " . Carbon::parse($this->start_date)->translatedFormat('d F Y') ." - ". Carbon::parse($this->end_date)->translatedFormat('d F Y') .".xlsx";
-        if($this->stockFrom != null && $this->stockTo != null) {
+        if($this->isStockFrom == 'specific_stock') {
             return Excel::download(new TransferStockInExport($this->start_date, $this->end_date, $this->stockFrom, $this->stockTo), $name);
         } else {
             return Excel::download(new TransferStockInExport($this->start_date, $this->end_date), $name);

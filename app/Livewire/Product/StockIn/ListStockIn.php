@@ -4,24 +4,33 @@ namespace App\Livewire\Product\StockIn;
 
 use App\Enums\StockActivity;
 use App\Enums\StockStatus;
+use App\Exports\StockInExport;
 use App\Models\ProductStock;
 use App\Models\StockIn;
+use Carbon\Carbon;
 use Exception;
 use Jantinnerezo\LivewireAlert\LivewireAlert;
+use Livewire\Attributes\Rule;
 use Livewire\Attributes\Title;
 use Livewire\Component;
 use Livewire\WithoutUrlPagination;
 use Livewire\WithPagination;
+use Maatwebsite\Excel\Facades\Excel;
 
 class ListStockIn extends Component
 {
     use LivewireAlert;
     use WithPagination, WithoutUrlPagination;
 
-    public $isOpen = false;
+    public $isOpen = false, $isExport = false;
     public $stockIn;
     public $query = '', $perPage = 10, $sortBy = 'created_at', $sortDirection = 'desc';
     public $total_price;
+
+    public $stockType;
+
+    #[Rule('required')]
+    public $start_date, $end_date;
 
     protected $listeners = [
         'delete'
@@ -31,6 +40,7 @@ class ListStockIn extends Component
 
     public function closeModal()
     {
+        $this->reset();
         $this->isOpen = false;
         $this->stockIn = null;
     }
@@ -106,6 +116,23 @@ class ListStockIn extends Component
             $this->alert('success', 'Stock In Data Succesfully Deleted');
         } catch (Exception $th) {
             $this->alert('error', $th->getMessage());
+        }
+    }
+
+    public function openModalExport()
+    {
+        $this->isExport = true;
+        $this->isOpen = true;
+    }
+
+    public function exportExcel()
+    {
+        $this->validate();
+        $name = "Stock In ". ucwords(str_replace('_', ' ', $this->stockType)) .  " Tanggal " . Carbon::parse($this->start_date)->translatedFormat('d F Y') ." - ". Carbon::parse($this->end_date)->translatedFormat('d F Y') .".xlsx";
+        if($this->stockType != null) {
+            return Excel::download(new StockInExport($this->start_date, $this->end_date, $this->stockType), $name);
+        } else {
+            return Excel::download(new StockInExport($this->start_date, $this->end_date), $name);
         }
     }
 }

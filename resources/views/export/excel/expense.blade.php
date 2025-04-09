@@ -52,7 +52,7 @@
                 <td style="border: 1px solid black; width: 80px; text-align: end;">Rp. {{ number_format($expense->amount, '0', ',' ,'.') }}</td>
                 <td style="border: 1px solid black; text-align: center;">{{ $expense->qty }}</td>
                 <td style="border: 1px solid black; text-align: center;">{{ $expense->uom }}</td>
-                <td style="border: 1px solid black; width: 80px; text-align: end;">Rp. {{ number_format($expense->total_amount, '0', ',' ,'.') }}</td>
+                <td style="border: 1px solid black; width: 100px; text-align: end;">Rp. {{ number_format($expense->total_amount, '0', ',' ,'.') }}</td>
             </tr>
         @endforeach
     </tbody>

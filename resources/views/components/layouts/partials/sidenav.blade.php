@@ -237,10 +237,11 @@
             @endif
 
             @if (auth()->user()->hasRole('Admin'))
-                <x-menu-item activeRoute="settings" text="Settings" iconClass="ri-settings-line" />
                 <li class="menu-title">User and Role</li>
                 <x-menu-item activeRoute="user" text="User" iconClass="ri-group-line" />
                 <x-menu-item activeRoute="role" text="Role" iconClass="ri-briefcase-line" />
+                <li class="menu-title">Setting</li>
+                <x-menu-item activeRoute="settings" text="Settings" iconClass="ri-settings-line" />
                 <div class="mb-10"></div>
             @endif
 

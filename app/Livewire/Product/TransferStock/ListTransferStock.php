@@ -4,24 +4,34 @@ namespace App\Livewire\Product\TransferStock;
 
 use App\Enums\StockActivity;
 use App\Enums\StockStatus;
+use App\Exports\TransferStockInExport;
 use App\Models\ProductStock;
 use App\Models\TransferStock;
+use Carbon\Carbon;
 use Exception;
 use Jantinnerezo\LivewireAlert\LivewireAlert;
+use Livewire\Attributes\Rule;
 use Livewire\Attributes\Title;
 use Livewire\Component;
 use Livewire\WithoutUrlPagination;
 use Livewire\WithPagination;
+use Maatwebsite\Excel\Facades\Excel;
 
 class ListTransferStock extends Component
 {
     use LivewireAlert;
     use WithPagination, WithoutUrlPagination;
 
-    public $isOpen = false;
+    public $isOpen = false, $isExport = false;
     public $transferStock;
     public $query = '', $perPage = 10, $sortBy = 'created_at', $sortDirection = 'desc';
     public $total_price;
+
+    #[Rule('required')]
+    public $start_date, $end_date;
+    public $stockFrom, $stockTo;
+
+    public $isStockFrom = true;
 
     protected $listeners = [
         'delete'
@@ -32,6 +42,7 @@ class ListTransferStock extends Component
     public function closeModal()
     {
         $this->isOpen = false;
+        $this->isExport = false;
         $this->transferStock = null;
     }
 
@@ -108,6 +119,23 @@ class ListTransferStock extends Component
             $this->alert('success', 'Transfer Data Succesfully Deleted');
         } catch (Exception $th) {
             $this->alert('error', $th->getMessage());
+        }
+    }
+
+    public function openModalExport()
+    {
+        $this->isExport = true;
+        $this->isOpen = true;
+    }
+
+    public function exportExcel()
+    {
+        $this->validate();
+        $name = "Transfer Produk ". ucwords(str_replace('_', ' ', $this->stockFrom)) . "Ke " . ucwords(str_replace('_', ' ', $this->stockTo)) .  " Tanggal " . Carbon::parse($this->start_date)->translatedFormat('d F Y') ." - ". Carbon::parse($this->end_date)->translatedFormat('d F Y') .".xlsx";
+        if($this->stockFrom != null && $this->stockTo != null) {
+            return Excel::download(new TransferStockInExport($this->start_date, $this->end_date, $this->stockFrom, $this->stockTo), $name);
+        } else {
+            return Excel::download(new TransferStockInExport($this->start_date, $this->end_date), $name);
         }
     }
 }

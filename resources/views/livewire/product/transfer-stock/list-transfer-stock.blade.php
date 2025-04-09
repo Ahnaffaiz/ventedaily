@@ -1,13 +1,22 @@
 <div>
     <x-modal wire:model="isOpen" title="Detail PreOrder" closeButton="closeModal" large="true">
-        @include('livewire.product.transfer-stock.detail-transfer-stock')
+        @if ($isExport)
+            @include('livewire.product.transfer-stock.export')
+        @else
+            @include('livewire.product.transfer-stock.detail-transfer-stock')
+        @endif
     </x-modal>
     <div class="relative mt-4 overflow-hidden bg-white shadow-md dark:bg-gray-800 sm:rounded-lg">
         <div class="flex items-center justify-between p-4 d">
             <div class="flex">
                 <div class="relative w-full">
                     <a class="text-white btn bg-primary" wire:navigate href="{{ route('create-transfer-stock') }}" type="button">
-                        Create </a>
+                        Create
+                    </a>
+                    <button type="button" class="inline text-white btn bg-success gaps-2" wire:click="openModalExport" type="button">
+                        <i class="ri-file-download-line"></i>
+                        Export
+                    </button>
                 </div>
             </div>
         </div>

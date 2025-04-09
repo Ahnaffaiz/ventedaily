@@ -234,6 +234,25 @@
                 <li class="menu-title">Finance</li>
                 <x-menu-item activeRoute="cost" text="Cost" iconClass="ri-money-dollar-box-line" />
                 <x-menu-item activeRoute="expense" text="Expense" iconClass="ri-bank-line" />
+                @if (auth()->user()->hasAnyRole(['Admin', 'Accounting']))
+                    <li class="menu-item">
+                        @php
+                            $activeRoutes = ['monthly-report'];
+                            $isActive = in_array(request()->route()->getName(), $activeRoutes);
+                        @endphp
+                        <a href="javascript:void(0)" data-fc-type="collapse" class="menu-link">
+                            <span class="menu-icon">
+                                <i class="ri-calculator-line {{ $isActive ? 'text-white font-bold' : 'text-gray-300' }}"></i>
+                            </span>
+                            <span class="menu-text {{ $isActive ? 'text-white font-bold' : 'text-gray-300' }}"> Report </span>
+                            <span class="menu-arrow"></span>
+                        </a>
+
+                        <ul class="hidden sub-menu">
+                            <x-menu-item activeRoute="monthly-report" text="Monthly Report" />
+                        </ul>
+                    </li>
+                @endif
             @endif
 
             @if (auth()->user()->hasRole('Admin'))

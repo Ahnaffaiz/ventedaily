@@ -43,6 +43,7 @@
 
     </div>
     @livewireScripts
+    @livewireChartsScripts
     @include('components.layouts.partials.customizer')
 
     @include('components.layouts.partials.footer-scripts')

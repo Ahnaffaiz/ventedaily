@@ -1,6 +1,7 @@
 <?php
 
 use App\Http\Controllers\ExportController;
+use App\Livewire\Accounting\MonthlyReport;
 use App\Livewire\Customer\Customer;
 use App\Livewire\Customer\Group;
 use App\Livewire\Dashboard;
@@ -180,4 +181,14 @@ Route::middleware([
     Route::get('/pre-order', ListPreOrder::class)->name('pre-order');
     Route::get('/create-pre-order/{preorder?}', CreatePreOrder::class)->name('create-pre-order')->middleware([PermissionMiddleware::class. ':Create Pre Order|Update Pre Order']);
     Route::get('/pre-order/cashier', CreatePreOrder::class)->name('pre-order/cashier');
+});
+
+Route::middleware([
+    'auth:sanctum',
+    config('jetstream.auth_session'),
+    'verified',
+    RoleMiddleware::class . ':Admin|Accounting'
+])->group(function() {
+    Route::get('/monthly-report', MonthlyReport::class)->name('monthly-report');
+
 });

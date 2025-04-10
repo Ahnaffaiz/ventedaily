@@ -193,5 +193,3 @@ Route::middleware([
     Route::get('/sales-report', SalesReport::class)->name('sales-report');
     Route::get('/monthly-report-print/{month}', [ExportController::class, 'monthlyReport'])->name('monthly-report-print');
 });
-
-Route::get('/test-print/{saleId}', [ExportController::class, 'printInvoice'])->name('test-print');

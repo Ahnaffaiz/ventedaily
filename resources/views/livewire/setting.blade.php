@@ -31,10 +31,10 @@
                                     </a>
                                 </div>
 
-                                <div wire:ignore>
+                                {{-- <div wire:ignore>
                                     <img id="logo" src="{{ $logo->temporaryUrl() }}" alt="Preview Logo"
                                         class="rounded w-[100%] h-[100%]">
-                                </div>
+                                </div> --}}
 
                             @elseif ($current_logo)
                                 <img src="{{ Storage::url($current_logo) }}" alt="" class="rounded w-[100%] h-[100%]">

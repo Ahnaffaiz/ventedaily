@@ -53,7 +53,7 @@
         <div>
             <form>
                 <x-input-text name="name" id="name" title="Name" placeholder="Input Product Name Here" />
-                @if (!$image)
+                {{-- @if (!$image)
                     <x-input-text name="image" id="image" title="Image" placeholder="Input Product Image" type="file" accept="image/*"/>
                     <small class="text-muted">Image max. 512 kb </small>
                 @endif
@@ -98,7 +98,8 @@
                     @elseif ($current_image)
                         <img src="{{ Storage::url($current_image) }}" alt="" class="rounded w-[100%] h-[100%]">
                     @endif
-                </div>
+                </div> --}}
+                <label class="mt-3 mb-2" for="imei">Imei</label>
                 <div class="relative ms-auto">
                     <button type="button" wire:click="generateImei" class="absolute z-10 text-base -translate-y-1/2 text-primary end-2 top-1/2">
                         <i class="ri-refresh-line" wire:loading.remove wire:target="generateImei"></i>

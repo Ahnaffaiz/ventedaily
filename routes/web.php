@@ -100,7 +100,6 @@ Route::middleware([
 Route::middleware([
     'auth:sanctum',
     config('jetstream.auth_session'),
-    'verified',
     RoleMiddleware::class . ':Admin'
 ])->group(function () {
     Route::get('/category', Category::class)->name('category');

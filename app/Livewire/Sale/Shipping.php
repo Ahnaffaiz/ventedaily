@@ -157,10 +157,6 @@ class Shipping extends Component
                 'bank_id' => $this->bank_id,
                 'transfer_amount' => $this->transfer_amount ? $this->transfer_amount : 0,
             ]);
-            $shipping->sale->update([
-                'ship' => $shipping->cost
-            ]);
-
             $this->alert('success', 'Shipping Successfully Created');
             $this->closeModal();
         } catch (Exception $th) {
@@ -211,9 +207,6 @@ class Shipping extends Component
                 'phone' => $this->phone,
                 'bank_id' => $this->bank_id,
                 'transfer_amount' => $this->transfer_amount,
-            ]);
-            $this->shipping->sale->update([
-                'ship' => $this->cost
             ]);
             $this->shipping = null;
             $this->alert('success', 'Shipping Succesfully Updated');

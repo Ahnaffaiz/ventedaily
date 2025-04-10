@@ -48,6 +48,7 @@
         </tr>
     </thead>
     <tbody>
+        @if ($sales)
         @foreach ($sales as $sale)
             <tr>
                 <td></td>
@@ -69,11 +70,12 @@
                 @endforeach
                 <td style="border: 1px solid black;width:100px;">Rp. {{ number_format($sale['cash'], 0, ',', '.') }}</td>
                 <td style="border: 1px solid black;width:100px;">Rp. {{ number_format($sale['wd_amount'], 0, ',', '.') }}</td>
-                <td style="border: 1px solid black;width:100px;">{{ date('d-m-Y', strtotime($sale['wd_date']))}}</td>
+                <td style="border: 1px solid black;width:100px;">{{ $sale['wd_date'] ? date('d-m-Y', strtotime($sale['wd_date'])) : ''}}</td>
                 <td style="border: 1px solid black;width:100px;">Rp. {{ number_format($sale['tiktok_fee'], 0, ',', '.') }}</td>
                 <td style="border: 1px solid black;width:100px;">Rp. {{ number_format($sale['shopee_fee'], 0, ',', '.') }}</td>
             </tr>
         @endforeach
+        @endif
     </tbody>
 
 </table>

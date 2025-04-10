@@ -690,6 +690,7 @@ class CreateSale extends Component
         $this->cash_received = $this->sale->salePayment?->cash_received;
         $this->cash_change = $this->sale->salePayment?->cash_change;
         if(strtolower($this->payment_type) === strtolower(PaymentType::TRANSFER)) {
+            $this->payment_type = PaymentType::TRANSFER;
             $this->bank_id = $this->sale->salePayment?->bank_id;
             $this->account_number = $this->sale->salePayment?->account_number;
             $this->account_name = $this->sale->salePayment?->account_name;

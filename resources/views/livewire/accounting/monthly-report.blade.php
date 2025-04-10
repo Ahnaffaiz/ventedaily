@@ -15,12 +15,16 @@
             </button>
         </div>
     </div>
-    <div class="relative p-4 mt-4 overflow-hidden bg-white shadow-md dark:bg-gray-800 sm:rounded-lg {{ !$salesCategories ? 'hidden' : 'block' }} w-full">
+    <div class="relative p-4 mt-4 overflow-hidden bg-white shadow-md dark:bg-gray-800 sm:rounded-lg {{ !$salesCategories ? 'hidden' : 'block' }} w-full" id="print-report">
         @if ($salesCategories)
             <div class="flex justify-between border-b">
                 <div class="">
                     <h1 class="text-2xl font-bold text-gray-900">{{ $setting->name }}</h1>
                     <h1 class="text-base font-normal text-gray-900">{{ $setting->address }}</h1>
+                    <a type="button" class="inline my-2 text-white btn bg-danger gaps-2" type="button" target="_blank" href="{{ route('monthly-report-print', $month) }}">
+                        <i class="ri-file-download-line"></i>
+                        Cetak
+                    </a>
                 </div>
                 <div class="">
                     <p class="text-base font-normal text-gray-800">Monthly Report</p>

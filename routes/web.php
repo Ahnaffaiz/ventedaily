@@ -2,6 +2,7 @@
 
 use App\Http\Controllers\ExportController;
 use App\Livewire\Accounting\MonthlyReport;
+use App\Livewire\Accounting\SalesReport;
 use App\Livewire\Customer\Customer;
 use App\Livewire\Customer\Group;
 use App\Livewire\Dashboard;
@@ -190,5 +191,6 @@ Route::middleware([
     RoleMiddleware::class . ':Admin|Accounting'
 ])->group(function() {
     Route::get('/monthly-report', MonthlyReport::class)->name('monthly-report');
-
+    Route::get('/sales-report', SalesReport::class)->name('sales-report');
+    Route::get('/monthly-report-print/{month}', [ExportController::class, 'monthlyReport'])->name('monthly-report-print');
 });

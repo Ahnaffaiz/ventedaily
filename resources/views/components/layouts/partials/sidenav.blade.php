@@ -250,6 +250,7 @@
 
                         <ul class="hidden sub-menu">
                             <x-menu-item activeRoute="monthly-report" text="Monthly Report" />
+                            <x-menu-item activeRoute="sales-report" text="Sales Report" />
                         </ul>
                     </li>
                 @endif

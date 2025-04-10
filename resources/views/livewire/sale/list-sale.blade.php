@@ -345,6 +345,9 @@
                                         <button wire:click="show({{ $sale->id }})" class="text-primary">
                                             <i class="ri-eye-line"></i>
                                         </button>
+                                        <button wire:click="printInvoice({{ $sale->id }})" class="text-warning">
+                                            <i class="ri-printer-line"></i>
+                                        </button>
                                         <button wire:click="addPayment({{ $sale->id }})" class="text-primary">
                                             <i class="ri-bank-card-2-line"></i>
                                         </button>
@@ -388,3 +391,11 @@
         </div>
     </div>
 </div>
+
+@script
+<script>
+    Livewire.on('print-rawbt', (url) => {
+        window.location.href = url;
+    });
+</script>
+@endscript

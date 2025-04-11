@@ -438,7 +438,7 @@ class Product extends Component
                 $this->alert('error', 'Please solve the error first');
             } else {
                 foreach ($this->productPreviews as $product) {
-                    ModelsProduct::firstOrCreate(
+                    ModelsProduct::updateOrCreate(
                         [
                         'name' => $product->name,
                         'category_id' => $product->category_id],
@@ -502,7 +502,7 @@ class Product extends Component
                 $this->alert('error', 'Please solve the error first');
             } else {
                 foreach ($this->stockPreviews as $productStock) {
-                    $stock = ProductStock::firstOrCreate(
+                    $stock = ProductStock::updateOrCreate(
                         [
                         'product_id' => $productStock->product_id,
                         'color_id' => $productStock->color_id,

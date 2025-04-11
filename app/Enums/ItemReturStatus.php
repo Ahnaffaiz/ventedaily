@@ -3,7 +3,7 @@ namespace App\Enums;
 
 use BenSampo\Enum\Enum;
 
-final class ReturItemStatus extends Enum  {
+final class ItemReturStatus extends Enum  {
     const VERMAK = 'vermak';
     const GRADE_B = 'grade b';
     public static function asSelectArray(): array

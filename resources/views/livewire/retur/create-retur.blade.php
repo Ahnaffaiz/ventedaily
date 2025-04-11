@@ -2,7 +2,7 @@
     <x-modal wire:model="isOpen" title="Change Retur Status"
         saveButton="saveReturStatus" closeButton="closeModal">
         <x-input-select id="item_status" name="item_status" title="Item Status" placeholder="Select Status"
-        :options="App\Enums\ReturItemStatus::asSelectArray()" />
+        :options="App\Enums\ItemReturStatus::asSelectArray()" />
     </x-modal>
     <div class="card">
         <div class="card-header">
@@ -87,11 +87,11 @@
                                     <td class="px-4 py-4 text-sm text-center text-gray-500 whitespace-nowrap">
                                         @if (array_key_exists($saleItem['id'], $returItems))
                                             <button wire:click="changeItemStatus({{ $saleItem['id'] }})">
-                                                @if ($returItems[$saleItem['id']]['item_status'] == strtolower(App\Enums\ReturItemStatus::VERMAK))
+                                                @if ($returItems[$saleItem['id']]['item_status'] == strtolower(App\Enums\ItemReturStatus::VERMAK))
                                                     <span class="inline-flex items-center gap-1.5 py-0.5 px-1.5 rounded-md text-xs font-medium bg-info/10 text-info">
                                                         {{ ucwords($returItems[$saleItem['id']]['item_status']) }}
                                                     </span>
-                                                @elseif ($returItems[$saleItem['id']]['item_status'] == strtolower(App\Enums\ReturItemStatus::GRADE_B))
+                                                @elseif ($returItems[$saleItem['id']]['item_status'] == strtolower(App\Enums\ItemReturStatus::GRADE_B))
                                                     <span class="inline-flex items-center gap-1.5 py-0.5 px-1.5 rounded-md text-xs font-medium bg-danger/10 text-danger">
                                                         {{ ucwords($returItems[$saleItem['id']]['item_status']) }}
                                                     </span>

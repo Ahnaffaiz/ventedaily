@@ -48,27 +48,27 @@ class ProductStockImport implements ToCollection, WithHeadingRow
                 $row['status'] = 'DEFAULT';
             }
 
-            if (!ctype_digit($row['purchase_price'])) {
+            if (!ctype_digit((int) $row['purchase_price'])) {
                 array_push($error,'Purchase Price harus angka');
                 $row['purchase_price'] = 0;
             }
 
-            if (!ctype_digit($row['selling_price'])) {
+            if (!ctype_digit((int) $row['selling_price'])) {
                 array_push($error,'Selling Price harus angka');
                 $row['selling_price'] = 0;
             }
 
-            if (!is_int($row['home_stock'])) {
+            if (!is_int((int) $row['home_stock'])) {
                 array_push($error,'Home Stock harus angka');
                 $row['home_stock'] = 0;
             }
 
-            if (!is_int($row['store_stock'])) {
+            if (!is_int((int) $row['store_stock'])) {
                 array_push($error,'Store Stock harus angka');
                 $row['store_stock'] = 0;
             }
 
-            if (!is_int($row['pre_order_stock'])) {
+            if (!is_int((int) $row['pre_order_stock'])) {
                 array_push($error,'Pre Order Stock harus angka');
                 $row['pre_order_stock'] = 0;
             }

@@ -134,10 +134,11 @@ class ProductStock extends Component
 
     public function edit($id)
     {
+
         $this->productStock = ModelsProductStock::find($id);
         $this->size_id = $this->productStock->size_id;
         $this->color_id = $this->productStock->color_id;
-        $this->status = $this->productStock->status;
+        $this->status = $this->productStock->status->value;
         $this->purchase_price = $this->productStock->purchase_price;
         $this->selling_price = $this->productStock->selling_price;
         $this->margin_price = $this->productStock->selling_price - $this->productStock->purchase_price;

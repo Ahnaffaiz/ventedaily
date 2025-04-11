@@ -26,7 +26,7 @@ class Customer extends Component
     #[Validate('required|regex:/^8\d+$/')]
     public $phone;
 
-    #[Validate('required|email|max:255')]
+    #[Validate('email|max:255')]
     public $email;
 
     #[Validate('required')]

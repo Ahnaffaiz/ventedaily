@@ -132,35 +132,43 @@ class ListTransferStock extends Component
 
     public function transferProduct()
     {
-        if($this->transfer_to == 'store_stock') {
-            $this->getTransferStockToStore();
-            foreach ($this->transferToStores as $keepProduct) {
-                $this->cart[$keepProduct->product_stock_id]['id'] = $keepProduct->product_stock_id;
-                $this->cart[$keepProduct->product_stock_id]['keep_product_id'] = $keepProduct->id;
-                $this->cart[$keepProduct->product_stock_id]['stock'] = $keepProduct->home_stock;
+        try {
+            if($this->transfer_to == 'store_stock') {
+                $this->getTransferStockToStore();
+                foreach ($this->transferToStores as $keepProduct) {
+                    $this->cart[$keepProduct->product_stock_id]['id'] = $keepProduct->product_stock_id;
+                    $this->cart[$keepProduct->product_stock_id]['keep_product_id'] = $keepProduct->id;
+                    $this->cart[$keepProduct->product_stock_id]['stock'] = $keepProduct->home_stock;
+                }
+                $total_items = $this->transferToStores->sum('home_stock');
+            } elseif($this->transfer_to == 'home_stock') {
+                $this->getTransferStockToHome();
+                foreach ($this->transferToHomes as $keepProduct) {
+                    $this->cart[$keepProduct->product_stock_id]['id'] = $keepProduct->product_stock_id;
+                    $this->cart[$keepProduct->product_stock_id]['keep_product_id'] = $keepProduct->id;
+                    $this->cart[$keepProduct->product_stock_id]['stock'] = $keepProduct->store_stock;
+                }
+                $total_items = $this->transferToHomes->sum('store_stock');
             }
-            $total_items = $this->transferToStores->sum('home_stock');
-        } elseif($this->transfer_to == 'home_stock') {
-            $this->getTransferStockToHome();
-            foreach ($this->transferToHomes as $keepProduct) {
-                $this->cart[$keepProduct->product_stock_id]['id'] = $keepProduct->product_stock_id;
-                $this->cart[$keepProduct->product_stock_id]['keep_product_id'] = $keepProduct->id;
-                $this->cart[$keepProduct->product_stock_id]['stock'] = $keepProduct->store_stock;
+
+            if($total_items > 0) {
+                $transferStock = TransferStock::create([
+                    'user_id' => Auth::user()->id,
+                    'transfer_from' => strtolower($this->transfer_from),
+                    'transfer_to' => strtolower($this->transfer_to),
+                    'total_items' => $total_items,
+                ]);
+
+                $this->createTransferProductStock($transferStock->id);
+                $this->reset();
+                $this->alert('success', 'Transfer Succesfully Created');
+                return redirect()->route('create-transfer-stock', $transferStock->id);
+            } else {
+                $this->alert('warning', 'No Product To Transfer');
             }
-            $total_items = $this->transferToStores->sum('store_stock');
+        } catch (\Throwable $th) {
+            $this->alert('error', $th->getMessage());
         }
-
-        $transferStock = TransferStock::create([
-            'user_id' => Auth::user()->id,
-            'transfer_from' => strtolower($this->transfer_from),
-            'transfer_to' => strtolower($this->transfer_to),
-            'total_items' => $total_items,
-        ]);
-
-        $this->createTransferProductStock($transferStock->id);
-        $this->reset();
-        $this->alert('success', 'Transfer Succesfully Created');
-        return redirect()->route('create-transfer-stock', $transferStock->id);
     }
 
     public function createTransferProductStock($transferStockId)

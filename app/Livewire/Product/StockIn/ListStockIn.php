@@ -96,6 +96,7 @@ class ListStockIn extends Component
                 $productStock = ProductStock::where('id', $stockInProduct->product_stock_id)->first();
                 $productStock->update([
                     $this->stockIn->stock_type->value => $productStock[$this->stockIn->stock_type->value] - $stockInProduct->stock,
+                    'all_stock' => $productStock->all_stock - $stockInProduct->stock
                 ]);
                 setStockHistory(
                     $productStock->id,

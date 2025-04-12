@@ -4,7 +4,7 @@
     </x-modal>
     @include('livewire.keep.statistic-keep')
     <div class="relative mt-4 overflow-hidden bg-white shadow-md dark:bg-gray-800 sm:rounded-lg">
-        <div class="flex items-center justify-between p-4 d">
+        <div class="flex items-center justify-between p-4">
             <div class="flex">
                 @if (auth()->user()->canAny(['Update Keep', 'Create Keep']))
                     <div class="relative w-full">
@@ -313,4 +313,5 @@
             </div>
         </div>
     </div>
+    @livewire('keep.resume-keep', ['user' => $user], key($user->id))
 </div>

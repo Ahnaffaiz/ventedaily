@@ -10,6 +10,7 @@ use App\Models\Group;
 use App\Models\Keep;
 use App\Models\Purchase;
 use Exception;
+use Illuminate\Support\Facades\Auth;
 use Jantinnerezo\LivewireAlert\LivewireAlert;
 use Livewire\Attributes\Title;
 use Livewire\Component;
@@ -21,6 +22,7 @@ class ListKeep extends Component
     use LivewireAlert;
     use WithPagination, WithoutUrlPagination;
 
+    public $user;
     public $isOpen = false;
     public $keep;
     public $query = '', $perPage = 10, $sortBy = 'no_keep', $sortDirection = 'desc', $groupIds, $groupId = '', $status = KeepStatus::ACTIVE;
@@ -68,6 +70,7 @@ class ListKeep extends Component
 
 
     public function mount() {
+        $this->user = Auth::user();
         $this->groupIds = Group::get();
     }
     public function render()
@@ -87,7 +90,7 @@ class ListKeep extends Component
                 ->where('customers.group_id', 'like', '%' . $this->groupId . '%')
                 ->where('status', 'like', '%' . $this->status . '%')
                 ->orderBy($this->sortBy, $this->sortDirection)
-                ->paginate($this->perPage)
+                ->paginate($this->perPage, ['*'], 'listKeep')
         ]);
     }
 

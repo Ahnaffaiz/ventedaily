@@ -175,8 +175,8 @@
 
     Livewire.on('categories-sold-loaded', ([payload]) => {
         const categoryColors = payload.categoryData.map(() => getRandomColor());
-
         const ctx = document.getElementById('categorySoldChart');
+
         new Chart(ctx, {
             type: 'polarArea',
             data: {

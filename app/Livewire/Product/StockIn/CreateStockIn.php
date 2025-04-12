@@ -176,6 +176,7 @@ class CreateStockIn extends Component
             $stock = ProductStock::where('id', $productStock['id'])->first();
             $stock->update([
                 $this->stock_type => $stock[$this->stock_type] + $productStock['stock'],
+                'all_stock' => $stock->all_stock + $productStock['stock']
             ]);
             setStockHistory(
                 $stock->id,

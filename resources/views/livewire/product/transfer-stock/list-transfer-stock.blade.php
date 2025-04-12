@@ -45,6 +45,9 @@
                             <th scope="col" class="px-4 py-4 text-sm font-medium text-gray-500 text-start">
                                 Transfer To
                             </th>
+                            <th scope="col" class="px-4 py-4 text-sm font-medium text-gray-500 text-start">
+                                Keep
+                            </th>
                             <th scope="col" class="px-4 py-4 text-sm font-medium text-gray-500 text-start" wire:click="sortByColumn('total_items')">
                                 Total Items
                                 @if ($sortBy === 'total_items')
@@ -88,6 +91,11 @@
                                     {{ App\Enums\StockType::getLabel($transferStock->transfer_to) }}
                                 </td>
                                 <td class="px-4 py-4 text-sm text-gray-500 whitespace-nowrap dark:text-gray-200">
+                                    @if ($transferStock?->transferProducts?->whereNotNull('keep_product_id')->isNotEmpty())
+                                        <span class="inline-flex items-center gap-1.5 py-0.5 px-1.5 rounded-md text-xs font-medium bg-info/10 text-info">Keep Product</span>
+                                    @endif
+                                </td>
+                                <td class="px-4 py-4 text-sm text-gray-500 whitespace-nowrap dark:text-gray-200">
                                     {{ $transferStock->total_items }}
                                 </td>
                                 <td class="px-4 py-4 text-sm text-gray-500 whitespace-nowrap dark:text-gray-200">
@@ -97,6 +105,14 @@
                                     <div class="flex items-center justify-center space-x-3">
                                         <button wire:click="show({{ $transferStock->id }})" class="text-primary">
                                             <i class="ri-eye-line"></i>
+                                        </button>
+                                        <button wire:click="exportTransferProduct({{ $transferStock->id }})" class="text-success" wire:target="exportTransferProduct({{ $transferStock->id }})" wire:loading.attr="disabled">
+                                            <div class="flex gap-2" wire:loading.remove wire:target="exportTransferProduct({{ $transferStock->id }})">
+                                                <i class="ri-file-excel-2-line"></i>
+                                            </div>
+                                            <div class="flex gap-2" wire:loading wire:target="exportTransferProduct({{ $transferStock->id }})">
+                                                <div class="animate-spin w-4 h-4 border-[3px] border-current border-t-transparent text-success rounded-full"></div>
+                                            </div>
                                         </button>
                                         <a wire:navigate href="{{ route('create-transfer-stock', ['transferstock' => $transferStock->id]) }}"
                                             class="text-info">

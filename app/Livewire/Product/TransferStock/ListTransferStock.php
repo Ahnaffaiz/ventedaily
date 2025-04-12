@@ -183,11 +183,11 @@ class ListTransferStock extends Component
         }
     }
 
-    public function exportTransferProduct($transferTo)
+    public function exportTransferProduct($transferStockId)
     {
-        $tranfer = $transferTo == 'store' ? ' Toko ' : ' Rumah ';
-        $name = "Tranfser Produk Ke " . $tranfer . Carbon::now()->format('d F Y')  .".xlsx";
-        return Excel::download(new TransferStockExport($transferTo), $name);
+        $transferStock = TransferStock::where('id', $transferStockId)->first();
+        $name = "Tranfser Produk Dari " . ucwords(str_replace('_', ' ', $transferStock->transfer_from)) . " Ke " . ucwords(str_replace('_', ' ', $transferStock->transfer_to)) . " Tanggal " . Carbon::parse($transferStock->created_at)->format('d F Y')  .".xlsx";
+        return Excel::download(new TransferStockExport($transferStockId), $name);
     }
 
     public function deleteAlert($transferStock)

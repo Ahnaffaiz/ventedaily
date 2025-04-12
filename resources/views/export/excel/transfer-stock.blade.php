@@ -13,11 +13,11 @@
         <tr></tr>
         <tr>
             <td width="20px"></td>
-            <td style="font-size:16px; font-weight:500;">TRANSFER PRODUK KE {{ $transferTo == 'store' ? 'TOKO' : 'RUMAH' }}</td>
+            <td style="font-size:16px; font-weight:500;">TRANSFER PRODUK DARI {{ strtoupper(str_replace('_', ' ', $transferStock->transfer_from)) . " KE " . strtoupper(str_replace('_', ' ', $transferStock->transfer_to)) }}</td>
         </tr>
         <tr>
             <td width="20px"></td>
-            <td style="font-size: 12px;">Tanggal : {{ $date }}</td>
+            <td style="font-size: 12px;">Tanggal : {{ \Carbon\Carbon::parse($transferStock->created_at)->format('d-m-Y') }}</td>
         </tr>
     </thead>
 </table>
@@ -33,18 +33,14 @@
         </tr>
     </thead>
     <tbody>
-        @foreach ($keepProducts as $keepProduct)
+        @foreach ($transferStock->transferProducts as $transferProduct)
             <tr>
                 <td width="20px"></td>
                 <td style="border: 1px solid black; text-align: center;margin:20px; padding: 20px;">{{ $loop->iteration }}</td>
-                <td style="border: 1px solid black">{{ $keepProduct->productStock->product->name }}</td>
-                <td style="border: 1px solid black">{{ $keepProduct->productStock->color->name }}</td>
-                <td style="border: 1px solid black">{{ $keepProduct->productStock->size->name }}</td>
-                @if ($transferTo == 'store')
-                    <td style="border: 1px solid black; text-align: center;">{{ $keepProduct->home_stock }}</td>
-                @elseif ($transferTo == 'home')
-                    <td style="border: 1px solid black; text-align: center;">{{ $keepProduct->store_stock }}</td>
-                @endif
+                <td style="border: 1px solid black">{{ $transferProduct->productStock->product->name }}</td>
+                <td style="border: 1px solid black">{{ $transferProduct->productStock->color->name }}</td>
+                <td style="border: 1px solid black">{{ $transferProduct->productStock->size->name }}</td>
+                <td style="border: 1px solid black; text-align: center;">{{ $transferProduct->stock }}</td>
             </tr>
         @endforeach
     </tbody>

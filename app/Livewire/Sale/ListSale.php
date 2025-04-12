@@ -49,7 +49,7 @@ class ListSale extends Component
     public $showColumns = [
         'keep_id' => true,
         'pre_order_id' => true,
-        'order_id_marketplace' => false,
+        'order_id_marketplace' => true,
         'group' => true,
         'term_of_payment_id' => true,
         'total_items' => true,

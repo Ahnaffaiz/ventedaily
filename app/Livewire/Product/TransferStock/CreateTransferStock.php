@@ -5,6 +5,7 @@ namespace App\Livewire\Product\TransferStock;
 use App\Enums\StockActivity;
 use App\Enums\StockStatus;
 use App\Enums\StockType;
+use App\Models\KeepProduct;
 use App\Models\Product;
 use App\Models\ProductStock;
 use App\Models\TransferProductStock;
@@ -177,6 +178,7 @@ class CreateTransferStock extends Component
                 'product' => $productStock->product->name,
                 'stock' => $this->cart[$productStockId]['stock'],
                 'max_stock' => $this->cart[$productStockId]['max_stock'],
+                'keep_product_id' => $this->cart[$productStockId]['keep_product_id']
             ];
             $this->getTotalItem();
         }
@@ -188,6 +190,7 @@ class CreateTransferStock extends Component
             $transferProductStocks = $this->transferStock?->transferProducts()->where('product_stock_id', $productStockId)->first();
             $productStock = ProductStock::where('id', $productStockId)->first();
             $this->cart[$productStockId]['max_stock'] = $productStock[$this->transfer_from] + $transferProductStocks?->stock;
+            $this->cart[$productStockId]['keep_product_id'] = null;
 
             if ($this->cart[$productStockId]['max_stock'] > 0) {
                 $this->cart[$productStockId]['stock'] = 1;
@@ -208,7 +211,16 @@ class CreateTransferStock extends Component
 
     public function removeProductStock($productStockId)
     {
-        if (isset($this->cart[$productStockId]) && $this->cart[$productStockId]['stock'] > 1) {
+        $transferfrom = $this->transfer_from;
+        if(isset($this->cart[$productStockId]) && $this->cart[$productStockId]['keep_product_id'] != null) {
+            $keepProduct = KeepProduct::where('id', $this->cart[$productStockId]['keep_product_id'])->first();
+            if($this->cart[$productStockId]['stock'] > $keepProduct->$transferfrom) {
+                $this->cart[$productStockId]['stock']--;
+                $this->addToCart($productStockId);
+            } else {
+                $this->alert('warning', 'Minimum product must transfer :' . $keepProduct->$transferfrom);
+            }
+        } elseif(isset($this->cart[$productStockId]) && $this->cart[$productStockId]['stock'] > 1) {
             $this->cart[$productStockId]['stock']--;
             $this->addToCart($productStockId);
         } elseif(isset($this->cart[$productStockId]) && $this->cart[$productStockId]['stock'] == 1) {
@@ -248,9 +260,14 @@ class CreateTransferStock extends Component
             if ($productStock['max_stock'] < $productStock['stock']) {
                 $this->alert('warning', 'Stock Not Enough');
             } else {
+                if($productStock['keep_product_id']) {
+                    $keepProduct = KeepProduct::where('id', $productStock['keep_product_id'])->first();
+                }
+                $transfer_from = $this->transfer_from;
+                $transferStock = $productStock['keep_product_id'] != null ? $productStock['stock'] - $keepProduct?->$transfer_from : $productStock['stock'];
                 $stock->update([
-                    $this->transfer_from => $stock[$this->transfer_from] - $productStock['stock'],
-                    $this->transfer_to => $stock[$this->transfer_to] + $productStock['stock'],
+                    $this->transfer_from => $stock[$this->transfer_from] - $transferStock,
+                    $this->transfer_to => $stock[$this->transfer_to] + $transferStock,
                 ]);
 
                 setStockHistory(
@@ -271,6 +288,7 @@ class CreateTransferStock extends Component
                 'transfer_stock_id' => $transferStockId,
                 'product_stock_id' => $productStock['id'],
                 'stock' => $productStock['stock'],
+                'keep_product_id' =>$productStock['keep_product_id'],
             ]);
         }
     }
@@ -308,6 +326,7 @@ class CreateTransferStock extends Component
                 'product' => $transferProduct->productStock->product->name,
                 'stock' => $transferProduct->stock,
                 'max_stock' => $transferProduct->stock + $transferProduct->productStock[$this->transfer_from],
+                'keep_product_id' => $transferProduct->keep_product_id,
             ];
         }
     }
@@ -317,9 +336,11 @@ class CreateTransferStock extends Component
         $this->validate();
         foreach ($this->transferStock->transferProducts as $transferProduct) {
             $productStock = ProductStock::where('id', $transferProduct->product_stock_id)->first();
+            $transfer_from = $this->transfer_from;
+            $transferStock = $transferProduct->keep_product_id != null ? $transferProduct->stock - $transferProduct->KeepProduct->$transfer_from : $transferProduct->stock;
             $productStock->update([
-                $this->transferStock->transfer_from => $productStock[$this->transferStock->transfer_from] + $transferProduct->stock,
-                $this->transferStock->transfer_to => $productStock[$this->transferStock->transfer_to] - $transferProduct->stock,
+                $this->transferStock->transfer_from => $productStock[$this->transferStock->transfer_from] + $transferStock,
+                $this->transferStock->transfer_to => $productStock[$this->transferStock->transfer_to] - $transferStock,
             ]);
             setStockHistory(
                 $productStock->id,

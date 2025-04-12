@@ -6,6 +6,7 @@
             @include('livewire.product.transfer-stock.detail-transfer-stock')
         @endif
     </x-modal>
+    @include('livewire.product.transfer-stock.information')
     <div class="relative mt-4 overflow-hidden bg-white shadow-md dark:bg-gray-800 sm:rounded-lg">
         <div class="flex items-center justify-between p-4 d">
             <div class="flex">

@@ -55,7 +55,6 @@ class Product extends Component
     public $categories, $product, $isProductStock = false, $isStock = false, $isImport = false, $importType = 'product', $isHistory = false;
 
     public $query = '', $perPage = 10, $sortBy = 'name', $sortDirection = 'asc';
-    public $transferToStores, $transferToHomes;
 
     public $start_date, $end_date;
 
@@ -125,7 +124,6 @@ class Product extends Component
 
     public function render()
     {
-        $this->getTransferStockToStore();
         return view('livewire.product.product', [
             'products' => ModelsProduct::withSum('productStocks', 'all_stock')
                 ->withSum('productStocks', 'home_stock')
@@ -144,27 +142,6 @@ class Product extends Component
                 )
                 ->paginate($this->perPage)
         ]);
-    }
-
-    public function getTransferStockToStore()
-    {
-        //reseller transfer data from home to store
-        $this->transferToStores = KeepProduct::whereHas('keep', function($query){
-            return $query->where('status', strtolower(KeepStatus::ACTIVE))
-                    ->whereHas('customer', function($query){
-                        return $query->where('group_id', 1);
-                    });
-        })->where('home_stock', '!=', 0)
-        ->get();
-
-        //reseller transfer data from store to home
-        $this->transferToHomes = KeepProduct::whereHas('keep', function($query){
-            return $query->where('status', strtolower(KeepStatus::ACTIVE))
-                    ->whereHas('customer', function($query){
-                        return $query->where('group_id', 2);
-                    });
-        })->where('store_stock', '!=', 0)
-        ->get();
     }
 
 
@@ -397,13 +374,6 @@ class Product extends Component
             $this->isOpen = false;
         }
 
-    }
-
-    public function exportTransferProduct($transferTo)
-    {
-        $tranfer = $transferTo == 'store' ? ' Toko ' : ' Rumah ';
-        $name = "Tranfser Produk Ke " . $tranfer . Carbon::now()->format('d F Y')  .".xlsx";
-        return Excel::download(new TransferStockExport($transferTo), $name);
     }
 
     public function openImportModal($importType)

@@ -20,4 +20,9 @@ class KeepProduct extends Model
     {
         return $this->belongsTo(ProductStock::class);
     }
+
+    public function transferProductStock()
+    {
+        return $this->hasOne(TransferProductStock::class);
+    }
 }

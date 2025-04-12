@@ -3,14 +3,8 @@
         <div class="h-56 overflow-auto card">
             <div class="sticky top-0 z-10 flex items-center justify-between bg-gray-200 card-header dark:bg-gray-800">
                 <h4 class="card-title">Transfer to Store</h4>
-                <button wire:click="exportTransferProduct('store')" class="inline gap-2 text-white transition-all btn btn-sm bg-success" wire:target="exportTransferProduct('store')" wire:loading.attr="disabled">
-                    <div class="flex gap-2" wire:loading.remove wire:target="exportTransferProduct('store')">
-                        <i class="ri-file-excel-2-line"></i>
-                        Excel
-                    </div>
-                    <div class="flex gap-2" wire:loading wire:target="exportTransferProduct('store')">
-                        <div class="animate-spin w-4 h-4 border-[3px] border-current border-t-transparent text-light rounded-full"></div>
-                    </div>
+                <button class="inline gap-2 text-white transition-all btn btn-sm bg-primary" wire:click="transferProductAlert('store')">
+                    Transfer
                 </button>
             </div>
 

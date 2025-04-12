@@ -121,6 +121,20 @@ class ListKeep extends Component
         try {
             if ($this->keep->status == KeepStatus::ACTIVE) {
                 foreach ($this->keep->keepProducts as $keepProduct) {
+                    if($keepProduct->transferProductStock) {
+                        $stockTypeTransfer = $keepProduct->transferProductStock->transferStock->transfer_from;
+                        $keepProduct->transferProductStock->transferStock->update([
+                            'total_items' => $keepProduct->transferProductStock->transferStock->total_items - $keepProduct->$stockTypeTransfer,
+                        ]);
+                        if ($keepProduct->transferProductStock->stock - $keepProduct->$stockTypeTransfer == 0) {
+                            $keepProduct->transferProductStock->delete();
+                        } else {
+                            $keepProduct->transferProductStock->update([
+                                'stock' => $keepProduct->transferProductStock->stock - $keepProduct->$stockTypeTransfer,
+                                'keep_product_id' => null
+                            ]);
+                        }
+                    }
                     if($keepProduct->home_stock > 0) {
                         $keepProduct->productStock->update([
                             'all_stock' => $keepProduct->productStock->all_stock + $keepProduct->home_stock,

@@ -2,14 +2,19 @@
 
 namespace App\Livewire\Product\TransferStock;
 
+use App\Enums\KeepStatus;
 use App\Enums\StockActivity;
 use App\Enums\StockStatus;
 use App\Enums\StockType;
+use App\Exports\TransferStockExport;
 use App\Exports\TransferStockInExport;
+use App\Models\KeepProduct;
 use App\Models\ProductStock;
+use App\Models\TransferProductStock;
 use App\Models\TransferStock;
 use Carbon\Carbon;
 use Exception;
+use Illuminate\Support\Facades\Auth;
 use Jantinnerezo\LivewireAlert\LivewireAlert;
 use Livewire\Attributes\Rule;
 use Livewire\Attributes\Title;
@@ -34,8 +39,14 @@ class ListTransferStock extends Component
 
     public $isStockFrom = "all_stock";
 
+    public $transferToStores, $transferToHomes;
+
+    public $transfer_from, $transfer_to;
+    public $cart;
+
     protected $listeners = [
-        'delete'
+        'delete',
+        'transferProduct'
     ];
 
     #[Title('Transfer Stock')]
@@ -59,6 +70,8 @@ class ListTransferStock extends Component
 
     public function render()
     {
+        $this->getTransferStockToStore();
+        $this->getTransferStockToHome();
         return view('livewire.product.transfer-stock.list-transfer-stock', [
             'transferStocks' => TransferStock::select('transfer_stocks.*')
                 ->orderBy($this->sortBy, $this->sortDirection)
@@ -69,6 +82,104 @@ class ListTransferStock extends Component
     public function show($transfer_stock_id) {
         $this->isOpen = true;
         $this->transferStock = TransferStock::find($transfer_stock_id);
+    }
+
+    public function getTransferStockToStore()
+    {
+        //reseller transfer data from home to store
+        $this->transferToStores = KeepProduct::whereDoesntHave('transferProductStock')
+            ->whereHas('keep', function($query){
+            return $query->where('status', strtolower(KeepStatus::ACTIVE))
+                    ->whereHas('customer', function($query){
+                        return $query->where('group_id', 1);
+                    });
+        })->where('home_stock', '!=', 0)
+        ->get();
+    }
+
+    public function getTransferStockToHome()
+    {
+        //reseller transfer data from store to home
+        $this->transferToHomes = KeepProduct::whereDoesntHave('transferProductStock')
+            ->whereHas('keep', function($query){
+            return $query->where('status', strtolower(KeepStatus::ACTIVE))
+                    ->whereHas('customer', function($query){
+                        return $query->where('group_id', 2);
+                    });
+        })->where('store_stock', '!=', 0)
+        ->get();
+    }
+
+    public function transferProductAlert($stockType)
+    {
+        $this->transfer_to = $stockType == 'store' ? 'store_stock' : 'home_stock';
+        $this->transfer_from = $stockType == 'store' ? 'home_stock' : 'store_stock';
+        $this->alert('question', 'Transfer Product to ' . ucwords($stockType), [
+            'toast' => false,
+            'text' => 'Create Transfer Stock ?',
+            'position' => 'center',
+            'showConfirmButton' => true,
+            'confirmButtonText' => 'Yes',
+            'showCancelButton' => true,
+            'cancelButtonText' => 'cancel',
+            'icon' => 'warning',
+            'onConfirmed' => 'transferProduct',
+            'timer' => null,
+            'confirmButtonColor' => '#3085d6',
+            'cancelButtonColor' => '#d33'
+        ]);
+    }
+
+    public function transferProduct()
+    {
+        if($this->transfer_to == 'store_stock') {
+            $this->getTransferStockToStore();
+            foreach ($this->transferToStores as $keepProduct) {
+                $this->cart[$keepProduct->product_stock_id]['id'] = $keepProduct->product_stock_id;
+                $this->cart[$keepProduct->product_stock_id]['keep_product_id'] = $keepProduct->id;
+                $this->cart[$keepProduct->product_stock_id]['stock'] = $keepProduct->home_stock;
+            }
+            $total_items = $this->transferToStores->sum('home_stock');
+        } elseif($this->transfer_to == 'home_stock') {
+            $this->getTransferStockToHome();
+            foreach ($this->transferToHomes as $keepProduct) {
+                $this->cart[$keepProduct->product_stock_id]['id'] = $keepProduct->product_stock_id;
+                $this->cart[$keepProduct->product_stock_id]['keep_product_id'] = $keepProduct->id;
+                $this->cart[$keepProduct->product_stock_id]['stock'] = $keepProduct->store_stock;
+            }
+            $total_items = $this->transferToStores->sum('store_stock');
+        }
+
+        $transferStock = TransferStock::create([
+            'user_id' => Auth::user()->id,
+            'transfer_from' => strtolower($this->transfer_from),
+            'transfer_to' => strtolower($this->transfer_to),
+            'total_items' => $total_items,
+        ]);
+
+        $this->createTransferProductStock($transferStock->id);
+        $this->reset();
+        $this->alert('success', 'Transfer Succesfully Created');
+        return redirect()->route('create-transfer-stock', $transferStock->id);
+    }
+
+    public function createTransferProductStock($transferStockId)
+    {
+        foreach ($this->cart as $cart) {
+            TransferProductStock::create([
+                'transfer_stock_id' => $transferStockId,
+                'product_stock_id' => $cart['id'],
+                'stock' => $cart['stock'],
+                'keep_product_id' => $cart['keep_product_id'],
+            ]);
+        }
+    }
+
+    public function exportTransferProduct($transferTo)
+    {
+        $tranfer = $transferTo == 'store' ? ' Toko ' : ' Rumah ';
+        $name = "Tranfser Produk Ke " . $tranfer . Carbon::now()->format('d F Y')  .".xlsx";
+        return Excel::download(new TransferStockExport($transferTo), $name);
     }
 
     public function deleteAlert($transferStock)

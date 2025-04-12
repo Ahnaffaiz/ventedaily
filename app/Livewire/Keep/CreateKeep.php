@@ -432,6 +432,20 @@ class CreateKeep extends Component
 
         foreach ($this->keep->keepProducts as $keepProduct) {
             $productStock = ProductStock::where('id', $keepProduct->product_stock_id)->first();
+            if($keepProduct->transferProductStock) {
+                $stockTypeTransfer = $keepProduct->transferProductStock->transferStock->transfer_from;
+                $keepProduct->transferProductStock->transferStock->update([
+                    'total_items' => $keepProduct->transferProductStock->transferStock->total_items - $keepProduct->$stockTypeTransfer,
+                ]);
+                if ($keepProduct->transferProductStock->stock - $keepProduct->$stockTypeTransfer == 0) {
+                    $keepProduct->transferProductStock->delete();
+                } else {
+                    $keepProduct->transferProductStock->update([
+                        'stock' => $keepProduct->transferProductStock->stock - $keepProduct->$stockTypeTransfer,
+                        'keep_product_id' => null
+                    ]);
+                }
+            }
             $productStock->update([
                 'home_stock' => $productStock['home_stock'] + $keepProduct->home_stock,
                 'store_stock' => $productStock['store_stock'] + $keepProduct->store_stock,

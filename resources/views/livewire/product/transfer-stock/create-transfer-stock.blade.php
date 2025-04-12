@@ -21,6 +21,7 @@
                             <th scope="col" class="px-4 py-4 text-sm font-medium text-gray-500 text-start">Color</th>
                             <th scope="col" class="px-4 py-4 text-sm font-medium text-gray-500 text-start">Size</th>
                             <th scope="col" class="px-4 py-4 text-sm font-medium text-gray-500 text-start">Max Stock</th>
+                            <th scope="col" class="px-4 py-4 text-sm font-medium text-center text-gray-500">Keep Status</th>
                             <th scope="col" class="px-4 py-4 text-sm font-medium text-center text-gray-500">Qty</th>
                             <th scope="col" class="justify-end px-4 py-4 pr-3 text-sm font-medium text-gray-500"></th>
                         </tr>
@@ -43,6 +44,14 @@
                                     </td>
                                     <td class="px-4 py-4 text-sm text-gray-500 whitespace-nowrap">
                                         {{ $productStock['max_stock'] }}
+                                    </td>
+                                    <td class="px-4 py-4 text-sm text-center text-gray-500 whitespace-nowrap">
+                                        @if ($productStock['keep_product_id'])
+                                            @php
+                                            $keepProduct = App\Models\KeepProduct::where('id', $productStock['keep_product_id'])->first();
+                                            @endphp
+                                            <span class="inline-flex items-center gap-1.5 py-0.5 px-1.5 rounded-md text-xs font-medium bg-info/10 text-info">Keep : {{ $keepProduct->$transfer_from }}</span>
+                                        @endif
                                     </td>
                                     <td class="px-4 py-4 text-sm text-gray-500 whitespace-nowrap">
                                         <div class="flex items-center justify-center gap-2">

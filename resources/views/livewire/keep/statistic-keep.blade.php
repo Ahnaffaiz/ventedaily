@@ -1,5 +1,5 @@
 <div class="grid gap-6 mb-6 2xl:grid-cols-3 lg:grid-cols-3 md:grid-cols-3 sm:grid-cols">
-    <div class="2xl:col-span-1 lg:col-span-2">
+    <div class="">
         <div class="card">
             <div class="p-6">
                 <div class="flex justify-between">
@@ -15,7 +15,7 @@
             </div>
         </div>
     </div>
-    <div class="2xl:col-span-1 lg:col-span-2">
+    <div class="">
         <div class="card">
             <div class="p-6">
                 <div class="flex justify-between">
@@ -31,7 +31,7 @@
             </div>
         </div>
     </div>
-    <div class="2xl:col-span-1 lg:col-span-2">
+    <div class="">
         <div class="card">
             <div class="p-6">
                 <div class="flex justify-between">

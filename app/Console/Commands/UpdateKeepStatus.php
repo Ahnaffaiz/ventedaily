@@ -38,45 +38,24 @@ class UpdateKeepStatus extends Command
         try {
             foreach ($keeps as $keep) {
                 foreach ($keep?->keepProducts as $keepProduct) {
-                    if($keepProduct->home_stock > 0) {
-                        $keepProduct->productStock->update([
-                            'all_stock' => $keepProduct->productStock->all_stock + $keepProduct->home_stock,
-                            'home_stock' => $keepProduct->productStock->home_stock + $keepProduct->home_stock,
-                        ]);
-                        setStockHistory(
-                            $keepProduct->productStock->id,
-                            StockActivity::KEEP,
-                            StockStatus::REMOVE,
-                            StockType::HOME_STOCK,
-                            NULL,
-                            $keepProduct->home_stock,
-                            $keep->no_keep,
-                            $keepProduct->productStock->all_stock,
-                            $keepProduct->productStock->home_stock,
-                            $keepProduct->productStock->store_stock,
-                            $keepProduct->productStock->pre_order_stock,
-                        );
-                    }
-
-                    if($keepProduct->store_stock > 0) {
-                        $keepProduct->productStock->update([
-                            'all_stock' => $keepProduct->productStock->all_stock + $keepProduct->store_stock,
-                            'store_stock' => $keepProduct->productStock->store_stock + $keepProduct->store_stock,
-                        ]);
-                        setStockHistory(
-                            $keepProduct->productStock->id,
-                            StockActivity::KEEP,
-                            StockStatus::REMOVE,
-                            StockType::STORE_STOCK,
-                            NULL,
-                            $keepProduct->store_stock,
-                            $keep->no_keep,
-                            $keepProduct->productStock->all_stock,
-                            $keepProduct->productStock->home_stock,
-                            $keepProduct->productStock->store_stock,
-                            $keepProduct->productStock->pre_order_stock,
-                        );
-                    }
+                    $stockType = $keep->customer->group->name == 'Reseller' ? 'store_stock' : 'home_stock';
+                    $keepProduct->productStock->update([
+                        'all_stock' => $keepProduct->productStock->all_stock + $keepProduct->total_items,
+                        $stockType => $keepProduct->productStock->$stockType + $keepProduct->total_items,
+                    ]);
+                    setStockHistory(
+                        $keepProduct->productStock->id,
+                        StockActivity::KEEP,
+                        StockStatus::REMOVE,
+                        StockType::HOME_STOCK,
+                        $stockType,
+                        $keepProduct->total_items,
+                        $keep->no_keep,
+                        $keepProduct->productStock->all_stock,
+                        $keepProduct->productStock->home_stock,
+                        $keepProduct->productStock->store_stock,
+                        $keepProduct->productStock->pre_order_stock,
+                    );
                 }
                 $keep->update([
                     'status' => strtolower(KeepStatus::CANCELED),

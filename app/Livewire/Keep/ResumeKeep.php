@@ -65,8 +65,14 @@ class ResumeKeep extends Component
                     DB::raw("CONCAT(products.name, ' ', colors.name, ' ', sizes.name) as product"),
                     DB::raw('SUM(keep_products.total_items) as items')
                 )
-                ->groupBy('keep_products.product_stock_id')
+                ->groupBy(
+                    'keep_products.product_stock_id',
+                    'products.name',
+                    'colors.name',
+                    'sizes.name'
+                )
                 ->get();
+
 
                 $this->dispatch('update-chart-product', [
                     'productLabel' => $data->pluck('product'),

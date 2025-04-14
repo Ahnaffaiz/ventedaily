@@ -73,7 +73,8 @@ class ResumeKeep extends Component
                 'products.name',
                 'colors.name',
                 'sizes.name',
-                DB::raw("CONCAT(products.name, ' ', colors.name, ' ', sizes.name)")
+                DB::raw("CONCAT(products.name, ' ', colors.name, ' ', sizes.name)"),
+                DB::raw("keep_products.total_items")
             )
             ->get();
 

@@ -13,15 +13,16 @@ use Maatwebsite\Excel\Concerns\FromView;
 
 class ReturExport implements FromView
 {
-    protected $start_date, $end_date, $returs;
+    protected $start_date, $end_date, $returs, $status;
     protected $total_price;
-    public function __construct($start_date, $end_date)
+    public function __construct($start_date, $end_date, $status)
     {
         $this->start_date = Carbon::parse($start_date)->format('d/m/Y');
         $this->end_date = Carbon::parse($end_date)->format('d/m/Y');
+        $this->status = $status;
         $start_date = Carbon::parse($start_date)->startOfDay();
         $end_date = Carbon::parse($end_date)->endOfDay();
-        $this->returs = Retur::whereBetween('created_at', [$start_date, $end_date])->get();
+        $this->returs = Retur::whereBetween('created_at', [$start_date, $end_date])->where('status', 'like', '%' . $this->status . '%')->get();
 
         $this->total_price = $this->returs->sum('total_price');
     }

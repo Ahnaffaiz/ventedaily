@@ -14,16 +14,17 @@ use Maatwebsite\Excel\Concerns\FromView;
 
 class ReturProductExport implements FromView
 {
-    protected $returItems, $start_date, $end_date, $setting, $returs;
+    protected $returItems, $start_date, $end_date, $setting, $returs, $status;
 
-    public function __construct($start_date, $end_date)
+    public function __construct($start_date, $end_date, $status)
     {
         $this->setting = Setting::first();
         $this->start_date = Carbon::parse($start_date)->format('d/m/Y');
         $this->end_date = Carbon::parse($end_date)->format('d/m/Y');
         $start_date = Carbon::parse($start_date)->startOfDay();
         $end_date = Carbon::parse($end_date)->endOfDay();
-        $this->returs = Retur::whereBetween('created_at', [$start_date, $end_date])->get();
+        $this->status = $status;
+        $this->returs = Retur::whereBetween('created_at', [$start_date, $end_date])->where('status', 'like', '%' . $this->status . '%')->get();
         $retur = $this->returs;
         $this->returItems = ReturItem::whereIn('retur_id', $this->returs->pluck('id'))
             ->with([

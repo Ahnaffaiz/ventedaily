@@ -12,6 +12,7 @@ use App\Models\Retur;
 use App\Models\Setting;
 use Carbon\Carbon;
 use Exception;
+use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Session;
 use Jantinnerezo\LivewireAlert\LivewireAlert;
 use Livewire\Attributes\Title;
@@ -30,9 +31,13 @@ class ListRetur extends Component
 
     #[Validate('required')]
     public $start_date, $end_date, $exportType = 'product';
+
+    public $export_status;
     public $retur;
     public $query = '', $perPage = 10, $sortBy = 'no_retur', $sortDirection = 'desc', $status, $returStatus;
     public $total_price;
+
+    public $user;
     public $showColumns = [
         'status' => true,
         'reason' => true,
@@ -69,6 +74,11 @@ class ListRetur extends Component
     public function updatedShowColumns($column)
     {
         $this->resetPage();
+    }
+
+    public function mount()
+    {
+        $this->user = Auth::user();
     }
 
     public function render()
@@ -203,11 +213,11 @@ class ListRetur extends Component
         if($this->exportType == 'product') {
             $this->validate();
             $name = "Data Retur Produk Tanggal " . Carbon::parse($this->start_date)->translatedFormat('d F Y') ." - ". Carbon::parse($this->end_date)->translatedFormat('d F Y') .".xlsx";
-            return Excel::download(new ReturProductExport($this->start_date, $this->end_date), $name);
+            return Excel::download(new ReturProductExport($this->start_date, $this->end_date, $this->export_status), $name);
         } elseif($this->exportType == 'retur') {
             $this->validate();
             $name = "Data Penjualan Tanggal " . Carbon::parse($this->start_date)->translatedFormat('d F Y') ." - ". Carbon::parse($this->end_date)->translatedFormat('d F Y') .".xlsx";
-            return Excel::download(new ReturExport($this->start_date, $this->end_date), $name);
+            return Excel::download(new ReturExport($this->start_date, $this->end_date, $this->export_status), $name);
         }
         $this->start_date = null;
         $this->end_date = null;

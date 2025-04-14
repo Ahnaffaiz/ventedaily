@@ -16,6 +16,7 @@
                 <x-input-text id="start_date" name="start_date" title="Start Date" type="date"/>
                 <x-input-text id="end_date" name="end_date" title="End Date" type="date"/>
             </div>
+            <x-input-select id="export_status" title="" name="export_status" placeholder="All Retur " :options="App\Enums\ReturStatus::asSelectArray()" title="Status"/>
         </form>
         <div class="flex items-center justify-end gap-2 mt-4">
             <button wire:click="exportExcel" class="inline gap-2 text-white transition-all btn bg-success" wire:target="exportExcel" wire:loading.attr="disabled">

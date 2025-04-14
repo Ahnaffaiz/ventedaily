@@ -2,7 +2,6 @@
 
 namespace App\Livewire\Sale;
 
-use App\Enums\ShippingStatus;
 use App\Models\Sale;
 use App\Models\SaleWithdrawal;
 use Exception;
@@ -63,18 +62,13 @@ class Withdrawal extends Component
     {
         $this->sales = Sale::whereHas('customer', function($query){
             $query->where('group_id', 2);
-        })->whereHas('saleShipping', function($query){
-            $query->where('status', strtolower(ShippingStatus::SELESAI));
         })->whereDoesntHave('saleWithdrawal')
         ->pluck('no_sale','id')->toArray();
 
         if ($query) {
             $this->sales = Sale::whereHas('customer', function($q){
                 $q->where('group_id', 2);
-            })->whereHas('saleShipping', function($query){
-                $query->where('status', strtolower(ShippingStatus::SELESAI));
-            })
-            ->where('no_sale', 'like', '%'.$query.'%')
+            })->where('no_sale', 'like', '%'.$query.'%')
             ->whereDoesntHave('saleWithdrawal')
             ->pluck('no_sale','id')->toArray();
         }
@@ -84,8 +78,8 @@ class Withdrawal extends Component
     {
         return view('livewire.sale.withdrawal', [
             'withdrawals' => SaleWithdrawal::join('sales', 'sales.id', '=', 'sale_withdrawals.sale_id')
-                ->join('sale_shippings', 'sale_shippings.sale_id', '=', 'sale_withdrawals.sale_id')
-                ->join('marketplaces', 'marketplaces.id', '=', 'sale_shippings.marketplace_id')
+                ->leftJoin('sale_shippings', 'sale_shippings.sale_id', '=', 'sale_withdrawals.sale_id')
+                ->leftJoin('marketplaces', 'marketplaces.id', '=', 'sale_shippings.marketplace_id')
                 ->select(
                     'sale_withdrawals.id',
                     'sale_withdrawals.marketplace_price',
@@ -99,12 +93,16 @@ class Withdrawal extends Component
                     'sale_shippings.no_resi',
                     'sale_shippings.customer_name as customer_name',
                     'sale_shippings.order_id_marketplace',
-                    'marketplaces.name as marketplace_name')
-                ->where('no_resi', 'like', '%' . $this->query . '%')
-                ->orWhere('sales.no_sale', 'like', '%' . $this->query . '%')
+                    'marketplaces.name as marketplace_name'
+                )
+                ->where(function($query) {
+                    $query->where('sale_shippings.no_resi', 'like', '%' . $this->query . '%')
+                        ->orWhere('sales.no_sale', 'like', '%' . $this->query . '%');
+                })
                 ->orderBy($this->sortBy, $this->sortDirection)
                 ->paginate($this->perPage),
         ]);
+
     }
 
     public function openModal()
@@ -113,10 +111,7 @@ class Withdrawal extends Component
         if (!$this->withdrawal) {
             $this->sales = Sale::whereHas('customer', function($query){
                 $query->where('group_id', 2);
-            })->whereHas('saleShipping', function($query){
-                $query->where('status', strtolower(ShippingStatus::SELESAI));
-            })
-            ->whereDoesntHave('saleWithdrawal')
+            })->whereDoesntHave('saleWithdrawal')
             ->pluck('no_sale','id')->toArray();
         }
         $this->isOpen = true;

@@ -342,6 +342,7 @@
             </div>
         </div>
     </div>
+    @livewire('retur.resume-retur', ['user' => $user], key($user->id))
 </div>
 
 @script

@@ -34,8 +34,16 @@
                 <div class="grid gap-4 md:grid-cols-3">
                     <x-input-select id="group_id" name="group_id" title="Group" :options="$groups"
                         placeholder="Select Group" />
-                    <x-input-select id="customer_id" name="customer_id" title="Customer" :options="$customers"
-                        placeholder="Select Customer" />
+                        <x-input-select-search
+                        id="customer_id"
+                        name="customer_id"
+                        title="Customer"
+                        :options="$customers"
+                        placeholder="Select Customer"
+                        searchFunction="searchCustomer"
+                        :selected-label="$selectedCustomerLabel"
+                        wire:key="'customer-select-'.$selectedCustomerLabel"
+                    />
                     <x-input-select id="term_of_payment_id" name="term_of_payment_id" title="Term of Payemnt"
                         :options="$termOfPayments" placeholder="Select Term of Payment" />
                 </div>
@@ -47,7 +55,7 @@
                     </div>
                 @endif
             </div>
-            <div class="mt-4 border border-gray-200 rounded-md section">
+            <div class="mt-4 overflow-x-auto border border-gray-200 rounded-md section">
                 <table class="min-w-full divide-y divide-gray-200 dark:divide-gray-700">
                     <thead>
                         <tr>

@@ -209,14 +209,14 @@
                                         <table class="min-w-full divide-gray-200 divide-b dark:divide-gray-700">
                                             <thead>
                                                 <tr>
-                                                    <th class="text-base text-gray-900"></th>
-                                                    <th class="px-4 text-base text-gray-900 text-start">Color Size</th>
-                                                    <th class="px-4 text-base text-gray-900 text-start">Selling Price</th>
-                                                    <th class="text-base text-gray-900">All</th>
-                                                    <th class="text-base text-gray-900">Home</th>
-                                                    <th class="text-base text-gray-900">Store</th>
-                                                    <th class="text-base text-gray-900">Pre Order</th>
-                                                    <th class="text-base text-gray-900"></th>
+                                                    <th class="text-sm text-gray-900"></th>
+                                                    <th class="px-4 text-sm text-gray-900 text-start">Color Size</th>
+                                                    <th class="px-4 text-sm text-gray-900 text-start">Selling Price</th>
+                                                    <th class="text-sm text-gray-900">All</th>
+                                                    <th class="text-sm text-gray-900">Home</th>
+                                                    <th class="text-sm text-gray-900">Store</th>
+                                                    <th class="text-sm text-gray-900">Pre Order</th>
+                                                    <th class="text-sm text-gray-900"></th>
                                                 </tr>
                                             </thead>
                                             <tbody>

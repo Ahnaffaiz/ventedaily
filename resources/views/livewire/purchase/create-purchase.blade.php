@@ -8,8 +8,8 @@
         <div class="p-6">
             <div class="section">
                 <div class="grid gap-4 lg:grid-cols-2">
-                    <x-input-select id="supplier_id" name="supplier_id" title="Supplier" :options="$suppliers"
-                        placeholder="Select Supplier" />
+                    <x-input-select-search id="supplier_id" name="supplier_id" title="Supplier" :options="$suppliers"
+                        placeholder="Select Supplier" searchFunction="searchSupplier" placeholder="Select Supplier"/>
                     <x-input-select id="term_of_payment_id" name="term_of_payment_id" title="Term of Payemnt"
                         :options="$termOfPayments" placeholder="Select Term of Payment" />
                 </div>

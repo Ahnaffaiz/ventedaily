@@ -10,8 +10,8 @@
         <div class="p-6">
             <div class="section">
                 <div class="grid gap-3 lg:grid-cols-3 md:grid-cols-2">
-                    <x-input-select id="customer_id" name="customer_id" title="Customer" :options="$customers"
-                        placeholder="Select Customer" />
+                    <x-input-select-search id="customer_id" name="customer_id" title="Customer" :options="$customers"
+                        placeholder="Select Customer" searchFunction="searchCustomer" :selected-label="$selectedCustomerLabel" />
                 </div>
                 <div class="mt-4">
                     <x-textarea-input id="desc" name="desc" title="PreOrder Note" />

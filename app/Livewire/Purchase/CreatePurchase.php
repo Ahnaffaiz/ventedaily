@@ -9,7 +9,6 @@ use App\Enums\StockStatus;
 use App\Enums\StockType;
 use App\Models\Product;
 use App\Models\ProductStock;
-use App\Models\ProductStockHistory;
 use App\Models\Purchase;
 use App\Models\PurchaseItem;
 use App\Models\PurchasePayment;
@@ -74,6 +73,18 @@ class CreatePurchase extends Component
             $this->getTotalPrice();
         }
 
+    }
+
+    public function searchSupplier($query)
+    {
+        $this->suppliers = Supplier::all()->pluck('name', 'id')->toArray();
+        if ($query) {
+            $this->suppliers = collect(Supplier::all()->pluck('name', 'id')->toArray())
+                ->filter(function ($label, $value) use ($query) {
+                    return stripos($label, $query) !== false;
+                })
+                ->toArray();
+            }
     }
 
     public function render()

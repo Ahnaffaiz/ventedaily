@@ -56,6 +56,9 @@ class CreateSale extends Component
     #[Rule('required')]
     public $group_id, $customer_id, $term_of_payment_id;
 
+    public $selectedCustomerLabel = '';
+
+
 
     public $desc;
 
@@ -104,6 +107,20 @@ class CreateSale extends Component
             $this->no_sale = $setting->sale_code . str_pad($setting->sale_increment + 1, 4, '0', STR_PAD_LEFT);
         }
     }
+
+    public function searchCustomer($query)
+    {
+        $this->customers = Customer::where('group_id', $this->group_id)->pluck('name', 'id')->toArray();
+        if ($query) {
+            $this->customers = collect(Customer::where('group_id', $this->group_id)->pluck('name', 'id')->toArray())
+                ->filter(function ($label, $value) use ($query) {
+                    return stripos($label, $query) !== false;
+                })
+                ->toArray();
+            }
+    }
+
+
 
     public function render()
     {
@@ -221,6 +238,26 @@ class CreateSale extends Component
         }
     }
 
+    public function updatedSaleFrom()
+    {
+        $this->sale = null;
+        $this->keep = null;
+        $this->preOrder = null;
+        $this->customer_id = null;
+        $this->group_id = null;
+        $this->cart = null;
+        $this->keep_id = null;
+        $this->pre_order_id = null;
+        $this->payment_type = strtolower(PaymentType::CASH);
+        $this->bank_id = null;
+        $this->account_number = null;
+        $this->account_name = null;
+        $this->cash_received = null;
+        $this->cash_change = null;
+        $this->term_of_payment_id = TermOfPayment::where('name', 'cash')->first()->id;
+        $this->discount_type = DiscountType::PERSEN;
+    }
+
     public function updatedKeepId()
     {
         if($this->keep_id) {
@@ -230,7 +267,9 @@ class CreateSale extends Component
                 $this->alert('warning', 'Keep Time Out. Please Refresh the Page');
             } else {
                 $this->group_id = $this->keep->customer->group_id;
+                $this->searchCustomer('');
                 $this->customer_id = $this->keep->customer_id;
+                $this->selectedCustomerLabel = $this->keep->customer->name ?? '';
                 $this->cart = [];
                 $stockType = $this->group_id == 1 ? 'store_stock' : 'home_stock';
                 foreach ($this->keep->keepProducts as $keepProduct) {
@@ -249,6 +288,7 @@ class CreateSale extends Component
                 $this->getTotalPrice();
             }
         }
+        $this->dispatch('$refresh');
     }
 
     public function updatedPreOrderId()
@@ -256,7 +296,9 @@ class CreateSale extends Component
         if($this->pre_order_id) {
             $this->preOrder = PreOrder::where('id', $this->pre_order_id)->first();
             $this->group_id = $this->preOrder->customer->group_id;
+            $this->customers = Customer::where('group_id', $this->group_id)->pluck('name', 'id')->toArray();
             $this->customer_id = $this->preOrder->customer_id;
+            $this->selectedCustomerLabel = Customer::find($this->customer_id)?->name ?? '';
             $this->cart = [];
             $stockType = 'pre_order_stock';
             foreach ($this->preOrder->preOrderProducts as $preOrderProduct) {
@@ -661,6 +703,7 @@ class CreateSale extends Component
         $this->group_id = $this->sale->customer->group_id;
         $this->customers = Customer::where('group_id', $this->group_id)->pluck('name', 'id')->toArray();
         $this->customer_id = $this->sale->customer_id;
+        $this->selectedCustomerLabel = Customer::find($this->customer_id)?->name ?? '';
         $this->term_of_payment_id = $this->sale->term_of_payment_id;
 
         $stockType = "pre_order_stock";

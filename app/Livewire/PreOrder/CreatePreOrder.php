@@ -32,6 +32,8 @@ class CreatePreOrder extends Component
     public $preOrder, $isEdit, $no_pre_order;
     public $productStockList, $product_id, $productStock, $products;
 
+    public $selectedCustomerLabel = null;
+
     #[Rule('required')]
     public $customer_id;
 
@@ -62,6 +64,18 @@ class CreatePreOrder extends Component
             $setting = Setting::first();
             $this->no_pre_order = $setting->pre_order_code . str_pad($setting->pre_order_increment + 1, 4, '0', STR_PAD_LEFT);
         }
+    }
+
+    public function searchCustomer($query)
+    {
+        $this->customers = Customer::all()->pluck('name', 'id')->toArray();
+        if ($query) {
+            $this->customers = collect(Customer::all()->pluck('name', 'id')->toArray())
+                ->filter(function ($label, $value) use ($query) {
+                    return stripos($label, $query) !== false;
+                })
+                ->toArray();
+            }
     }
 
     public function render()
@@ -275,6 +289,7 @@ class CreatePreOrder extends Component
         $this->isEdit = true;
         $this->customers = Customer::get()->pluck('name', 'id')->toArray();
         $this->customer_id = $this->preOrder->customer_id;
+        $this->selectedCustomerLabel = Customer::find($this->customer_id)?->name ?? '';
 
         foreach ($this->preOrder->preOrderProducts as $preOrderProduct) {
             $this->cart[$preOrderProduct->product_stock_id] = [

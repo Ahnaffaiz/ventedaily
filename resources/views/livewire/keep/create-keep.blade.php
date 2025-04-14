@@ -12,8 +12,8 @@
                 <div class="grid gap-4 lg:grid-cols-4 md:grid-cols-2">
                     <x-input-select id="group_id" name="group_id" title="Group" :options="$groups"
                         placeholder="Select Group" />
-                    <x-input-select id="customer_id" name="customer_id" title="Customer" :options="$customers"
-                        placeholder="Select Customer" />
+                    <x-input-select-search id="customer_id" name="customer_id" title="Customer" :options="$customers"
+                        placeholder="Select Customer" searchFunction="searchCustomer" :selected-label="$selectedCustomerLabel" />
                     <x-input-select id="keep_type" name="keep_type" title="Keep Type"
                         :options="App\Enums\KeepType::asSelectArray()" />
                     @if (strtolower($keep_type) === App\Enums\KeepType::CUSTOM)

@@ -39,6 +39,7 @@ class CreateKeep extends Component
 
     #[Rule('required')]
     public $customer_id;
+    public $selectedCustomerLabel = null;
 
     #[Rule('required')]
     public $keep_type = KeepType::REGULAR;
@@ -114,6 +115,18 @@ class CreateKeep extends Component
     public function updatedGroupId()
     {
         $this->customers = Customer::where('group_id', $this->group_id)->pluck('name', 'id')->toArray();
+    }
+
+    public function searchCustomer($query)
+    {
+        $this->customers = Customer::where('group_id', $this->group_id)->pluck('name', 'id')->toArray();
+        if ($query) {
+            $this->customers = collect(Customer::where('group_id', $this->group_id)->pluck('name', 'id')->toArray())
+                ->filter(function ($label, $value) use ($query) {
+                    return stripos($label, $query) !== false;
+                })
+                ->toArray();
+            }
     }
 
     public function searchProduct($query)
@@ -397,6 +410,7 @@ class CreateKeep extends Component
         $this->group_id = $this->keep->customer->group_id;
         $this->customers = Customer::where('group_id', $this->group_id)->pluck('name', 'id')->toArray();
         $this->customer_id = $this->keep->customer_id;
+        $this->selectedCustomerLabel = Customer::find($this->customer_id)?->name ?? '';
         $this->keep_type = $this->keep->keep_type->key;
         $this->keep_time = $this->keep->keep_time;
         foreach ($this->keep->keepProducts as $keepProduct) {

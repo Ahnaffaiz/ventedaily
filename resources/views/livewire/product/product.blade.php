@@ -36,8 +36,8 @@
                 @if ($products->count() > 0)
                     <thead>
                         <tr>
-                            <th scope="col" class="w-2/12 px-4 py-4 text-sm font-medium text-center text-gray-900 dark:text-gray-100">No</th>
-                            <th scope="col" class="w-2/12 px-4 py-4 text-sm font-medium text-gray-900 dark:text-gray-100 text-start"
+                            <th scope="col" class="w-2/12 px-4 py-4 text-base font-bold text-center text-gray-900 text-bold dark:text-gray-100">No</th>
+                            <th scope="col" class="w-2/12 px-4 py-4 text-base font-bold text-gray-900 dark:text-gray-100 text-start"
                                 wire:click="sortByColumn('name')">
                                 Name
                                 @if ($sortBy === 'name')
@@ -48,10 +48,9 @@
                                     @endif
                                 @else
                                     <i class="ri-expand-up-down-line"></i>
-                                @endif
-                            </th>
+                                @endif</th>
                             @if ($showColumns['category_id'])
-                                <th scope="col" class="w-2/12 px-4 py-4 text-sm font-medium text-gray-900 dark:text-gray-100 text-start"
+                                <th scope="col" class="w-2/12 px-4 py-4 text-base font-bold text-gray-900 dark:text-gray-100 text-start"
                                     wire:click="sortByColumn('category_id')">
                                     Category
                                     @if ($sortBy === 'category_id')
@@ -66,9 +65,9 @@
                                 </th>
                             @endif
                             @if ($showColumns['all_stock'])
-                                <th scope="col" class="w-1/12 px-4 py-4 text-sm font-medium text-center text-gray-900 dark:text-gray-100"
+                                <th scope="col" class="w-1/12 px-4 py-4 text-base font-bold text-center text-gray-900 dark:text-gray-100"
                                     wire:click="sortByColumn('product_stocks_sum_all_stock')">
-                                    All Stock
+                                    All
                                     @if ($sortBy === 'product_stocks_sum_all_stock')
                                         @if ($sortDirection === 'asc')
                                             <i class="ri-arrow-up-s-line"></i>
@@ -81,9 +80,9 @@
                                 </th>
                             @endif
                             @if ($showColumns['home_stock'])
-                                <th scope="col" class="w-1/12 px-4 py-4 text-sm font-medium text-center text-gray-900 dark:text-gray-100"
+                                <th scope="col" class="w-1/12 px-4 py-4 text-base font-bold text-center text-gray-900 dark:text-gray-100"
                                     wire:click="sortByColumn('product_stocks_sum_home_stock')">
-                                    Home Stock
+                                    Home
                                     @if ($sortBy === 'product_stocks_sum_home_stock')
                                         @if ($sortDirection === 'asc')
                                             <i class="ri-arrow-up-s-line"></i>
@@ -96,9 +95,9 @@
                                 </th>
                             @endif
                             @if ($showColumns['store_stock'])
-                                <th scope="col" class="w-1/12 px-4 py-4 text-sm font-medium text-center text-gray-900 dark:text-gray-100"
+                                <th scope="col" class="w-1/12 px-4 py-4 text-base font-bold text-center text-gray-900 dark:text-gray-100"
                                     wire:click="sortByColumn('product_stocks_sum_store_stock')">
-                                    Store Stock
+                                    Store
                                     @if ($sortBy === 'product_stocks_sum_store_stock')
                                         @if ($sortDirection === 'asc')
                                             <i class="ri-arrow-up-s-line"></i>
@@ -111,9 +110,9 @@
                                 </th>
                             @endif
                             @if ($showColumns['pre_order_stock'])
-                                <th scope="col" class="w-1/12 px-4 py-4 text-sm font-medium text-center text-gray-900 dark:text-gray-100"
+                                <th scope="col" class="w-1/12 px-4 py-4 text-base font-bold text-center text-gray-900 dark:text-gray-100"
                                     wire:click="sortByColumn('product_stocks_sum_pre_order_stock')">
-                                    PO Stock
+                                    PO
                                     @if ($sortBy === 'product_stocks_sum_pre_order_stock')
                                         @if ($sortDirection === 'asc')
                                             <i class="ri-arrow-up-s-line"></i>
@@ -125,7 +124,7 @@
                                     @endif
                                 </th>
                             @endif
-                            <th scope="col" class="justify-end w-2/12 px-4 py-4 pr-3 text-sm font-medium text-center text-gray-900 dark:text-gray-100">
+                            <th scope="col" class="justify-end w-2/12 px-4 py-4 pr-3 text-base font-bold text-center text-gray-900 dark:text-gray-100">
                                 Action
                             </th>
                         </tr>
@@ -208,12 +207,24 @@
                                 <tr class="w-full overflow-hidden transition-[height] duration-300">
                                     <td colspan="8" class="py-2">
                                         <table class="min-w-full divide-gray-200 divide-b dark:divide-gray-700">
+                                            <thead>
+                                                <tr>
+                                                    <th class="text-base text-gray-500"></th>
+                                                    <th class="px-4 text-base text-gray-500 text-start">Color Size</th>
+                                                    <th class="px-4 text-base text-gray-500 text-start">Selling Price</th>
+                                                    <th class="text-base text-gray-500">All</th>
+                                                    <th class="text-base text-gray-500">Home</th>
+                                                    <th class="text-base text-gray-500">Store</th>
+                                                    <th class="text-base text-gray-500">Pre Order</th>
+                                                    <th class="text-base text-gray-500"></th>
+                                                </tr>
+                                            </thead>
                                             <tbody>
                                                 @foreach ($product->productStocks as $productStock)
                                                 <tr class="bg-gray-100 border-gray-200 dark:bg-gray-900 border-y dark:border-gray-700">
                                                     <td class="w-2/12 py-2"></td>
-                                                    <td class="w-2/12 px-4 py-2 text-sm text-gray-800 text-start whitespace-nowrap dark:text-gray-200">{{ $productStock->color->name }}</td>
-                                                    <td class="w-2/12 px-4 py-2 text-sm text-gray-800 text-start whitespace-nowrap dark:text-gray-200">{{ $productStock->size->name }}</td>
+                                                    <td class="w-2/12 px-4 py-2 text-sm text-gray-800 text-start whitespace-nowrap dark:text-gray-200">{{ $productStock->color->name . ' ' . $productStock->size->name }}</td>
+                                                    <td class="w-2/12 px-4 py-2 text-sm text-gray-800 text-start whitespace-nowrap dark:text-gray-200">Rp. {{ number_format($productStock->selling_price, 0, ',', '.') }}</td>
                                                     <td class="w-1/12 px-4 py-2 text-sm text-center text-gray-800 whitespace-nowrap dark:text-gray-200">
                                                         {{ $productStock->all_stock }}
                                                         @if ($productStock->allStockInKeep() > 0)

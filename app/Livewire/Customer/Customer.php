@@ -2,7 +2,9 @@
 
 namespace App\Livewire\Customer;
 
+use App\Imports\CustomerImport;
 use App\Models\Customer as ModelsCustomer;
+use App\Models\CustomerPreview;
 use App\Models\Group;
 use App\Models\Size;
 use Carbon\Carbon;
@@ -10,14 +12,16 @@ use Jantinnerezo\LivewireAlert\LivewireAlert;
 use Livewire\Attributes\Title;
 use Livewire\Attributes\Validate;
 use Livewire\Component;
+use Livewire\WithFileUploads;
 use Livewire\WithoutUrlPagination;
 use Livewire\WithPagination;
+use Maatwebsite\Excel\Facades\Excel;
 
 class Customer extends Component
 {
-    use LivewireAlert;
+    use LivewireAlert, WithFileUploads;
     use WithPagination, WithoutUrlPagination;
-    public $isOpen = false;
+    public $isOpen = false, $isImport = false;
     public $customer;
 
     #[Validate('required|unique:customers|min:5')]
@@ -30,10 +34,9 @@ class Customer extends Component
     public $email;
 
     #[Validate('required')]
-    public $address;
+    public $address, $group_id;
 
-    #[Validate('required')]
-    public $group_id;
+    public $customerPreviews, $customer_file;
 
     public $query = '', $perPage = 10, $sortBy = 'name', $sortDirection = 'asc';
     public $showColumns = [
@@ -84,6 +87,17 @@ class Customer extends Component
     public function openModal()
     {
         $this->reset();
+        $this->isOpen = true;
+    }
+
+    public function openModalImport()
+    {
+        $this->reset();
+        $this->customerPreviews = CustomerPreview::get();
+        if($this->customerPreviews->count() <= 0) {
+            $this->customerPreviews = null;
+        }
+        $this->isImport = true;
         $this->isOpen = true;
     }
 
@@ -163,5 +177,45 @@ class Customer extends Component
     public function cancel()
     {
         $this->reset();
+    }
+
+    public function previewImport()
+    {
+        try {
+            CustomerPreview::truncate();
+            Excel::import(new CustomerImport, $this->customer_file);
+            $this->customerPreviews = CustomerPreview::get();
+        } catch (\Throwable $th) {
+            $this->alert('error', $th->getMessage());
+        }
+    }
+
+    public function saveCustomer()
+    {
+        $error = CustomerPreview::where('error', '!=', null)->first();
+        if($error) {
+            $this->alert('error', 'Please solve the error first');
+        } else {
+            ModelsCustomer::chunk(100, function(){
+                foreach ($this->customerPreviews as $customer) {
+                    ModelsCustomer::firstOrCreate([
+                        'name' => $customer->name,
+                        'address' => $customer->address,
+                        'email' => $customer->email,
+                        'phone' => $customer->phone,
+                        'group_id' => $customer->group_id,
+                    ]);
+                }
+            });
+            CustomerPreview::truncate();
+            $this->alert('success','Customer Successfully Imported');
+            $this->reset();
+        }
+    }
+
+    public function resetCustomerPreview()
+    {
+        CustomerPreview::truncate();
+        $this->customerPreviews = null;
     }
 }

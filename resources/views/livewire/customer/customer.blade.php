@@ -1,6 +1,90 @@
 <div>
-    <x-modal wire:model="isOpen" title="{{ $customer ? 'Edit ' . $customer?->name : 'Create Customer' }}"
-        saveButton="{{ $customer ? 'update' : 'save' }}" closeButton="closeModal">
+    @php
+        $saveButton = null;
+        $saveLabel = 'save';
+        $title = 'Create Customer';
+        if($isImport) {
+            $title = 'Import Customer';
+            if($customerPreviews) {
+                $saveButton = 'saveCustomer';
+            } else {
+                $saveButton = 'previewImport';
+                $saveLabel = 'import';
+            }
+        } else {
+            $title = 'Customer';
+            $saveButton = $customer ? 'update' : 'save';
+        }
+    @endphp
+    <x-modal wire:model="isOpen" title="{{ $title }}"
+        saveButton="{{ $saveButton }}" closeButton="closeModal">
+        @if ($isImport)
+        <div class="gap-4">
+            @if ($customerPreviews)
+                <button wire:click="resetCustomerPreview" class="inline gap-2 transition-all btn bg-danger/25 text-danger hover:bg-danger hover:text-white" wire:target="resetCustomerPreview" wire:loading.attr="disabled">
+                    <div class="flex gap-2" wire:loading.remove wire:target="resetCustomerPreview">
+                        <i class="ri-refresh-line"></i>
+                        Reset Form
+                    </div>
+                    <div class="flex gap-2" wire:loading wire:target="resetCustomerPreview">
+                        <div class="animate-spin w-4 h-4 border-[3px] border-current border-t-transparent text-light rounded-full"></div>
+                    </div>
+                </button>
+                <table class="min-w-full divide-y divide-gray-200 dark:divide-gray-700">
+                    <thead>
+                        <tr>
+                            <th scope="col" class="px-4 py-4 text-sm font-medium text-center text-gray-500">Status</th>
+                            <th scope="col" class="px-4 py-4 text-sm font-medium text-gray-500 text-start">Error</th>
+                            <th scope="col" class="px-4 py-4 text-sm font-medium text-center text-gray-500">No</th>
+                            <th scope="col" class="px-4 py-4 text-sm font-medium text-gray-500 text-start">Name</th>
+                            <th scope="col" class="px-4 py-4 text-sm font-medium text-gray-500 text-start">Phone</th>
+                            <th scope="col" class="px-4 py-4 text-sm font-medium text-gray-500 text-start">Email</th>
+                            <th scope="col" class="px-4 py-4 text-sm font-medium text-gray-500 text-start">Group</th>
+                            <th scope="col" class="px-4 py-4 text-sm font-medium text-gray-500 text-start">Address</th>
+                        </tr>
+                    </thead>
+                    <tbody class="divide-y divide-gray-200 dark:divide-gray-700">
+                        @foreach ($customerPreviews as $customer)
+                            <tr class="{{ $loop->index % 2 === 0 ? 'bg-gray-100 dark:bg-gray-900' : '' }}">
+                                <th class="px-4 py-4 text-sm text-gray-500 whitespace-nowrap dark:text-gray-200">
+                                    @if ($customer->error)
+                                        <span class="inline-flex items-center gap-1.5 py-0.5 px-1.5 rounded-full text-xs font-medium bg-danger/10 text-danger">Failed</span>
+                                    @else
+                                        <span class="inline-flex items-center gap-1.5 py-0.5 px-1.5 rounded-full text-xs font-medium bg-success/10 text-success">Success</span>
+                                    @endif
+                                </th>
+                                <td class="px-4 py-4 text-sm text-danger whitespace-nowrap dark:text-danger">
+                                    {{ $customer->error }}
+                                </td>
+                                <th class="px-4 py-4 text-sm text-gray-500 whitespace-nowrap dark:text-gray-200">
+                                    {{ $loop->iteration }}
+                                </th>
+                                <td class="px-4 py-4 text-sm text-gray-500 whitespace-nowrap dark:text-gray-200">
+                                    {{ $customer->name }}
+                                </td>
+                                <td class="px-4 py-4 text-sm text-gray-500 whitespace-nowrap dark:text-gray-200">
+                                    {{ $customer->phone }}
+                                </td>
+                                <td class="px-4 py-4 text-sm text-gray-500 whitespace-nowrap dark:text-gray-200">
+                                    {{ $customer->email }}
+                                </td>
+                                <td class="px-4 py-4 text-sm text-gray-500 whitespace-nowrap dark:text-gray-200">
+                                    {{ $customer->group->name }}
+                                </td>
+                                <td class="px-4 py-4 text-sm text-gray-500 whitespace-nowrap dark:text-gray-200">
+                                    {{ $customer->group->address }}
+                                </td>
+                            </tr>
+                        @endforeach
+                    </tbody>
+                </table>
+                <span wire:loading>Importing...</span>
+            @else
+                <x-input-text type="file" name="customer_file" id="customer_file" title="Upload File Excel" accept=".xlsx, .xls"/>
+                <span wire:loading wire:target="previewImport">Uploading...</span>
+            @endif
+        </div>
+        @else
         <form>
             <x-input-text id="name" name="name" title="Name" />
             <x-input-text id="phone" name="phone" title="Phone" type="tel" prepend="+62" />
@@ -9,6 +93,7 @@
                 :options="App\Models\Group::all()->pluck('name', 'id')->toArray()" />
             <x-textarea-input id="address" name="address" title="Address" />
         </form>
+        @endif
     </x-modal>
     <div class="relative mt-4 overflow-hidden bg-white shadow-md dark:bg-gray-800 sm:rounded-lg">
         <div class="flex items-center justify-between p-4 d">
@@ -16,6 +101,8 @@
                 <div class="relative w-full">
                     <button class="text-white btn bg-primary" wire:click="openModal" type="button">
                         Create </button>
+                    <button class="text-white btn bg-primary" wire:click="openModalImport" type="button">
+                        Import </button>
                 </div>
             </div>
             <div class="flex justify-end mb-4">

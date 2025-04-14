@@ -11,13 +11,14 @@ return new class extends Migration
      */
     public function up(): void
     {
-        Schema::create('customers', function (Blueprint $table) {
+        Schema::create('customer_previews', function (Blueprint $table) {
             $table->id();
             $table->string('name', 255);
             $table->string('phone', 255);
             $table->string('email', 255)->nullable();
             $table->foreignId('group_id')->constrained()->onDelete('cascade');
             $table->string('address', 225);
+            $table->longText('error')->nullable();
             $table->timestamps();
         });
     }
@@ -27,6 +28,6 @@ return new class extends Migration
      */
     public function down(): void
     {
-        Schema::dropIfExists('customers');
+        Schema::dropIfExists('customer_previews');
     }
 };

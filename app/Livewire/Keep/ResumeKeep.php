@@ -70,8 +70,12 @@ class ResumeKeep extends Component
             )
             ->groupBy(
                 'keep_products.product_stock_id',
+                'products.name',
+                'colors.name',
+                'sizes.name'
             )
             ->get();
+
 
 
     $this->productData = $data->pluck('items');

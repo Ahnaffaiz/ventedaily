@@ -40,7 +40,7 @@
                                     {{ $loop->iteration}}
                                 </th>
                                 <td class="px-4 py-2 text-sm text-gray-700 whitespace-nowrap dark:text-gray-200">
-                                    {{ $stockHistory->user->name }}
+                                    {{ $stockHistory?->user?->name }}
                                 </td>
                                 <td class="px-4 py-2 text-sm text-gray-700 whitespace-nowrap dark:text-gray-200">
                                     {{ \Carbon\Carbon::parse($stockHistory['created_at'])->format('H:i d/m/Y') }}

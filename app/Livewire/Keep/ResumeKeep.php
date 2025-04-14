@@ -72,11 +72,10 @@ class ResumeKeep extends Component
                 'keep_products.product_stock_id',
                 'products.name',
                 'colors.name',
-                'sizes.name',
-                DB::raw("CONCAT(products.name, ' ', colors.name, ' ', sizes.name)"),
-                DB::raw("keep_products.total_items")
+                'sizes.name'
             )
             ->get();
+
 
     $this->productData = $data->pluck('items');
     $this->productLabel = $data->pluck('full_name');

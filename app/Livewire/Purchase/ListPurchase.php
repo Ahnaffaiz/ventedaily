@@ -38,6 +38,7 @@ class ListPurchase extends Component
     public $showColumns = [
         'supplier_id' => true,
         'term_of_payment_id' => true,
+        'total_items' => true,
         'sub_total' => true,
         'discount' => false,
         'tax' => true,

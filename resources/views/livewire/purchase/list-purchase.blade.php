@@ -83,6 +83,21 @@
                                             @endif
                                         </th>
                                     @endif
+                                    @if ($showColumns['total_items'])
+                                        <th scope="col" class="px-4 py-4 text-sm font-medium text-gray-500 text-start"
+                                            wire:click="sortByColumn('total_items')">
+                                            Total Items
+                                            @if ($sortBy === 'total_items')
+                                                @if ($sortDirection === 'asc')
+                                                    <i class="ri-arrow-up-s-line"></i>
+                                                @else
+                                                    <i class="ri-arrow-down-s-line"></i>
+                                                @endif
+                                            @else
+                                                <i class="ri-expand-up-down-line"></i>
+                                            @endif
+                                        </th>
+                                    @endif
                                     @if ($showColumns['sub_total'])
                                         <th scope="col" class="px-4 py-4 text-sm font-medium text-gray-500 text-start"
                                             wire:click="sortByColumn('sub_total')">
@@ -204,6 +219,11 @@
                                         @if ($showColumns['term_of_payment_id'])
                                             <td class="px-4 py-4 text-sm text-gray-500 whitespace-nowrap dark:text-gray-200">
                                                 {{ $purchase->termOfPayment->name }}
+                                            </td>
+                                        @endif
+                                        @if ($showColumns['total_items'])
+                                            <td class="px-4 py-4 text-sm text-gray-500 whitespace-nowrap dark:text-gray-200">
+                                                {{ $purchase->total_items }}
                                             </td>
                                         @endif
                                         @if ($showColumns['sub_total'])

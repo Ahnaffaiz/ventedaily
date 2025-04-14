@@ -313,5 +313,5 @@
             </div>
         </div>
     </div>
-    {{-- @livewire('keep.resume-keep', ['user' => $user], key($user->id)) --}}
+    @livewire('keep.resume-keep', ['user' => $user], key($user->id))
 </div>

@@ -87,65 +87,52 @@
             const b = Math.floor(Math.random() * 256);
             return `rgb(${r}, ${g}, ${b})`;
         }
-
-        function addData(chart, label, newData) {
-            chart.data.labels.push(label);
-            chart.data.datasets.forEach((dataset) => {
-                dataset.data.push(newData);
-            });
-            chart.update();
-        }
-
-        function removeData(chart) {
-            chart.data.labels.pop();
-            chart.data.datasets.forEach((dataset) => {
-                dataset.data.pop();
-            });
-            chart.update();
-        }
-
-    </script>
-    <script>
-
     </script>
 @endpush
-
 @script
 <script>
-    const labels = {!! json_encode($productLabel) !!}
-    const datas = {!! json_encode($productData) !!}
-    const productColors = datas.map(() => getRandomColor());
+    let keepProductChart;
 
-    const ctr = document.getElementById('keepProductChart');
-    new Chart(ctr, {
-        type: 'polarArea',
-        data: {
-            labels: labels,
-            datasets: [{
-                label: 'Produk Keep',
-                data: datas,
-                backgroundColor: productColors,
-                borderWidth: 1
-            }]
-        },
-        options: {
-            scales: {
-                y: {
-                    beginAtZero: true
+    Livewire.on('update-chart-product', ([payload]) => {
+        const productColors = payload.productData.map(() => getRandomColor());
+
+        const ctx = document.getElementById('keepProductChart').getContext('2d');
+
+        if (keepProductChart) {
+            keepProductChart.data.labels = payload.productLabel;
+            keepProductChart.data.datasets[0].data = payload.productData;
+            keepProductChart.data.datasets[0].backgroundColor = productColors;
+            keepProductChart.update();
+        } else {
+            keepProductChart = new Chart(ctx, {
+                type: 'polarArea',
+                data: {
+                    labels: payload.productLabel,
+                    datasets: [{
+                        label: 'Keep Product',
+                        data: payload.productData,
+                        backgroundColor: productColors,
+                        borderWidth: 1
+                    }]
+                },
+                options: {
+                    responsive: true,
+                    plugins: {
+                        legend: {
+                            position: 'right',
+                        }
+                    }
                 }
-            }
+            });
         }
     });
-</script>
-<script>
-    Livewire.on('update-chart-product', ([payload]) => {
-        console.log(payload.productData);
-        console.log('heloo')
-        const updatedColors = updatedDatas.map(() => getRandomColor());
-        console.log(updatedLabels);
 
-        removeData(ctr);
-        addData(ctr, updatedLabels, updatedDatas, updatedColors);
-    })
+    function getRandomColor() {
+        const r = Math.floor(Math.random() * 256);
+        const g = Math.floor(Math.random() * 256);
+        const b = Math.floor(Math.random() * 256);
+        return `rgba(${r}, ${g}, ${b}, 0.6)`;
+    }
 </script>
+
 @endscript

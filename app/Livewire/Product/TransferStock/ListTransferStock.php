@@ -89,8 +89,7 @@ class ListTransferStock extends Component
         //reseller transfer data from home to store
         $this->transferToStores = KeepProduct::whereDoesntHave('transferProductStock')
             ->whereHas('keep', function($query){
-            return $query->where('status', strtolower(KeepStatus::ACTIVE))
-                    ->whereHas('customer', function($query){
+            return $query->whereHas('customer', function($query){
                         return $query->where('group_id', 1);
                     });
         })->where('home_stock', '!=', 0)
@@ -102,8 +101,7 @@ class ListTransferStock extends Component
         //reseller transfer data from store to home
         $this->transferToHomes = KeepProduct::whereDoesntHave('transferProductStock')
             ->whereHas('keep', function($query){
-            return $query->where('status', strtolower(KeepStatus::ACTIVE))
-                    ->whereHas('customer', function($query){
+            return $query->whereHas('customer', function($query){
                         return $query->where('group_id', 2);
                     });
         })->where('store_stock', '!=', 0)

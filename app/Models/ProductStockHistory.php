@@ -26,6 +26,7 @@ class ProductStockHistory extends Model
         'final_store_stock',
         'final_pre_order_stock',
         'is_temporary',
+        'user_id'
     ];
 
     protected $casts = [
@@ -42,5 +43,10 @@ class ProductStockHistory extends Model
     public function productStock(): BelongsTo
     {
         return $this->belongsTo(ProductStock::class);
+    }
+
+    public function user()
+    {
+        return $this->belongsTo(User::class);
     }
 }

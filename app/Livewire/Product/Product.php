@@ -2,24 +2,17 @@
 
 namespace App\Livewire\Product;
 
-use App\Enums\KeepStatus;
 use App\Enums\StockActivity;
 use App\Enums\StockStatus;
-use App\Enums\StockType;
-use App\Exports\TransferStockExport;
 use App\Imports\ProductImport;
 use App\Imports\ProductStockImport;
 use App\Models\Category;
-use App\Models\KeepProduct;
-use App\Models\Setting;
 use App\Models\Product as ModelsProduct;
 use App\Models\ProductPreview;
 use App\Models\ProductStock;
-use App\Models\ProductStockHistory;
 use App\Models\ProductStockPreview;
 use Carbon\Carbon;
 use Exception;
-use Illuminate\Support\Facades\Session;
 use Illuminate\Support\Facades\Storage;
 use Intervention\Image\Facades\Image;
 use Jantinnerezo\LivewireAlert\LivewireAlert;

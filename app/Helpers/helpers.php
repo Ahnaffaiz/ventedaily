@@ -1,6 +1,7 @@
 <?php
 
 use App\Models\ProductStockHistory;
+use Illuminate\Support\Facades\Auth;
 
 if (! function_exists('setStockHistory')) {
     /**
@@ -42,6 +43,7 @@ if (! function_exists('setStockHistory')) {
                 'final_store_stock' => $finalStoreStock,
                 'final_pre_order_stock' => $finalPreOrderStock,
                 'is_temporary' => $isTemporary,
+                'user_id' => Auth::user()->id,
             ]);
         } catch (\Exception $e) {
             return null;

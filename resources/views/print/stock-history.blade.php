@@ -18,6 +18,7 @@
                     <thead>
                         <tr>
                             <th scope="col" class="px-4 py-2 text-sm font-bold text-center text-gray-800 dark:text-gray-200">No</th>
+                            <th scope="col" class="px-4 py-2 text-sm font-bold text-gray-800 dark:text-gray-200 text-start">User</th>
                             <th scope="col" class="px-4 py-2 text-sm font-bold text-gray-800 dark:text-gray-200 text-start">Date</th>
                             <th scope="col" class="px-4 py-2 text-sm font-bold text-gray-800 dark:text-gray-200 text-start">Reference</th>
                             <th scope="col" class="px-4 py-2 text-sm font-bold text-gray-800 dark:text-gray-200 text-start">Activity</th>
@@ -38,6 +39,9 @@
                                 <th class="px-4 py-2 text-sm text-gray-700 whitespace-nowrap dark:text-gray-200">
                                     {{ $loop->iteration}}
                                 </th>
+                                <td class="px-4 py-2 text-sm text-gray-700 whitespace-nowrap dark:text-gray-200">
+                                    {{ $stockHistory->user->name }}
+                                </td>
                                 <td class="px-4 py-2 text-sm text-gray-700 whitespace-nowrap dark:text-gray-200">
                                     {{ \Carbon\Carbon::parse($stockHistory['created_at'])->format('H:i d/m/Y') }}
                                 </td>

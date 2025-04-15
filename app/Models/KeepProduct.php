@@ -23,6 +23,6 @@ class KeepProduct extends Model
 
     public function transferProductStock()
     {
-        return $this->hasOne(TransferProductStock::class);
+        return $this->hasMany(TransferProductStock::class, 'keep_product_id', 'id');
     }
 }

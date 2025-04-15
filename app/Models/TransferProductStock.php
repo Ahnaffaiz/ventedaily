@@ -11,6 +11,10 @@ class TransferProductStock extends Model
 
     protected $fillable = ['transfer_stock_id', 'product_stock_id', 'stock', 'keep_product_id'];
 
+    protected $casts = [
+        'keep_product_id' => 'array',
+    ];
+
     public function transferStock()
     {
         return $this->belongsTo(TransferStock::class);

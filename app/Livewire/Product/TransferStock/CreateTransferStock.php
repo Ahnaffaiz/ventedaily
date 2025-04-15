@@ -213,12 +213,12 @@ class CreateTransferStock extends Component
     {
         $transferfrom = $this->transfer_from;
         if(isset($this->cart[$productStockId]) && $this->cart[$productStockId]['keep_product_id'] != null) {
-            $keepProduct = KeepProduct::where('id', $this->cart[$productStockId]['keep_product_id'])->first();
-            if($this->cart[$productStockId]['stock'] > $keepProduct->$transferfrom) {
+            $keepProduct = KeepProduct::whereIn('id', $this->cart[$productStockId]['keep_product_id'])->get()->sum($transferfrom);
+            if($this->cart[$productStockId]['stock'] > $keepProduct) {
                 $this->cart[$productStockId]['stock']--;
                 $this->addToCart($productStockId);
             } else {
-                $this->alert('warning', 'Minimum product must transfer :' . $keepProduct->$transferfrom);
+                $this->alert('warning', 'Minimum product must transfer :' . $keepProduct);
             }
         } elseif(isset($this->cart[$productStockId]) && $this->cart[$productStockId]['stock'] > 1) {
             $this->cart[$productStockId]['stock']--;
@@ -260,11 +260,11 @@ class CreateTransferStock extends Component
             if ($productStock['max_stock'] < $productStock['stock']) {
                 $this->alert('warning', 'Stock Not Enough');
             } else {
-                if($productStock['keep_product_id']) {
-                    $keepProduct = KeepProduct::where('id', $productStock['keep_product_id'])->first();
-                }
                 $transfer_from = $this->transfer_from;
-                $transferStock = $productStock['keep_product_id'] != null ? $productStock['stock'] - $keepProduct?->$transfer_from : $productStock['stock'];
+                if($productStock['keep_product_id']) {
+                    $keepProduct = KeepProduct::whereIn('id', $productStock['keep_product_id'])->get()->sum($transfer_from);
+                }
+                $transferStock = $productStock['keep_product_id'] != null ? $productStock['stock'] - $keepProduct : $productStock['stock'];
                 $stock->update([
                     $this->transfer_from => $stock[$this->transfer_from] - $transferStock,
                     $this->transfer_to => $stock[$this->transfer_to] + $transferStock,
@@ -335,9 +335,10 @@ class CreateTransferStock extends Component
     {
         $this->validate();
         foreach ($this->transferStock->transferProducts as $transferProduct) {
-            $productStock = ProductStock::where('id', $transferProduct->product_stock_id)->first();
             $transfer_from = $this->transfer_from;
-            $transferStock = $transferProduct->keep_product_id != null ? $transferProduct->stock - $transferProduct->KeepProduct->$transfer_from : $transferProduct->stock;
+            $productStock = ProductStock::where('id', $transferProduct->product_stock_id)->first();
+            $keepProduct = KeepProduct::whereIn('id', $transferProduct->keep_product_id)->get()->sum($transfer_from);
+            $transferStock = $transferProduct->keep_product_id != null ? $transferProduct->stock - $keepProduct : $transferProduct->stock;
             $productStock->update([
                 $this->transferStock->transfer_from => $productStock[$this->transferStock->transfer_from] + $transferStock,
                 $this->transferStock->transfer_to => $productStock[$this->transferStock->transfer_to] - $transferStock,

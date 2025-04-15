@@ -48,9 +48,9 @@
                                     <td class="px-4 py-4 text-sm text-center text-gray-500 whitespace-nowrap">
                                         @if ($productStock['keep_product_id'])
                                             @php
-                                            $keepProduct = App\Models\KeepProduct::where('id', $productStock['keep_product_id'])->first();
+                                            $keepProduct = App\Models\KeepProduct::whereIn('id', $productStock['keep_product_id'])->get()->sum($transfer_from);
                                             @endphp
-                                            <span class="inline-flex items-center gap-1.5 py-0.5 px-1.5 rounded-md text-xs font-medium bg-info/10 text-info">Keep : {{ $keepProduct->$transfer_from }}</span>
+                                            <span class="inline-flex items-center gap-1.5 py-0.5 px-1.5 rounded-md text-xs font-medium bg-info/10 text-info">Keep : {{ $keepProduct }}</span>
                                         @endif
                                     </td>
                                     <td class="px-4 py-4 text-sm text-gray-500 whitespace-nowrap">

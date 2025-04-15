@@ -290,22 +290,28 @@ class ListTransferStock extends Component
 
     public function transferProductAlert($stockType)
     {
-        $this->transfer_to = $stockType == 'store' ? 'store_stock' : 'home_stock';
-        $this->transfer_from = $stockType == 'store' ? 'home_stock' : 'store_stock';
-        $this->alert('question', 'Transfer Product to ' . ucwords($stockType), [
-            'toast' => false,
-            'text' => 'Create Transfer Stock ?',
-            'position' => 'center',
-            'showConfirmButton' => true,
-            'confirmButtonText' => 'Yes',
-            'showCancelButton' => true,
-            'cancelButtonText' => 'cancel',
-            'icon' => 'warning',
-            'onConfirmed' => 'transferProduct',
-            'timer' => null,
-            'confirmButtonColor' => '#3085d6',
-            'cancelButtonColor' => '#d33'
-        ]);
+        if($stockType == 'store' && $this->transferToStores == null) {
+            $this->alert('warning', 'No Product to Transfer');
+        } elseif($stockType == 'home' && $this->transferToHomes == null) {
+            $this->alert('warning', 'No Product to Transfer');
+        } else {
+            $this->transfer_to = $stockType == 'store' ? 'store_stock' : 'home_stock';
+            $this->transfer_from = $stockType == 'store' ? 'home_stock' : 'store_stock';
+            $this->alert('question', 'Transfer Product to ' . ucwords($stockType), [
+                'toast' => false,
+                'text' => 'Create Transfer Stock ?',
+                'position' => 'center',
+                'showConfirmButton' => true,
+                'confirmButtonText' => 'Yes',
+                'showCancelButton' => true,
+                'cancelButtonText' => 'cancel',
+                'icon' => 'warning',
+                'onConfirmed' => 'transferProduct',
+                'timer' => null,
+                'confirmButtonColor' => '#3085d6',
+                'cancelButtonColor' => '#d33'
+            ]);
+        }
     }
 
     public function transferProduct()

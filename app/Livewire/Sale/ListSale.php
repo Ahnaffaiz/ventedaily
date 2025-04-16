@@ -44,6 +44,17 @@ class ListSale extends Component
 
     public $total_price, $sub_total_after_discount;
 
+    public $filter = 'today';
+
+    public $query_filter_start, $query_filter_end;
+    public $filters = [
+        'today' => 'Today',
+        'this_week' => 'This Week',
+        'this_month' => 'This Month',
+        'this_year' => 'This Year',
+        'all' => 'All',
+    ];
+
     public $btraw;
 
     public $showColumns = [
@@ -84,8 +95,31 @@ class ListSale extends Component
         $this->resetPage();
     }
 
+    public function updatedFilter()
+    {
+        $this->resetPage();
+        if ($this->filter === 'today') {
+            $this->query_filter_start = Carbon::today();
+            $this->query_filter_end = Carbon::today();
+        } elseif ($this->filter === 'this_week') {
+            $this->query_filter_start = Carbon::now()->startOfWeek();
+            $this->query_filter_end = Carbon::now()->endOfWeek();
+        } elseif ($this->filter === 'this_month') {
+            $this->query_filter_start = Carbon::now()->startOfMonth();
+            $this->query_filter_end = Carbon::now()->endOfMonth();
+        } elseif ($this->filter === 'this_year') {
+            $this->query_filter_start = Carbon::now()->startOfYear();
+            $this->query_filter_end = Carbon::now()->endOfYear();
+        } else {
+            $this->query_filter_start = Carbon::parse('1970-01-01');
+            $this->query_filter_end = Carbon::today();
+        }
+    }
+
     public function mount()
     {
+        $this->query_filter_start = Carbon::today();
+        $this->query_filter_end = Carbon::today();
         $this->groupIds = Group::get();
     }
     public function render()
@@ -95,6 +129,10 @@ class ListSale extends Component
                 ->join('customers', 'sales.customer_id', '=', 'customers.id')
                 ->where('no_sale', 'like', '%' . $this->query . '%')
                 ->where('customers.group_id', 'like', '%' . $this->groupId . '%')
+                ->whereBetween('sales.created_at', [
+                    Carbon::parse($this->query_filter_start)->startOfDay(),
+                    Carbon::parse($this->query_filter_end)->endOfDay(),
+                ])
                 ->orderBy($this->sortBy, $this->sortDirection)
                 ->paginate($this->perPage)
         ]);

@@ -13,13 +13,16 @@ use App\Models\SaleItem;
 use App\Models\SalePayment;
 use Carbon\Carbon;
 use Carbon\CarbonPeriod;
+use Illuminate\Support\Facades\Auth;
+use Illuminate\Support\Facades\DB;
 use Livewire\Attributes\Title;
 use Livewire\Component;
 
 class Dashboard extends Component
 {
+    public $user;
     public $keep_items, $keep_prices;
-    public $sale_total_prices, $sale_total_items;
+    public $sale_today;
     public $total_sale, $total_btc, $total_vente, $total_tiktok, $total_shopee;
     public $cost, $discount;
 
@@ -41,6 +44,8 @@ class Dashboard extends Component
             'year' => 'Year'
         ];
 
+        $this->user = Auth::user();
+
         $this->updatedSalesChartData();
         $this->banks = Bank::all();
     }
@@ -54,6 +59,7 @@ class Dashboard extends Component
         $this->getResumeKeepSale();
         $this->getTotalPayment();
         $this->getDiscount();
+        $this->getProfit();
         $this->cost = Expense::whereDate('created_at',  now())->sum('total_amount');
         return view('livewire.dashboard.dashboard');
     }
@@ -71,6 +77,18 @@ class Dashboard extends Component
                     return 0;
                 }
             });
+    }
+
+    public function getProfit()
+    {
+        $this->sale_today['price'] = Sale::whereDate('created_at', Carbon::now())->get()->sum('total_price');
+        $this->sale_today['items'] = Sale::whereDate('created_at', Carbon::now())->get()->sum('total_items');
+        $totalHpp = Sale::whereDate('sales.created_at', Carbon::now())
+                            ->join('sale_items', 'sales.id', '=', 'sale_items.sale_id')
+                            ->join('product_stocks', 'sale_items.product_stock_id', '=', 'product_stocks.id')
+                            ->select(DB::raw('SUM(product_stocks.purchase_price * sale_items.total_items) as hpp'))
+                            ->value('hpp');
+        $this->profit = $this->sale_today['price'] - $totalHpp;
     }
 
     public function getTotalPayment()

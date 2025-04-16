@@ -37,6 +37,15 @@
                         role="menu" aria-orientation="vertical" aria-labelledby="menu-button" tabindex="-1"
                         onclick="event.stopPropagation()">
                         <div class="max-h-[300px] h-56 overflow-auto mt-2">
+                            <span class="m-2">Filter</span>
+                            <div class="flex w-full p-1">
+                                <select class="form-input" wire:model.change="filter">
+                                    <option value="">All Date</option>
+                                    @foreach ($filters as $key => $value)
+                                        <option value="{{ $key }}">{{ $value }}</option>
+                                    @endforeach
+                                </select>
+                            </div>
                             <span class="m-2">Group</span>
                             <div class="flex w-full p-1">
                                 <select class="form-input" wire:model.change="groupId">

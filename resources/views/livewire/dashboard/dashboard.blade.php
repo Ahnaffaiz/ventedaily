@@ -32,6 +32,7 @@
             </div>
         </div>
     </div>
+    @livewire('dashboard.resume-sale', ['user' => $user], key($user->id))
 </div>
 @push('scripts')
     <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>

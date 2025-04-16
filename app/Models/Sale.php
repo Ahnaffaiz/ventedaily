@@ -3,6 +3,7 @@
 namespace App\Models;
 
 use App\Enums\DiscountType;
+use Carbon\Carbon;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 
@@ -77,5 +78,49 @@ class Sale extends Model
     public function stockHistories()
     {
         return $this->morphMany(ProductStockHistory::class, 'reference');
+    }
+
+    public static function totalPriceToday()
+    {
+        $today = Carbon::now();
+        return self::whereDate('created_at', $today)->sum('total_price');
+    }
+
+    public static function totalItemsToday()
+    {
+        $today = Carbon::now();
+        return self::whereDate('created_at', $today)->sum('total_items');
+    }
+
+    public static function totalPriceResellerToday()
+    {
+        $today = Carbon::now();
+        return self::whereHas('customer', function($query) {
+            return $query->where('group_id', 1);
+        })->whereDate('created_at', $today)->sum('total_price');
+    }
+
+    public static function totalItemsResellerToday()
+    {
+        $today = Carbon::now();
+        return self::whereHas('customer', function($query) {
+            return $query->where('group_id', 1);
+        })->whereDate('created_at', $today)->sum('total_items');
+    }
+
+    public static function totalPriceOnlineToday()
+    {
+        $today = Carbon::now();
+        return self::whereHas('customer', function($query) {
+            return $query->where('group_id', 2);
+        })->whereDate('created_at', $today)->sum('total_price');
+    }
+
+    public static function totalItemsOnlineToday()
+    {
+        $today = Carbon::now();
+        return self::whereHas('customer', function($query) {
+            return $query->where('group_id', 2);
+        })->whereDate('created_at', $today)->sum('total_items');
     }
 }

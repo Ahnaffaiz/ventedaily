@@ -5,7 +5,7 @@ use App\Livewire\Accounting\MonthlyReport;
 use App\Livewire\Accounting\SalesReport;
 use App\Livewire\Customer\Customer;
 use App\Livewire\Customer\Group;
-use App\Livewire\Dashboard;
+use App\Livewire\Dashboard\Dashboard;
 use App\Livewire\Discount;
 use App\Livewire\CostExpense\Expense;
 use App\Livewire\Keep\CreateKeep;

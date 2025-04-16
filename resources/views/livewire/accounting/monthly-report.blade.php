@@ -145,11 +145,11 @@
         <div class="mt-4">
             <p class="mb-2 text-base font-normal text-gray-800">Detail Kategori Produk</p>
             <div class="grid gap-6 md:grid-cols-2">
-                <div class="mb-4 h-96">
+                <div class="mb-4">
                     <canvas id="categorySoldChart" class="w-full h-full"></canvas>
                     <span>Penjualan Produk Per Kategori</span>
                 </div>
-                <div class="mb-4 h-96">
+                <div class="mb-4">
                     <canvas id="productSoldChart" class="w-full h-full"></canvas>
                     <span>Penjualan Produk</span>
                 </div>
@@ -189,6 +189,12 @@
                 }]
             },
             options: {
+                responsive: true,
+                    plugins: {
+                        legend: {
+                            position: 'right',
+                        }
+                    },
                 scales: {
                     y: {
                         beginAtZero: true
@@ -213,6 +219,12 @@
                 }]
             },
             options: {
+                responsive: true,
+                    plugins: {
+                        legend: {
+                            position: 'right',
+                        }
+                    },
                 scales: {
                     y: {
                         beginAtZero: true

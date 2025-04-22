@@ -399,7 +399,64 @@
                         <option value="100">100</option>
                     </select>
                 </div>
-                {{ $sales->links(data: ['scrollTo' => false]) }}
+                <div class="flex items-center space-x-2">
+                    @if($sales->hasPages())
+                        <nav role="navigation" aria-label="Pagination Navigation" class="flex items-center justify-between">
+                            <div class="flex items-center space-x-2">
+                                {{-- Previous Page Link --}}
+                                @if ($sales->onFirstPage())
+                                    <span class="px-3 py-1 text-sm font-medium text-gray-500 bg-white border border-gray-300 rounded-md cursor-not-allowed">
+                                        Previous
+                                    </span>
+                                @else
+                                    <button wire:click="previousPage('page')" wire:loading.attr="disabled" class="px-3 py-1 text-sm font-medium text-gray-700 bg-white border border-gray-300 rounded-md hover:bg-gray-50">
+                                        Previous
+                                    </button>
+                                @endif
+
+                                {{-- First Page --}}
+                                @if($sales->currentPage() > 3)
+                                    <button wire:click="gotoPage(1)" class="px-3 py-1 text-sm font-medium text-gray-700 bg-white border border-gray-300 rounded-md hover:bg-gray-50">
+                                        1
+                                    </button>
+                                    <span class="px-3 py-1 text-sm font-medium text-gray-500">...</span>
+                                @endif
+
+                                {{-- Pagination Elements --}}
+                                @for($i = max(1, $sales->currentPage() - 1); $i <= min($sales->lastPage(), $sales->currentPage() + 1); $i++)
+                                    @if ($i == $sales->currentPage())
+                                        <span class="px-3 py-1 text-sm font-medium text-white border rounded-md bg-primary border-primary">
+                                            {{ $i }}
+                                        </span>
+                                    @else
+                                        <button wire:click="gotoPage({{ $i }})" class="px-3 py-1 text-sm font-medium text-gray-700 bg-white border border-gray-300 rounded-md hover:bg-gray-50">
+                                            {{ $i }}
+                                        </button>
+                                    @endif
+                                @endfor
+
+                                {{-- Last Page --}}
+                                @if($sales->currentPage() < $sales->lastPage() - 2)
+                                    <span class="px-3 py-1 text-sm font-medium text-gray-500">...</span>
+                                    <button wire:click="gotoPage({{ $sales->lastPage() }})" class="px-3 py-1 text-sm font-medium text-gray-700 bg-white border border-gray-300 rounded-md hover:bg-gray-50">
+                                        {{ $sales->lastPage() }}
+                                    </button>
+                                @endif
+
+                                {{-- Next Page Link --}}
+                                @if ($sales->hasMorePages())
+                                    <button wire:click="nextPage('page')" wire:loading.attr="disabled" class="px-3 py-1 text-sm font-medium text-gray-700 bg-white border border-gray-300 rounded-md hover:bg-gray-50">
+                                        Next
+                                    </button>
+                                @else
+                                    <span class="px-3 py-1 text-sm font-medium text-gray-500 bg-white border border-gray-300 rounded-md cursor-not-allowed">
+                                        Next
+                                    </span>
+                                @endif
+                            </div>
+                        </nav>
+                    @endif
+                </div>
             </div>
         </div>
     </div>

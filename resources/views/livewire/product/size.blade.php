@@ -217,21 +217,7 @@
         </div>
 
         <div class="px-3 py-4">
-            <div class="flex justify-between">
-                <div class="flex items-center">
-                    <label class="w-32 text-sm font-medium text-gray-900">Per Page</label>
-                    <select
-                        class="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full p-2.5"
-                        wire:model.change="perPage">
-                        <option value="5">5</option>
-                        <option value="10">10</option>
-                        <option value="20">20</option>
-                        <option value="50">50</option>
-                        <option value="100">100</option>
-                    </select>
-                </div>
-                {{ $sizes->links(data: ['scrollTo' => false]) }}
-            </div>
+            <x-pagination :items="$sizes" pageName="page" />
         </div>
     </div>
 </div>

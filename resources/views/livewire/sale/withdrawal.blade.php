@@ -357,7 +357,7 @@
                         <option value="100">100</option>
                     </select>
                 </div>
-                {{ $withdrawals->links(data: ['scrollTo' => false]) }}
+                <x-pagination :paginator="$withdrawals" pageName="listWithdrawals" />
             </div>
         </div>
     </div>

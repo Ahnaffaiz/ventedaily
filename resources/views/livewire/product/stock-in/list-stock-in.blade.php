@@ -126,7 +126,9 @@
                         <option value="100">100</option>
                     </select>
                 </div>
-                {{ $stockIns->links(data: ['scrollTo' => false]) }}
+                <div class="flex items-center space-x-2">
+                    <x-pagination :paginator="$stockIns" pageName="page" />
+                </div>
             </div>
         </div>
     </div>

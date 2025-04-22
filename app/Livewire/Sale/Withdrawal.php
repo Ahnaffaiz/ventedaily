@@ -100,7 +100,7 @@ class Withdrawal extends Component
                         ->orWhere('sales.no_sale', 'like', '%' . $this->query . '%');
                 })
                 ->orderBy($this->sortBy, $this->sortDirection)
-                ->paginate($this->perPage),
+                ->paginate($this->perPage, ['*'], 'listWithdrawals')
         ]);
 
     }

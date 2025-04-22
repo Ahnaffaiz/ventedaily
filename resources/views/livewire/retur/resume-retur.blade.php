@@ -84,7 +84,7 @@
                             <option value="100">100</option>
                         </select>
                     </div>
-                    {{ $returItems->links(data: ['scrollTo' => false]) }}
+                    <x-pagination :items="$returItems" pageName="resumeRetur" />
                 </div>
             </div>
         </div>

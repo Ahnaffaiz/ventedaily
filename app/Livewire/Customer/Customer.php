@@ -79,7 +79,7 @@ class Customer extends Component
         return view('livewire.customer.customer', [
             'customers' =>ModelsCustomer::orderBy($this->sortBy, $this->sortDirection)
                     ->where('name', 'like', '%'.$this->query.'%')
-                    ->paginate($this->perPage)
+                    ->paginate($this->perPage, ['*'], 'listCustomers')
         ]);
     }
 

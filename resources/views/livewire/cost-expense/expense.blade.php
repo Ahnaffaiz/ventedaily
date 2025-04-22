@@ -115,7 +115,7 @@
                         <option value="100">100</option>
                     </select>
                 </div>
-                {{ $expenses->links(data: ['scrollTo' => false]) }}
+                <x-pagination :paginator="$expenses" pageName="page" />
             </div>
         </div>
     </div>

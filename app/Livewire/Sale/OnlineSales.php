@@ -93,7 +93,7 @@ class OnlineSales extends Component
                     ->where('pre_order_id', null)
                     ->where('no_sale', 'like', '%' . $this->query . '%')
                     ->orderBy($this->sortBy, $this->sortDirection)
-                    ->paginate($this->perPage)
+                    ->paginate($this->perPage, ['*'], 'listOnlineSales')
             ]);
     }
 

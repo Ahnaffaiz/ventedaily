@@ -230,8 +230,7 @@
                         <option value="100">100</option>
                     </select>
                 </div>
-                {{ $colors->links(data: ['scrollTo' => false]) }}
+                <x-pagination :paginator="$colors" pageName="page" />
             </div>
-        </div>
     </div>
 </div>

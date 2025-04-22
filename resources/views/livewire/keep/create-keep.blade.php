@@ -39,6 +39,7 @@
                             <th scope="col" class="px-4 py-4 text-sm font-medium text-gray-500 text-start">Store Stock
                             </th>
                             <th scope="col" class="px-4 py-4 text-sm font-medium text-gray-500 text-start">Price (@)
+                            <th scope="col" class="px-4 py-4 text-sm font-medium text-center text-gray-500">Status</th>
                             <th scope="col" class="px-4 py-4 text-sm font-medium text-center text-gray-500">Qty</th>
                             </th>
                             <th scope="col" class="px-4 py-4 text-sm font-medium text-gray-500 text-start">Total</th>
@@ -70,13 +71,37 @@
                                     <td class="px-4 py-4 text-sm text-gray-500 whitespace-nowrap">
                                         {{ number_format($productStock['selling_price'], 0, ',', '.') }}
                                     </td>
+                                    <td class="px-4 py-4 text-sm text-center text-gray-500 whitespace-nowrap">
+                                        @if ($productStock['transfer'])
+                                            <span class="inline-flex items-center gap-1.5 py-0.5 px-1.5 rounded-md text-xs font-medium bg-info/10 text-info">Transfer</span>
+                                        @endif
+                                    </td>
                                     <td class="px-4 py-4 text-sm text-gray-500 whitespace-nowrap">
                                         <div class="flex items-center justify-center gap-2">
-                                            <button wire:click="removeProductStock({{ $productStock['id'] }})"
-                                                class="h-8 px-4 py-1 text-sm rounded-md bg-primary/25 text-primary hover:bg-primary hover:text-white font-md"
-                                                type="button">
-                                                -
-                                            </button>
+                                            @if ($productStock['transfer'])
+                                                @php
+                                                    $mainStock = $group_id == 1 ? 'store_stock' : 'home_stock';
+                                                @endphp
+                                                @if ($productStock['transfer'] + $productStock[$mainStock] < $productStock['quantity'])
+                                                    <button wire:click="removeProductStock({{ $productStock['id'] }})"
+                                                        class="h-8 px-4 py-1 text-sm rounded-md bg-primary/25 text-primary hover:bg-primary hover:text-white font-md"
+                                                        type="button">
+                                                        -
+                                                    </button>
+                                                @else
+                                                    <button class="h-8 px-4 py-1 text-sm rounded-md bg-danger/25 text-danger font-md"
+                                                        type="button">
+                                                        x
+                                                    </button>
+
+                                                @endif
+                                            @else
+                                                <button wire:click="removeProductStock({{ $productStock['id'] }})"
+                                                    class="h-8 px-4 py-1 text-sm rounded-md bg-primary/25 text-primary hover:bg-primary hover:text-white font-md"
+                                                    type="button">
+                                                    -
+                                                </button>
+                                            @endif
 
                                             <input type="number"
                                                 wire:model.lazy="cart.{{ $productStock['id'] }}.{{ 'quantity' }}"
@@ -127,9 +152,15 @@
             </div>
             <div class="flex justify-end gap-3 mt-6">
                 @if ($isEdit)
-                    <button class="gap-1 text-white btn bg-primary" wire:click="update">
-                        <i class="ri-save-line"></i>
-                        Update Keep</button>
+                    <button wire:click="update" class="inline gap-2 text-white transition-all btn bg-primary" wire:target="update" wire:loading.attr="disabled">
+                        <div class="flex gap-2" wire:loading.remove wire:target="update">
+                            <i class="ri-file-excel-2-line"></i>
+                            Update Keep
+                        </div>
+                        <div class="flex gap-2" wire:loading wire:target="update">
+                            <div class="animate-spin w-4 h-4 border-[3px] border-current border-t-transparent text-light rounded-full"></div>
+                        </div>
+                    </button>
                 @else
                     <button class="gap-1 btn bg-danger/20 text-danger" wire:click="resetKeep()">
                         <i class="ri-refresh-line"></i>

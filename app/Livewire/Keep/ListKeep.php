@@ -8,6 +8,7 @@ use App\Enums\StockStatus;
 use App\Enums\StockType;
 use App\Models\Group;
 use App\Models\Keep;
+use App\Models\KeepProduct;
 use App\Models\Purchase;
 use Exception;
 use Illuminate\Support\Facades\Auth;
@@ -25,7 +26,7 @@ class ListKeep extends Component
     public $user;
     public $isOpen = false;
     public $keep;
-    public $query = '', $perPage = 10, $sortBy = 'no_keep', $sortDirection = 'desc', $groupIds, $groupId = '', $status = KeepStatus::ACTIVE;
+    public $query = '', $perPage = 10, $sortBy = 'product_name', $sortDirection = 'asc', $groupIds, $groupId = '', $status = KeepStatus::ACTIVE;
 
     public $online_keep_products, $reseller_keep_products, $all_keep_products;
     public $online_keep_price, $reseller_keep_price, $all_keep_price;
@@ -84,12 +85,35 @@ class ListKeep extends Component
         $this->reseller_keep_price = Keep::resellerTotalPrice();
 
         return view('livewire.keep.list-keep', [
-            'keeps' => Keep::select('keeps.*')
+            'keeps' => KeepProduct::select(
+                'keep_products.*',
+                'keeps.id as keep_id',
+                'keeps.no_keep',
+                'keeps.customer_id',
+                'keeps.keep_time',
+                'keeps.status',
+                'customers.name as customer_name',
+                'customers.group_id',
+                'products.name as product_name',
+                'colors.name as color_name',
+                'sizes.name as size_name'
+            )
+                ->join('keeps', 'keep_products.keep_id', '=', 'keeps.id')
                 ->join('customers', 'keeps.customer_id', '=', 'customers.id')
-                ->where('customers.name', 'like', '%' . $this->query . '%')
+                ->join('product_stocks', 'keep_products.product_stock_id', '=', 'product_stocks.id')
+                ->join('products', 'product_stocks.product_id', '=', 'products.id')
+                ->join('colors', 'product_stocks.color_id', '=', 'colors.id')
+                ->join('sizes', 'product_stocks.size_id', '=', 'sizes.id')
+                ->where(function($query) {
+                    $query->where('keeps.no_keep', 'like', '%' . $this->query . '%')
+                        ->orWhere('customers.name', 'like', '%' . $this->query . '%')
+                        ->orWhere('products.name', 'like', '%' . $this->query . '%')
+                        ->orWhere('colors.name', 'like', '%' . $this->query . '%')
+                        ->orWhere('sizes.name', 'like', '%' . $this->query . '%');
+                })
                 ->where('customers.group_id', 'like', '%' . $this->groupId . '%')
-                ->where('status', 'like', '%' . $this->status . '%')
-                ->orderBy($this->sortBy, $this->sortDirection)
+                ->where('keeps.status', 'like', '%' . $this->status . '%')
+                ->orderBy($this->sortBy === 'product_name' ? 'products.name' : 'keeps.' . $this->sortBy, $this->sortDirection)
                 ->paginate($this->perPage, ['*'], 'listKeep')
         ]);
     }

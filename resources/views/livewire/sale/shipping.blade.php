@@ -385,6 +385,7 @@
                     </select>
                 </div>
                 {{ $saleShippings->links(data: ['scrollTo' => false]) }}
+                <x-pagination :paginator="$saleShippings" pageName="listSaleShippings" />
             </div>
         </div>
     </div>

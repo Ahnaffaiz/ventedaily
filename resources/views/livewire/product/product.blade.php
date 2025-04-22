@@ -1,4 +1,3 @@
-
 <div>
     @include('livewire.product.modal')
     <div class="relative mt-4 overflow-hidden bg-white shadow-md dark:bg-gray-800 sm:rounded-lg">
@@ -281,7 +280,7 @@
             </table>
         </div>
 
-        <div class="px-3 py-4">
+        <div class="flex justify-between px-3 py-4">
             <div class="flex justify-start mb-6">
                 <div class="flex gap-2 pe-4">
                     <div class="p-2 rounded-full bg-warning"></div>
@@ -292,20 +291,8 @@
                     <span>Product In Pre Order</span>
                 </div>
             </div>
-            <div class="flex justify-between">
-                <div class="flex items-center">
-                    <label class="w-32 text-sm font-medium text-gray-900">Per Page</label>
-                    <select
-                        class="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full p-2.5"
-                        wire:model.change="perPage">
-                        <option value="5">5</option>
-                        <option value="10">10</option>
-                        <option value="20">20</option>
-                        <option value="50">50</option>
-                        <option value="100">100</option>
-                    </select>
-                </div>
-                {{ $products->links(data: ['scrollTo' => false]) }}
+            <div class="">
+                <x-pagination :paginator="$products" pageName="listProducts" />
             </div>
         </div>
     </div>

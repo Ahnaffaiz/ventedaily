@@ -217,7 +217,7 @@
                         <option value="100">100</option>
                     </select>
                 </div>
-                {{ $preOrders->links(data: ['scrollTo' => false]) }}
+                <x-pagination :paginator="$preOrders" pageName="page" />
             </div>
         </div>
     </div>

@@ -43,6 +43,7 @@ class ResumeSale extends Component
                     DB::raw('SUM(sale_items.total_items) as items')
                 )
                 ->groupByRaw("sale_items.product_stock_id, products.name, colors.name, sizes.name, CONCAT(products.name, ' ', colors.name, ' ', sizes.name)")
+                ->orderBy('items', 'desc')
                 ->paginate($this->perPage,  ['*'], 'resumeSale')
         ]);
     }
@@ -67,6 +68,8 @@ class ResumeSale extends Component
                 DB::raw('SUM(sale_items.total_items) as items')
             )
             ->groupByRaw("sale_items.product_stock_id, products.name, colors.name, sizes.name, CONCAT(products.name, ' ', colors.name, ' ', sizes.name)")
+            ->orderBy('items', 'desc')
+            ->limit(20)
             ->get();
 
 

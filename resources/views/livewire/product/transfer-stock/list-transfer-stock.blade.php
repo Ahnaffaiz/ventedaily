@@ -149,7 +149,9 @@
                         <option value="100">100</option>
                     </select>
                 </div>
-                {{ $transferStocks->links(data: ['scrollTo' => false]) }}
+                <div class="flex items-center space-x-2">
+                    <x-pagination :paginator="$transferStocks" pageName="listTransferStocks" />
+                </div>
             </div>
         </div>
     </div>

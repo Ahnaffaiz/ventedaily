@@ -14,6 +14,7 @@ use App\Models\KeepProduct;
 use App\Models\Product;
 use App\Models\ProductStock;
 use App\Models\Setting;
+use App\Models\TransferProductStock;
 use Carbon\Carbon;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\View;
@@ -206,19 +207,19 @@ class CreateKeep extends Component
         }
 
         if($this->cart[$productStockId]['quantity'] >= 1 && $this->cart[$productStockId]['quantity'] <= $this->cart[$productStockId]['total_stock']) {
-            $this->cart[$productStockId] = [
-                'id' => $productStock->id,
-                'color' => $productStock->color->name,
-                'size' => $productStock->size->name,
-                'product' => $productStock->product->name,
-                'quantity' => $this->cart[$productStockId]['quantity'],
-                'home_stock' => $this->cart[$productStockId]['home_stock'],
-                'store_stock' => $this->cart[$productStockId]['store_stock'],
-                'total_stock' => $this->cart[$productStockId]['total_stock'],
-                'purchase_price' => $productStock->purchase_price,
-                'selling_price' => $productStock->selling_price,
-                'total_price' => $this->cart[$productStockId]['selling_price'] * $this->cart[$productStockId]['quantity']
-            ];
+            if (isset($this->cart[$productStockId])) {
+                $this->cart[$productStockId] = array_merge(
+                    $this->cart[$productStockId],
+                    [
+                        'color' => $productStock->color->name,
+                        'size' => $productStock->size->name,
+                        'product' => $productStock->product->name,
+                        'purchase_price' => $productStock->purchase_price,
+                        'selling_price' => $productStock->selling_price,
+                        'total_price' => $this->cart[$productStockId]['selling_price'] * $this->cart[$productStockId]['quantity']
+                    ]
+                );
+            }
             $this->getTotalPrice();
         }
 
@@ -229,9 +230,12 @@ class CreateKeep extends Component
         if (!isset($this->cart[$productStockId])) {
             $keepProduct = $this->keep?->keepProducts()->where('product_stock_id', $productStockId)->first();
             $productStock = ProductStock::where('id', $productStockId)->first();
+            $this->cart[$productStockId]['id'] = $productStock->id;
             $this->cart[$productStockId]['home_stock'] = $productStock->home_stock + $keepProduct?->home_stock;
             $this->cart[$productStockId]['store_stock'] = $productStock->store_stock + $keepProduct?->store_stock;
             $this->cart[$productStockId]['total_stock'] = $productStock->home_stock + $productStock->store_stock + $keepProduct?->total_items;
+            $this->cart[$productStockId]['keep_product_id'] = null;
+            $this->cart[$productStockId]['transfer'] = 0;
 
             if ($this->cart[$productStockId]['total_stock'] > 0) {
                 $this->cart[$productStockId]['quantity'] = 1;
@@ -414,6 +418,9 @@ class CreateKeep extends Component
         $this->keep_type = $this->keep->keep_type->key;
         $this->keep_time = $this->keep->keep_time;
         foreach ($this->keep->keepProducts as $keepProduct) {
+            $transferProductStock = TransferProductStock::whereJsonContains('keep_product_id', $keepProduct->id)
+                    ->with('transferStock')
+                    ->get()->sum('stock');
             $this->cart[$keepProduct->product_stock_id] = [
                 'id' => $keepProduct->product_stock_id,
                 'color' => $keepProduct->productStock->color->name,
@@ -425,7 +432,9 @@ class CreateKeep extends Component
                 'store_stock' => $keepProduct->store_stock + $keepProduct->productStock->store_stock,
                 'purchase_price' => $keepProduct->purchase_price,
                 'selling_price' => $keepProduct->selling_price,
-                'total_price' => $keepProduct->total_price
+                'total_price' => $keepProduct->total_price,
+                'keep_product_id' => $keepProduct->id,
+                'transfer' => $transferProductStock > 0 ? $transferProductStock : 0
             ];
         }
     }
@@ -446,59 +455,58 @@ class CreateKeep extends Component
 
         foreach ($this->keep->keepProducts as $keepProduct) {
             $productStock = ProductStock::where('id', $keepProduct->product_stock_id)->first();
-            if($keepProduct->transferProductStock) {
-                $stockTypeTransfer = $keepProduct->transferProductStock->transferStock->transfer_from;
-                $keepProduct->transferProductStock->transferStock->update([
-                    'total_items' => $keepProduct->transferProductStock->transferStock->total_items - $keepProduct->$stockTypeTransfer,
+            $transferProductStock = TransferProductStock::whereJsonContains('keep_product_id', $keepProduct->id)
+                    ->with('transferStock')
+                    ->get();
+            if($transferProductStock) {
+                $fromCart = $this->cart[$keepProduct->product_stock_id];
+                $keepProduct->update([
+                    'total_items' => $fromCart['quantity'],
+                    'home_stock' => $fromCart['home_stock'],
+                    'store_stock' => $fromCart['store_stock'],
                 ]);
-                if ($keepProduct->transferProductStock->stock - $keepProduct->$stockTypeTransfer == 0) {
-                    $keepProduct->transferProductStock->delete();
-                } else {
-                    $keepProduct->transferProductStock->update([
-                        'stock' => $keepProduct->transferProductStock->stock - $keepProduct->$stockTypeTransfer,
-                        'keep_product_id' => null
-                    ]);
+                unset($this->cart[$keepProduct->product_stock_id]);
+            } else {
+                $productStock->update([
+                    'home_stock' => $productStock['home_stock'] + $keepProduct->home_stock,
+                    'store_stock' => $productStock['store_stock'] + $keepProduct->store_stock,
+                    'all_stock' => $productStock['all_stock'] + $keepProduct->total_items
+                ]);
+                if($keepProduct->home_stock > 0) {
+                    setStockHistory(
+                        $productStock->id,
+                        StockActivity::KEEP,
+                        StockStatus::CHANGE_REMOVE,
+                        StockType::HOME_STOCK,
+                        NULL,
+                        $keepProduct->home_stock,
+                        $this->keep->no_keep,
+                        $productStock->all_stock,
+                        $productStock->home_stock,
+                        $productStock->store_stock,
+                        $productStock->pre_order_stock,
+                        true
+                    );
                 }
-            }
-            $productStock->update([
-                'home_stock' => $productStock['home_stock'] + $keepProduct->home_stock,
-                'store_stock' => $productStock['store_stock'] + $keepProduct->store_stock,
-                'all_stock' => $productStock['all_stock'] + $keepProduct->total_items
-            ]);
-            if($keepProduct->home_stock > 0) {
-                setStockHistory(
-                    $productStock->id,
-                    StockActivity::KEEP,
-                    StockStatus::CHANGE_REMOVE,
-                    StockType::HOME_STOCK,
-                    NULL,
-                    $keepProduct->home_stock,
-                    $this->keep->no_keep,
-                    $productStock->all_stock,
-                    $productStock->home_stock,
-                    $productStock->store_stock,
-                    $productStock->pre_order_stock,
-                    true
-                );
-            }
 
-            if($keepProduct->store_stock > 0) {
-                setStockHistory(
-                    $productStock->id,
-                    StockActivity::KEEP,
-                    StockStatus::CHANGE_REMOVE,
-                    StockType::STORE_STOCK,
-                    NULL,
-                    $keepProduct->store_stock,
-                    $this->keep->no_keep,
-                    $productStock->all_stock,
-                    $productStock->home_stock,
-                    $productStock->store_stock,
-                    $productStock->pre_order_stock,
-                    true
-                );
+                if($keepProduct->store_stock > 0) {
+                    setStockHistory(
+                        $productStock->id,
+                        StockActivity::KEEP,
+                        StockStatus::CHANGE_REMOVE,
+                        StockType::STORE_STOCK,
+                        NULL,
+                        $keepProduct->store_stock,
+                        $this->keep->no_keep,
+                        $productStock->all_stock,
+                        $productStock->home_stock,
+                        $productStock->store_stock,
+                        $productStock->pre_order_stock,
+                        true
+                    );
+                }
+                $keepProduct->delete();
             }
-            $keepProduct->delete();
         }
 
         $this->createKeepProduct($this->keep->id);

@@ -72,7 +72,7 @@ class Discount extends Component
         return view('livewire.discount', [
             'discounts' =>ModelsDiscount::orderBy($this->sortBy, $this->sortDirection)
                     ->where('name', 'like', '%'.$this->query.'%')
-                    ->paginate($this->perPage)
+                    ->paginate($this->perPage, ['*'], 'listDiscounts')
         ]);
     }
 

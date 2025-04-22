@@ -213,7 +213,6 @@
                 @endif
             </table>
         </div>
-
         <div class="px-3 py-4">
             <div class="flex justify-between">
                 <div class="flex items-center">
@@ -228,7 +227,7 @@
                         <option value="100">100</option>
                     </select>
                 </div>
-                {{ $categories->links(data: ['scrollTo' => false]) }}
+                <x-pagination :paginator="$categories" pageName="listCategories" />
             </div>
         </div>
     </div>

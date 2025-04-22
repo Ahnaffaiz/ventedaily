@@ -2,11 +2,11 @@
     <div class="grid gap-4 md:grid-cols-2 lg:grid-cols-3">
         <div class="relative mt-4 overflow-hidden bg-white shadow-md dark:bg-gray-800 sm:rounded-lg">
             <div class="flex items-center justify-between p-4">
-                <h1 class="text-base text-bold">Sale Statistic</h1>
+                <h1 class="text-base text-bold">Top 20 Product</h1>
             </div>
-            <div class="p-4 mb-4">
+            <div class="items-center p-4 mb-4">
                 <canvas id="SaleProductChart" class="w-full h-full"></canvas>
-                <span>Penjualan Produk Per Kategori</span>
+                <span class="mt-20">Top Penjualan Produk Today</span>
             </div>
         </div>
         <div class="relative mt-4 overflow-hidden bg-white shadow-md dark:bg-gray-800 sm:rounded-lg lg:col-span-2">
@@ -72,7 +72,7 @@
                             <option value="100">100</option>
                         </select>
                     </div>
-                    {{ $saleItems->links(data: ['scrollTo' => false]) }}
+                    <x-pagination :paginator="$saleItems" pageName="resumeSale" />
                 </div>
             </div>
         </div>
@@ -119,7 +119,7 @@
                     responsive: true,
                     plugins: {
                         legend: {
-                            position: 'right',
+                            position: 'bottom',
                         }
                     }
                 }

@@ -95,6 +95,19 @@
                                     <i class="ri-expand-up-down-line"></i>
                                 @endif
                             </th>
+                            <th scope="col" class="px-4 py-4 text-sm font-medium text-gray-500 text-start"
+                                wire:click="sortByColumn('product_name')">
+                                Product Name
+                                @if ($sortBy === 'product_name')
+                                    @if ($sortDirection === 'asc')
+                                        <i class="ri-arrow-up-s-line"></i>
+                                    @else
+                                        <i class="ri-arrow-down-s-line"></i>
+                                    @endif
+                                @else
+                                    <i class="ri-expand-up-down-line"></i>
+                                @endif
+                            </th>
                             @if ($showColumns['group'])
                                 <th scope="col" class="px-4 py-4 text-sm font-medium text-gray-500 text-start">
                                     Group
@@ -204,18 +217,20 @@
                                     {{ $keep->no_keep }}
                                 </td>
                                 <td class="px-4 py-4 text-sm text-gray-500 whitespace-nowrap dark:text-gray-200">
-                                    {{ $keep->customer?->name }}
+                                    {{ $keep->customer_name }}
+                                </td>
+                                <td class="px-4 py-4 text-sm text-gray-500 whitespace-nowrap dark:text-gray-200">
+                                    {{ $keep->product_name }} {{ $keep->color_name }} {{ $keep->size_name }}
                                 </td>
                                 @if ($showColumns['group'])
                                     <td class="px-4 py-4 text-sm text-gray-500 whitespace-nowrap dark:text-gray-200">
-                                        @if (strtolower($keep->customer?->group?->name) === 'reseller')
-                                            <span
-                                                class="inline-flex items-center gap-1.5 py-0.5 px-1.5 rounded-md text-xs font-medium bg-info/10 text-info">
-                                                {{ ucwords($keep->customer?->group?->name) }}
+                                        @if (strtolower($keep->group_id) === '1')
+                                            <span class="inline-flex items-center gap-1.5 py-0.5 px-1.5 rounded-md text-xs font-medium bg-info/10 text-info">
+                                                Reseller
                                             </span>
-                                        @elseif (strtolower($keep->customer?->group?->name) === 'online')
+                                        @elseif (strtolower($keep->group_id) === '2')
                                             <span class="inline-flex items-center gap-1.5 py-0.5 px-1.5 rounded-md text-xs font-medium bg-warning/10 text-warning">
-                                                {{ ucwords($keep->customer?->group?->name) }}
+                                                Online
                                             </span>
                                         @endif
                                     </td>
@@ -223,8 +238,7 @@
                                 @if ($showColumns['status'])
                                     <td class="px-4 py-4 text-sm text-gray-500 whitespace-nowrap dark:text-gray-200">
                                         @if (strtolower($keep->status) === strtolower(App\Enums\KeepStatus::ACTIVE))
-                                            <span
-                                                class="inline-flex items-center gap-1.5 py-0.5 px-1.5 rounded-md text-xs font-medium bg-primary/10 text-primary">
+                                            <span class="inline-flex items-center gap-1.5 py-0.5 px-1.5 rounded-md text-xs font-medium bg-primary/10 text-primary">
                                                 {{ ucwords($keep->status) }}
                                             </span>
                                         @elseif (strtolower($keep->status) === strtolower(App\Enums\KeepStatus::SOLD))
@@ -265,19 +279,19 @@
                                 @endif
                                 <td class="px-4 py-4">
                                     <div class="flex items-center justify-center space-x-3">
-                                        <button wire:click="show({{ $keep->id }})" class="text-primary">
+                                        <button wire:click="show({{ $keep->keep_id }})" class="text-primary">
                                             <i class="ri-eye-line"></i>
                                         </button>
                                         @if (auth()->user()->can('Update Keep'))
                                             @if (strtolower($keep->status) === strtolower(App\Enums\KeepStatus::ACTIVE))
-                                                <a wire:navigate href="{{ route('create-keep', ['keep' => $keep->id]) }}"
+                                                <a wire:navigate href="{{ route('create-keep', ['keep' => $keep->keep_id]) }}"
                                                     class="text-info">
                                                     <i class="ri-edit-circle-line"></i>
                                                 </a>
                                             @endif
                                         @endif
                                         @if (auth()->user()->can('Delete Keep'))
-                                            <button wire:click="deleteAlert({{ $keep->id }})" class="text-danger">
+                                            <button wire:click="deleteAlert({{ $keep->keep_id }})" class="text-danger">
                                                 <i class="text-base ri-delete-bin-2-line"></i>
                                             </button>
                                         @endif
@@ -309,7 +323,7 @@
                         <option value="100">100</option>
                     </select>
                 </div>
-                {{ $keeps->links(data: ['scrollTo' => false]) }}
+                <x-pagination :paginator="$keeps" pageName="listKeep" />
             </div>
         </div>
     </div>

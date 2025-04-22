@@ -285,7 +285,7 @@
                         <option value="100">100</option>
                     </select>
                 </div>
-                {{ $customers->links(data: ['scrollTo' => false]) }}
+                <x-pagination :paginator="$customers" pageName="listCustomers" />
             </div>
         </div>
     </div>

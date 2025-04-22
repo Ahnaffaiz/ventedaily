@@ -133,7 +133,7 @@ class Product extends Component
                     },
                     $this->sortDirection
                 )
-                ->paginate($this->perPage)
+                ->paginate($this->perPage, ['*'], 'listProducts')
         ]);
     }
 

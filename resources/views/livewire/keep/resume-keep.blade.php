@@ -72,7 +72,7 @@
                             <option value="100">100</option>
                         </select>
                     </div>
-                    {{ $keepProducts->links(data: ['scrollTo' => false]) }}
+                    <x-pagination :paginator="$keepProducts" pageName="resumeKeep" />
                 </div>
             </div>
         </div>

@@ -89,7 +89,7 @@ class ListRetur extends Component
                 ->join('customers', 'sales.customer_id', '=', 'customers.id')
                 ->where('status', 'like', '%' . $this->status . '%')
                 ->orderBy($this->sortBy, $this->sortDirection)
-                ->paginate($this->perPage)
+                ->paginate($this->perPage, ['*'], 'listReturs')
         ]);
     }
 

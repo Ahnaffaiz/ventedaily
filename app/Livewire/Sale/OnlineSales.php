@@ -69,8 +69,8 @@ class OnlineSales extends Component
         return view('livewire.sale.online-sales', [
                 'onlineSales' => Sale::join('customers', 'sales.customer_id', '=', 'customers.id')
                     ->leftJoin('sale_shippings', 'sales.id', '=', 'sale_shippings.sale_id')
+                    ->leftJoin('marketplaces', 'sales.marketplace_id','=','marketplaces.id')
                     ->leftJoin('sale_withdrawals', 'sales.id', '=', 'sale_withdrawals.sale_id')
-                    ->leftJoin('marketplaces', 'sale_shippings.marketplace_id','=','marketplaces.id')
                     ->with('saleItems')
                     ->select(
                         'sales.id as id',
@@ -85,7 +85,7 @@ class OnlineSales extends Component
                         'sale_shippings.cost as ship_cost',
                         'sale_withdrawals.withdrawal_amount as withdrawal_amount',
                         'marketplaces.name as marketplace_name',
-                        'sale_shippings.order_id_marketplace as order_id',
+                        'sales.order_id_marketplace as order_id',
                     )
                     ->whereHas('customer', function($query){
                         return $query->where('group_id', 2);

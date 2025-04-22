@@ -24,7 +24,7 @@
             <div class="flex justify-end mb-4">
                 <div class="relative mr-4 ms-auto">
                     <input type="search" class="relative border-none form-input bg-black/5 ps-8" wire:model.live="query"
-                        placeholder="Masukkan No Sale">
+                        placeholder="Search by No Sale, Customer, Keep, Pre Order, Order ID, etc...">
                     <span class="absolute z-10 text-base -translate-y-1/2 ri-search-line start-2 top-1/2"></span>
                 </div>
                 <div class="relative ms-auto">
@@ -336,7 +336,11 @@
                                 @endif
                                 @if ($showColumns['payment_type'])
                                     <td class="px-4 py-4 text-sm text-gray-500 whitespace-nowrap dark:text-gray-200">
-                                        {{ $sale->salePayment?->payment_type }}
+                                        @if (strtolower($sale->salePayment?->payment_type) === 'transfer')
+                                            {{ $sale->salePayment?->bank?->name }}
+                                        @else
+                                            {{ $sale->salePayment?->payment_type }}
+                                        @endif
                                     </td>
                                 @endif
                                 @if ($showColumns['created_at'])

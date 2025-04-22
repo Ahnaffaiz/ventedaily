@@ -127,8 +127,23 @@ class ListSale extends Component
         return view('livewire.sale.list-sale', [
             'sales' => Sale::select('sales.*')
                 ->join('customers', 'sales.customer_id', '=', 'customers.id')
-                ->where('no_sale', 'like', '%' . $this->query . '%')
+                ->leftJoin('keeps', 'sales.keep_id', '=', 'keeps.id')
+                ->leftJoin('pre_orders', 'sales.pre_order_id', '=', 'pre_orders.id')
+                ->leftJoin('sale_payments', 'sales.id', '=', 'sale_payments.sale_id')
+                ->leftJoin('banks', 'sale_payments.bank_id', '=', 'banks.id')
                 ->where('customers.group_id', 'like', '%' . $this->groupId . '%')
+                ->where(function($query) {
+                    $query->where('sales.no_sale', 'like', '%' . $this->query . '%')
+                        ->orWhere('customers.name', 'like', '%' . $this->query . '%')
+                        ->orWhere('keeps.no_keep', 'like', '%' . $this->query . '%')
+                        ->orWhere('pre_orders.no_pre_order', 'like', '%' . $this->query . '%')
+                        ->orWhere('sales.order_id_marketplace', 'like', '%' . $this->query . '%')
+                        ->orWhere('customers.group_id', 'like', '%' . $this->query . '%')
+                        ->orWhere('sales.total_items', 'like', '%' . $this->query . '%')
+                        ->orWhere('sales.total_price', 'like', '%' . $this->query . '%')
+                        ->orWhere('sale_payments.payment_type', 'like', '%' . $this->query . '%')
+                        ->orWhere('banks.name', 'like', '%' . $this->query . '%');
+                })
                 ->whereBetween('sales.created_at', [
                     Carbon::parse($this->query_filter_start)->startOfDay(),
                     Carbon::parse($this->query_filter_end)->endOfDay(),

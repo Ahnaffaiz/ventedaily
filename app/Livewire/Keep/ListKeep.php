@@ -26,7 +26,7 @@ class ListKeep extends Component
     public $user;
     public $isOpen = false;
     public $keep;
-    public $query = '', $perPage = 10, $sortBy = 'product_name', $sortDirection = 'asc', $groupIds, $groupId = '', $status = KeepStatus::ACTIVE;
+    public $query = '', $perPage = 10, $sortBy = 'no_keep', $sortDirection = 'desc', $groupIds, $groupId = '', $status = KeepStatus::ACTIVE;
 
     public $online_keep_products, $reseller_keep_products, $all_keep_products;
     public $online_keep_price, $reseller_keep_price, $all_keep_price;

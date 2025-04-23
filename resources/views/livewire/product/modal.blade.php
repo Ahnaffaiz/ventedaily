@@ -117,7 +117,7 @@
                                             class="absolute inset-y-0 right-0 flex items-center px-3 text-primary">
                                         <i class="ri-refresh-line" wire:loading.remove wire:target="generateImei"></i>
                                         <div wire:loading wire:target="generateImei"
-                                             class="w-4 h-4 border-2 border-current border-t-transparent rounded-full animate-spin"></div>
+                                             class="w-4 h-4 border-2 border-current rounded-full border-t-transparent animate-spin"></div>
                                     </button>
                                 </div>
                                 @error('imei')
@@ -163,12 +163,12 @@
             </div>
 
             <!-- Footer -->
-            <div class="mt-6 flex justify-end space-x-3">
-                <button type="button" class="btn btn-flat" wire:click="closeModal">
+            <div class="flex justify-end mt-6 space-x-3">
+                <button type="button" class="bg-gray-100 btn" wire:click="closeModal">
                     Cancel
                 </button>
                 @if($saveButton)
-                    <button type="button" class="btn btn-primary" wire:click="{{ $saveButton }}">
+                    <button type="button" class="text-white btn bg-primary" wire:click="{{ $saveButton }}">
                         {{ $saveLabel }}
                     </button>
                 @endif
@@ -231,11 +231,11 @@
                 </div>
             @endif
 
-            <div class="flex justify-end gap-x-4 mt-6">
-                <button type="button" class="btn btn-flat" wire:click="$toggle('isEditStock')">
+            <div class="flex justify-end mt-6 gap-x-4">
+                <button type="button" class="bg-gray-100 btn" wire:click="$toggle('isEditStock')">
                     Cancel
                 </button>
-                <button type="button" class="btn btn-primary" wire:click="saveStockChanges">
+                <button type="button" class="text-white btn bg-primary" wire:click="saveStockChanges">
                     Save Changes
                 </button>
             </div>

@@ -98,7 +98,7 @@ class ListTransferStock extends Component
             ->join('sizes', 'product_stocks.size_id', 'sizes.id')
             ->where('keep_products.home_stock', '>', 0)
             ->whereHas('keep', function($query){
-                $query->where('status', '!=', KeepStatus::CANCELED)
+                $query->where('status', KeepStatus::ACTIVE)
                     ->whereHas('customer', function($q) {
                         $q->where('group_id', 1);
                     });
@@ -124,7 +124,6 @@ class ListTransferStock extends Component
                     ) as stock
                 ")
             ])
-            ->orderBy('products.name', 'asc')
             ->get();
 
         foreach ($transferToStores as $keepProduct) {
@@ -147,33 +146,39 @@ class ListTransferStock extends Component
 
     public function getTransferStockToHome()
     {
-        $transferToHomes = KeepProduct::leftJoin('transfer_product_stocks', function($join) {
-            $join->on('transfer_product_stocks.keep_product_id', 'like', DB::raw("CONCAT('%', keep_products.id, '%')"));
-        })
-        ->join('product_stocks', 'keep_products.product_stock_id', 'product_stocks.id')
-        ->join('products', 'product_stocks.product_id', 'products.id')
-        ->join('colors', 'product_stocks.color_id', 'colors.id')
-        ->join('sizes', 'product_stocks.size_id', 'sizes.id')
-        ->whereNull('transfer_product_stocks.keep_product_id')
-        ->whereHas('keep', function($query){
-            return $query->where('status', '!= ', KeepStatus::CANCELED);
-        })
-        ->whereHas('keep', function($query) {
-            return $query->whereHas('customer', function($query) {
-                return $query->where('group_id', 2);
-            });
-        })
-        ->where('keep_products.store_stock', '!=', 0)
-        ->select([
-            'keep_products.id as id',
-            'keep_products.product_stock_id as product_stock_id',
-            'products.name as name',
-            'colors.name as color',
-            'sizes.name as size',
-            'keep_products.store_stock as stock'
-        ])
-        ->orderBy('products.name', 'asc')
-        ->get();
+        $transferToHomes = KeepProduct::leftJoin('product_stocks', 'keep_products.product_stock_id', 'product_stocks.id')
+            ->join('products', 'product_stocks.product_id', 'products.id')
+            ->join('colors', 'product_stocks.color_id', 'colors.id')
+            ->join('sizes', 'product_stocks.size_id', 'sizes.id')
+            ->where('keep_products.store_stock', '>', 0)
+            ->whereHas('keep', function($query){
+                $query->where('status', KeepStatus::ACTIVE)
+                    ->whereHas('customer', function($q) {
+                        $q->where('group_id', 2);
+                    });
+            })
+            ->whereRaw("
+                (
+                    SELECT COALESCE(SUM(transfer_product_stocks.stock), 0)
+                    FROM transfer_product_stocks
+                    WHERE JSON_CONTAINS(transfer_product_stocks.keep_product_id, JSON_QUOTE(CAST(keep_products.id AS CHAR)))
+                ) < keep_products.store_stock
+            ")
+            ->select([
+                'keep_products.id as id',
+                'keep_products.product_stock_id as product_stock_id',
+                'products.name as name',
+                'colors.name as color',
+                'sizes.name as size',
+                DB::raw("
+                    keep_products.store_stock - (
+                        SELECT COALESCE(SUM(transfer_product_stocks.stock), 0)
+                        FROM transfer_product_stocks
+                        WHERE JSON_CONTAINS(transfer_product_stocks.keep_product_id, JSON_QUOTE(CAST(keep_products.id AS CHAR)))
+                    ) as stock
+                ")
+            ])
+            ->get();
 
 
         foreach ($transferToHomes as $keepProduct) {

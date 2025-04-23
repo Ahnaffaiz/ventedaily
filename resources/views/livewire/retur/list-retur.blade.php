@@ -340,8 +340,11 @@
                 </div>
                 <x-pagination :paginator="$returs" pageName="listReturs" />
             </div>
+        </div>
     </div>
-    @livewire('retur.resume-retur', ['user' => $user], key($user->id))
+    <div class="mt-2">
+        @livewire('retur.resume-retur', ['user' => $user], key($user->id))
+    </div>
 </div>
 
 @script

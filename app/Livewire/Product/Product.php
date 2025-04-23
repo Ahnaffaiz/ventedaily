@@ -260,7 +260,11 @@ class Product extends Component
             'onConfirmed' => 'delete',
             'timer' => null,
             'confirmButtonColor' => '#3085d6',
-            'cancelButtonColor' => '#d33'
+            'cancelButtonColor' => '#d33',
+            'customClass' => [
+                'confirmButton' => 'btn bg-primary text-white hover:bg-primary-dark',
+                'cancelButton' => 'btn bg-danger text-white hover:bg-danger-dark'
+            ]
         ]);
     }
 
@@ -546,5 +550,62 @@ class Product extends Component
         ]);
 
         $this->dispatch('openStockHistoryTab', $url);
+    }
+
+    public $isEditStock = false;
+    public $editingProduct;
+    public $editingStocks = [];
+
+    public function editStock($productId)
+    {
+        $this->editingProduct = ModelsProduct::with(['productStocks.color', 'productStocks.size'])->find($productId);
+        $this->editingStocks = $this->editingProduct->productStocks->mapWithKeys(function($stock) {
+            return [$stock->id => [
+                'home_stock' => $stock->home_stock,
+                'store_stock' => $stock->store_stock,
+                'pre_order_stock' => $stock->pre_order_stock,
+            ]];
+        })->toArray();
+        $this->isEditStock = true;
+    }
+
+    public function saveStockChanges()
+    {
+        foreach ($this->editingStocks as $stockId => $values) {
+            $stock = ProductStock::find($stockId);
+            if ($stock) {
+                $oldTotal = $stock->all_stock;
+                $oldHome = $stock->home_stock;
+                $oldStore = $stock->store_stock;
+                $oldPreOrder = $stock->pre_order_stock;
+
+                $stock->update([
+                    'home_stock' => $values['home_stock'],
+                    'store_stock' => $values['store_stock'],
+                    'pre_order_stock' => $values['pre_order_stock'],
+                    'all_stock' => $values['home_stock'] + $values['store_stock'] + $values['pre_order_stock']
+                ]);
+
+                // Create history for the stock change
+                setStockHistory(
+                    $stock->id,
+                    StockActivity::EDIT,
+                    StockStatus::CHANGE,
+                    NULL,
+                    NULL,
+                    $stock->all_stock - $oldTotal,
+                    NULL,
+                    $stock->all_stock,
+                    $stock->home_stock,
+                    $stock->store_stock,
+                    $stock->pre_order_stock
+                );
+            }
+        }
+
+        $this->alert('success', 'Stock Successfully Updated');
+        $this->isEditStock = false;
+        $this->editingProduct = null;
+        $this->editingStocks = [];
     }
 }

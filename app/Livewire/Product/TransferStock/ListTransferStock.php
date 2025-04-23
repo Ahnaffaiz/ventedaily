@@ -42,7 +42,6 @@ class ListTransferStock extends Component
     public $isStockFrom = "all_stock";
 
     public $transferToStores, $transferToHomes;
-    public $transferToStoreJunis, $transferToHomeJunis;
 
     public $transfer_from, $transfer_to;
     public $cart;
@@ -82,7 +81,7 @@ class ListTransferStock extends Component
         return view('livewire.product.transfer-stock.list-transfer-stock', [
             'transferStocks' => TransferStock::select('transfer_stocks.*')
                 ->orderBy($this->sortBy, $this->sortDirection)
-                ->paginate($this->perPage, ['*'], 'listTransferStocks')
+                ->paginate($this->perPage)
         ]);
     }
 
@@ -125,6 +124,7 @@ class ListTransferStock extends Component
                     ) as stock
                 ")
             ])
+            ->orderBy('products.name', 'asc')
             ->get();
 
         foreach ($transferToStores as $keepProduct) {
@@ -172,6 +172,7 @@ class ListTransferStock extends Component
             'sizes.name as size',
             'keep_products.store_stock as stock'
         ])
+        ->orderBy('products.name', 'asc')
         ->get();
 
 
@@ -226,39 +227,6 @@ class ListTransferStock extends Component
                 $this->cart = $this->transferToStores;
             } elseif($this->transfer_to == 'home_stock') {
                 $this->cart = $this->transferToHomes;
-            }
-            $total_items = array_sum(array_column($this->cart, 'stock'));
-            if($total_items > 0) {
-                $transferStock = TransferStock::create([
-                    'user_id' => Auth::user()->id,
-                    'transfer_from' => strtolower($this->transfer_from),
-                    'transfer_to' => strtolower($this->transfer_to),
-                    'total_items' => $total_items,
-                ]);
-
-                $this->createTransferProductStock($transferStock->id);
-                $this->reset();
-                $this->alert('success', 'Transfer Succesfully Created');
-                return redirect()->route('create-transfer-stock', $transferStock->id);
-            } else {
-                $this->alert('warning', 'No Product To Transfer');
-            }
-        } catch (\Throwable $th) {
-            $this->alert('error', $th->getMessage());
-        }
-    }
-
-    public function transferProduct14Juni($stockType)
-    {
-        try {
-            if($stockType == 'store') {
-                $this->transfer_to = 'store_stock';
-                $this->transfer_from = 'home_stock';
-                $this->cart = $this->transferToStoreJunis;
-            } elseif($stockType == 'home') {
-                $this->transfer_to = 'home_stock';
-                $this->transfer_from = 'store_stock';
-                $this->cart = $this->transferToHomeJunis;
             }
             $total_items = array_sum(array_column($this->cart, 'stock'));
             if($total_items > 0) {

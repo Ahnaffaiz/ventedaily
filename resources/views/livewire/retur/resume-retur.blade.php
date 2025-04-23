@@ -84,7 +84,7 @@
                             <option value="100">100</option>
                         </select>
                     </div>
-                    <x-pagination :items="$returItems" pageName="resumeRetur" />
+                    <x-pagination :paginator="$returItems" pageName="resumeRetur" />
                 </div>
             </div>
         </div>

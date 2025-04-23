@@ -63,7 +63,7 @@ class Size extends Component
         return view('livewire.product.size', [
             'sizes' =>ModelsSize::orderBy($this->sortBy, $this->sortDirection)
                     ->where('name', 'like', '%'.$this->query.'%')
-                    ->paginate($this->perPage)
+                    ->paginate($this->perPage, ['*'], ),
         ]);
     }
 

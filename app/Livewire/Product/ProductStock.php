@@ -154,12 +154,16 @@ class ProductStock extends Component
             'showConfirmButton' => true,
             'confirmButtonText' => 'Yes',
             'showCancelButton' => true,
-            'cancelButtonText' => 'cancel',
+            'cancelButtonText' => 'Cancel',
             'icon' => 'warning',
             'onConfirmed' => 'delete',
             'timer' => null,
-            'confirmButtonColor' => '#3085d6',
-            'cancelButtonColor' => '#d33'
+            'confirmButtonColor' => '#3085d6',  // Primary color
+            'cancelButtonColor' => '#d33',      // Danger color
+            'customClass' => [
+                'confirmButton' => 'btn bg-primary text-white hover:bg-primary-dark',
+                'cancelButton' => 'btn bg-danger text-white hover:bg-danger-dark'
+            ]
         ]);
     }
 

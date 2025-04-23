@@ -194,6 +194,11 @@
                                             <i class="text-base ri-delete-bin-2-line"></i>
                                         </button>
                                         @endif
+                                        <button wire:click="editStock({{ $product->id }})"
+                                            class="text-success"
+                                            title="Edit Stock">
+                                            <i class="text-base ri-edit-line"></i>
+                                        </button>
                                         <button wire:click="toggleRow({{ $product->id }})" type="button"
                                             class="inline-flex transition-all duration-300">
                                             <i class="text-xl transition-all text-warning ri-arrow-down-s-line

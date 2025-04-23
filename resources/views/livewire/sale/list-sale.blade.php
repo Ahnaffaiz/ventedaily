@@ -74,9 +74,9 @@
             </div>
         </div>
         <div class="overflow-x-auto">
-            <table class="min-w-full divide-y divide-gray-200 dark:divide-gray-700">
+            <table class="min-w-full divide-y divide-gray-200 table-auto dark:divide-gray-700">
                 @if ($sales->count() > 0)
-                    <thead>
+                    <thead class="bg-gray-50 dark:bg-gray-800">
                         <tr>
                             <th scope="col" class="px-4 py-4 text-sm font-medium text-center text-gray-500">No</th>
                             <th scope="col" class="px-4 py-4 text-sm font-medium text-gray-500 text-start"
@@ -106,27 +106,27 @@
                                 @endif
                             </th>
                             @if ($showColumns['keep_id'])
-                                <th scope="col" class="px-4 py-4 text-sm font-medium text-gray-500 text-start">
+                                <th scope="col" class="px-4 py-4 text-sm font-medium text-gray-500 sm:hidden md:table-cell text-start">
                                     No Keep
                                 </th>
                             @endif
                             @if ($showColumns['pre_order_id'])
-                                <th scope="col" class="px-4 py-4 text-sm font-medium text-gray-500 text-start">
+                                <th scope="col" class="px-4 py-4 text-sm font-medium text-gray-500 sm:hidden md:table-cell text-start">
                                     No Pre Order
                                 </th>
                             @endif
                             @if ($showColumns['order_id_marketplace'])
-                                <th scope="col" class="px-4 py-4 text-sm font-medium text-gray-500 text-start">
+                                <th scope="col" class="px-4 py-4 text-sm font-medium text-gray-500 sm:hidden md:table-cell text-start">
                                     Order ID
                                 </th>
                             @endif
                             @if ($showColumns['group'])
-                                <th scope="col" class="px-4 py-4 text-sm font-medium text-gray-500 text-start">
+                                <th scope="col" class="px-4 py-4 text-sm font-medium text-gray-500 sm:hidden md:table-cell text-start">
                                     Group
                                 </th>
                             @endif
                             @if ($showColumns['term_of_payment_id'])
-                                <th scope="col" class="px-4 py-4 text-sm font-medium text-gray-500 text-start"
+                                <th scope="col" class="px-4 py-4 text-sm font-medium text-gray-500 sm:hidden md:table-cell text-start"
                                     wire:click="sortByColumn('term_of_payment_id')">
                                     Term
                                     @if ($sortBy === 'term_of_payment_id')
@@ -156,7 +156,7 @@
                                 </th>
                             @endif
                             @if ($showColumns['sub_total'])
-                                <th scope="col" class="px-4 py-4 text-sm font-medium text-gray-500 text-start"
+                                <th scope="col" class="px-4 py-4 text-sm font-medium text-gray-500 sm:hidden md:table-cell text-start"
                                     wire:click="sortByColumn('sub_total')">
                                     Amount
                                     @if ($sortBy === 'sub_total')
@@ -171,7 +171,7 @@
                                 </th>
                             @endif
                             @if ($showColumns['discount'])
-                                <th scope="col" class="px-4 py-4 text-sm font-medium text-gray-500 text-start"
+                                <th scope="col" class="px-4 py-4 text-sm font-medium text-gray-500 sm:hidden md:table-cell text-start"
                                     wire:click="sortByColumn('discount')">
                                     Discount
                                     @if ($sortBy === 'discount')
@@ -186,7 +186,7 @@
                                 </th>
                             @endif
                             @if ($showColumns['tax'])
-                                <th scope="col" class="px-4 py-4 text-sm font-medium text-gray-500 text-start"
+                                <th scope="col" class="px-4 py-4 text-sm font-medium text-gray-500 sm:hidden md:table-cell text-start"
                                     wire:click="sortByColumn('tax')">
                                     Tax
                                     @if ($sortBy === 'tax')
@@ -201,7 +201,7 @@
                                 </th>
                             @endif
                             @if ($showColumns['total_price'])
-                                <th scope="col" class="px-4 py-4 text-sm font-medium text-gray-500 text-start"
+                                <th scope="col" class="px-4 py-4 text-sm font-medium text-gray-500 sm:hidden md:table-cell text-start"
                                     wire:click="sortByColumn('total_price')">
                                     Total Sale
                                     @if ($sortBy === 'total_price')
@@ -216,7 +216,7 @@
                                 </th>
                             @endif
                             @if ($showColumns['payment_type'])
-                                <th scope="col" class="px-4 py-4 text-sm font-medium text-gray-500 text-start"
+                                <th scope="col" class="px-4 py-4 text-sm font-medium text-gray-500 sm:hidden md:table-cell text-start"
                                     wire:click="sortByColumn('payment_type')">
                                     Payment Type
                                     @if ($sortBy === 'payment_type')
@@ -267,6 +267,7 @@
                     <tbody class="divide-y divide-gray-200 dark:divide-gray-700">
                         @foreach ($sales as $sale)
                             <tr class="{{ $loop->index % 2 === 0 ? 'bg-gray-100 dark:bg-gray-900' : '' }}">
+                                <!-- Always visible columns (mobile and desktop) -->
                                 <th class="px-4 py-4 text-sm text-gray-500 whitespace-nowrap dark:text-gray-200">
                                     {{($sales->currentpage() - 1) * $sales->perpage() + $loop->index + 1}}
                                 </th>
@@ -276,33 +277,33 @@
                                 <td class="px-4 py-4 text-sm text-gray-500 whitespace-nowrap dark:text-gray-200">
                                     {{ $sale->customer->name }}
                                 </td>
-                                <td class="px-4 py-4 text-sm text-gray-500 whitespace-nowrap dark:text-gray-200">
+                                <td class="px-4 py-4 text-sm text-gray-500 sm:hidden md:table-cell whitespace-nowrap dark:text-gray-200">
                                     {{ $sale->keep?->no_keep }}
                                 </td>
-                                <td class="px-4 py-4 text-sm text-gray-500 whitespace-nowrap dark:text-gray-200">
+                                <td class="px-4 py-4 text-sm text-gray-500 sm:hidden md:table-cell whitespace-nowrap dark:text-gray-200">
                                     {{ $sale->preOrder?->no_pre_order }}
                                 </td>
                                 @if ($showColumns['order_id_marketplace'])
-                                <td class="px-4 py-4 text-sm text-gray-500 whitespace-nowrap dark:text-gray-200">
+                                <td class="px-4 py-4 text-sm text-gray-500 sm:hidden md:table-cell whitespace-nowrap dark:text-gray-200">
                                     {{ $sale->order_id_marketplace }}
                                 </td>
                                 @endif
                                 @if ($showColumns['group'])
-                                    <td class="px-4 py-4 text-sm text-gray-500 whitespace-nowrap dark:text-gray-200">
+                                    <td class="px-4 py-4 text-sm text-gray-500 sm:hidden md:table-cell whitespace-nowrap dark:text-gray-200">
                                         @if (strtolower($sale->customer?->group?->name) === 'reseller')
                                             <span class="inline-flex items-center gap-1.5 py-0.5 px-1.5 rounded-md text-xs font-medium bg-info/10 text-info">
                                                 {{ ucwords($sale->customer?->group?->name) }}
                                             </span>
                                         @elseif (strtolower($sale->customer?->group?->name) === 'online')
-                                            <span
-                                                class="inline-flex items-center gap-1.5 py-0.5 px-1.5 rounded-md text-xs font-medium bg-warning/10 text-warning">
+                                            <span class="inline-flex items-center gap-1.5 py-0.5 px-1.5 rounded-md text-xs font-medium bg-warning/10 text-warning">
                                                 {{ ucwords($sale->customer?->group?->name) }}
                                             </span>
                                         @endif
                                     </td>
                                 @endif
+                                <!-- Other columns with hidden md:table-cell class -->
                                 @if ($showColumns['term_of_payment_id'])
-                                    <td class="px-4 py-4 text-sm text-gray-500 whitespace-nowrap dark:text-gray-200">
+                                    <td class="px-4 py-4 text-sm text-gray-500 sm:hidden md:table-cell whitespace-nowrap dark:text-gray-200">
                                         {{ $sale->termOfPayment->name }}
                                     </td>
                                 @endif
@@ -312,7 +313,7 @@
                                     </td>
                                 @endif
                                 @if ($showColumns['sub_total'])
-                                    <td class="px-4 py-4 text-sm text-gray-500 whitespace-nowrap dark:text-gray-200">
+                                    <td class="px-4 py-4 text-sm text-gray-500 sm:hidden md:table-cell whitespace-nowrap dark:text-gray-200">
                                         {{ 'Rp.' . number_format($sale->sub_total, 0, ',', '.') }}
                                     </td>
                                 @endif
@@ -320,22 +321,22 @@
                                     $discount = $sale->discount_type === App\Enums\DiscountType::PERSEN ? $sale->sub_total * (int) $sale->discount / 100 : $sale->discount;
                                 @endphp
                                 @if ($showColumns['discount'])
-                                    <td class="px-4 py-4 text-sm text-gray-500 whitespace-nowrap dark:text-gray-200">
+                                    <td class="px-4 py-4 text-sm text-gray-500 sm:hidden md:table-cell whitespace-nowrap dark:text-gray-200">
                                         Rp. {{ number_format($discount, 0, ',', '.')}}
                                     </td>
                                 @endif
                                 @if ($showColumns['tax'])
-                                    <td class="px-4 py-4 text-sm text-gray-500 whitespace-nowrap dark:text-gray-200">
+                                    <td class="px-4 py-4 text-sm text-gray-500 sm:hidden md:table-cell whitespace-nowrap dark:text-gray-200">
                                         Rp. {{ $sale->tax / 100 * ($sale->sub_total - $discount)}}
                                     </td>
                                 @endif
                                 @if ($showColumns['total_price'])
-                                    <td class="px-4 py-4 text-sm text-gray-500 whitespace-nowrap dark:text-gray-200">
+                                    <td class="px-4 py-4 text-sm text-gray-500 sm:hidden md:table-cell whitespace-nowrap dark:text-gray-200">
                                         Rp. {{ number_format($sale->total_price, 0, ',', '.') }}
                                     </td>
                                 @endif
                                 @if ($showColumns['payment_type'])
-                                    <td class="px-4 py-4 text-sm text-gray-500 whitespace-nowrap dark:text-gray-200">
+                                    <td class="px-4 py-4 text-sm text-gray-500 sm:hidden md:table-cell whitespace-nowrap dark:text-gray-200">
                                         @if (strtolower($sale->salePayment?->payment_type) === 'transfer')
                                             {{ $sale->salePayment?->bank?->name }}
                                         @else
@@ -354,7 +355,96 @@
                                     </td>
                                 @endif
                                 <td class="px-4 py-4">
-                                    <div class="flex items-center justify-center space-x-3">
+                                    <div class="flex items-center justify-end space-x-3">
+                                        <!-- Mobile detail toggle button -->
+                                        <button
+                                            wire:ignore
+                                            x-data="{ isOpen: false }"
+                                            @click="isOpen = !isOpen"
+                                            class="md:hidden text-primary"
+                                            aria-label="Toggle details"
+                                        >
+                                            <i class="ri-information-line"></i>
+
+                                            <!-- Mobile detail panel -->
+                                            <div
+                                                x-show="isOpen"
+                                                x-cloak
+                                                x-transition:enter="transition ease-out duration-200"
+                                                x-transition:enter-start="opacity-0 transform scale-90"
+                                                x-transition:enter-end="opacity-100 transform scale-100"
+                                                x-transition:leave="transition ease-in duration-100"
+                                                x-transition:leave-start="opacity-100 transform scale-100"
+                                                x-transition:leave-end="opacity-0 transform scale-90"
+                                                class="absolute z-50 p-4 mt-2 bg-white rounded-lg shadow-lg left-4 right-4 dark:bg-gray-800 md:hidden"
+                                                @click.away="isOpen = false"
+                                            >
+                                                <dl class="space-y-2 text-gray-800 dark:text-gray-200">
+                                                    <div class="flex justify-between">
+                                                        <dt class="font-medium">No Keep:</dt>
+                                                        <dd>{{ $sale->keep?->no_keep ?? '-' }}</dd>
+                                                    </div>
+                                                    <div class="flex justify-between">
+                                                        <dt class="font-medium">No Pre Order:</dt>
+                                                        <dd>{{ $sale->preOrder?->no_pre_order ?? '-' }}</dd>
+                                                    </div>
+                                                    @if ($showColumns['order_id_marketplace'])
+                                                    <div class="flex justify-between">
+                                                        <dt class="font-medium">Order ID:</dt>
+                                                        <dd>{{ $sale->order_id_marketplace ?? '-' }}</dd>
+                                                    </div>
+                                                    @endif
+                                                    @if ($showColumns['group'])
+                                                    <div class="flex justify-between">
+                                                        <dt class="font-medium">Group:</dt>
+                                                        <dd>
+                                                            @if (strtolower($sale->customer?->group?->name) === 'reseller')
+                                                                <span class="inline-flex items-center gap-1.5 py-0.5 px-1.5 rounded-md text-xs font-medium bg-info/10 text-info">
+                                                                    {{ ucwords($sale->customer?->group?->name) }}
+                                                                </span>
+                                                            @elseif (strtolower($sale->customer?->group?->name) === 'online')
+                                                                <span class="inline-flex items-center gap-1.5 py-0.5 px-1.5 rounded-md text-xs font-medium bg-warning/10 text-warning">
+                                                                    {{ ucwords($sale->customer?->group?->name) }}
+                                                                </span>
+                                                            @endif
+                                                        </dd>
+                                                    </div>
+                                                    @endif
+                                                    @if ($showColumns['total_items'])
+                                                    <div class="flex justify-between">
+                                                        <dt class="font-medium">Total Items:</dt>
+                                                        <dd>{{ $sale->total_items }}</dd>
+                                                    </div>
+                                                    @endif
+                                                    @if ($showColumns['sub_total'])
+                                                    <div class="flex justify-between">
+                                                        <dt class="font-medium">Sub Total:</dt>
+                                                        <dd>Rp. {{ number_format($sale->sub_total, 0, ',', '.') }}</dd>
+                                                    </div>
+                                                    @endif
+                                                    @if ($showColumns['total_price'])
+                                                    <div class="flex justify-between">
+                                                        <dt class="font-medium">Total Price:</dt>
+                                                        <dd>Rp. {{ number_format($sale->total_price, 0, ',', '.') }}</dd>
+                                                    </div>
+                                                    @endif
+                                                    @if ($showColumns['payment_type'])
+                                                    <div class="flex justify-between">
+                                                        <dt class="font-medium">Payment:</dt>
+                                                        <dd>
+                                                            @if (strtolower($sale->salePayment?->payment_type) === 'transfer')
+                                                                {{ $sale->salePayment?->bank?->name }}
+                                                            @else
+                                                                {{ $sale->salePayment?->payment_type }}
+                                                            @endif
+                                                        </dd>
+                                                    </div>
+                                                    @endif
+                                                </dl>
+                                            </div>
+                                        </button>
+
+                                        <!-- Existing action buttons -->
                                         <button wire:click="show({{ $sale->id }})" class="text-primary">
                                             <i class="ri-eye-line"></i>
                                         </button>

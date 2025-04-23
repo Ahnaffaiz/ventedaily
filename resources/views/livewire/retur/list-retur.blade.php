@@ -338,9 +338,8 @@
                         <option value="100">100</option>
                     </select>
                 </div>
-                <x-pagination :paginator="$returs" pageName="listReturs"/>
+                <x-pagination :paginator="$returs" pageName="listReturs" />
             </div>
-        </div>
     </div>
     @livewire('retur.resume-retur', ['user' => $user], key($user->id))
 </div>

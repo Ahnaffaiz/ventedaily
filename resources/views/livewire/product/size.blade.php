@@ -217,7 +217,7 @@
         </div>
 
         <div class="px-3 py-4">
-            <x-pagination :items="$sizes" pageName="page" />
+            <x-pagination :paginator="$sizes" pageName="page" />
         </div>
     </div>
 </div>

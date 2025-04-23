@@ -42,6 +42,7 @@ class ResumeKeep extends Component
                     'sizes.name as size',
                     DB::raw('SUM(keep_products.total_items) as items')
                 )
+                ->orderBy('products.name', 'asc')
                 ->groupByRaw("keep_products.product_stock_id, products.name, colors.name, sizes.name, CONCAT(products.name, ' ', colors.name, ' ', sizes.name)")
                 ->paginate($this->perPage,  ['*'], 'resumeKeep')
         ]);

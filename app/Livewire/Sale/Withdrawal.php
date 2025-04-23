@@ -176,17 +176,21 @@ class Withdrawal extends Component
         $withdrawal = SaleWithdrawal::where('id', $this->withdrawal_id)->first();
         $this->alert('question', 'Delete', [
             'toast' => false,
-            'text' => 'Are you sure to delete withdrawal ' . $withdrawal->sale->no_sale .' ?',
+            'text' => 'Are you sure to delete this withdrawal?',
             'position' => 'center',
             'showConfirmButton' => true,
             'confirmButtonText' => 'Yes',
             'showCancelButton' => true,
-            'cancelButtonText' => 'cancel',
+            'cancelButtonText' => 'Cancel',
             'icon' => 'warning',
             'onConfirmed' => 'delete',
             'timer' => null,
             'confirmButtonColor' => '#3085d6',
-            'cancelButtonColor' => '#d33'
+            'cancelButtonColor' => '#d33',
+            'customClass' => [
+                'confirmButton' => 'btn bg-primary text-white hover:bg-primary-dark',
+                'cancelButton' => 'btn bg-danger text-white hover:bg-danger-dark'
+            ]
         ]);
     }
 

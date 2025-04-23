@@ -15,8 +15,9 @@
                     prepend="Rp." />
             </div>
             <div class="flex justify-end mt-4">
-                <button class="text-white btn bg-primary" wire:click="save" type="button">
-                    Save </button>
+                <button class="text-white btn bg-primary hover:bg-primary-dark" wire:click="save" type="button">
+                    Save
+                </button>
             </div>
         </div>
     </div>

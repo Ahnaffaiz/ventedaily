@@ -15,8 +15,6 @@ final class StockActivity extends Enum {
     const REMOVE = 'remove';
     const IMPORT = 'import';
 
-    const EDIT = 'edit';
-
     public static function asSelectArray(): array
     {
         $array = self::asArray();

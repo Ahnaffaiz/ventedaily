@@ -77,9 +77,6 @@
                     <div class="mt-4">
                         <label class="block mb-2 text-sm font-medium text-gray-700 dark:text-gray-200">Stock</label>
                         <div class="relative">
-                            <span class="absolute inset-y-0 left-0 flex items-center pl-3 text-gray-500">
-                                Max Stock: {{ $stockTotal }}
-                            </span>
                             <input type="number" wire:model="stockAmount" class="w-full pl-24 form-input" />
                         </div>
                     </div>

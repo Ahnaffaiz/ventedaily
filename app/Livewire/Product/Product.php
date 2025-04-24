@@ -445,7 +445,11 @@ class Product extends Component
             'onConfirmed' => 'saveProduct',
             'timer' => null,
             'confirmButtonColor' => '#3085d6',
-            'cancelButtonColor' => '#d33'
+            'cancelButtonColor' => '#d33',
+            'customClass' => [
+                'confirmButton' => 'btn bg-primary text-white hover:bg-primary-dark',
+                'cancelButton' => 'btn bg-danger text-white hover:bg-danger-dark'
+            ]
         ]);
     }
 
@@ -530,7 +534,11 @@ class Product extends Component
             'onConfirmed' => 'saveProductStock',
             'timer' => null,
             'confirmButtonColor' => '#3085d6',
-            'cancelButtonColor' => '#d33'
+            'cancelButtonColor' => '#d33',
+            'customClass' => [
+                'confirmButton' => 'btn bg-primary text-white hover:bg-primary-dark',
+                'cancelButton' => 'btn bg-danger text-white hover:bg-danger-dark'
+            ]
         ]);
     }
 
@@ -575,9 +583,6 @@ class Product extends Component
             $stock = ProductStock::find($stockId);
             if ($stock) {
                 $oldTotal = $stock->all_stock;
-                $oldHome = $stock->home_stock;
-                $oldStore = $stock->store_stock;
-                $oldPreOrder = $stock->pre_order_stock;
 
                 $stock->update([
                     'home_stock' => $values['home_stock'],
@@ -586,20 +591,21 @@ class Product extends Component
                     'all_stock' => $values['home_stock'] + $values['store_stock'] + $values['pre_order_stock']
                 ]);
 
-                // Create history for the stock change
-                setStockHistory(
-                    $stock->id,
-                    StockActivity::EDIT,
-                    StockStatus::CHANGE,
-                    NULL,
-                    NULL,
-                    $stock->all_stock - $oldTotal,
-                    NULL,
-                    $stock->all_stock,
-                    $stock->home_stock,
-                    $stock->store_stock,
-                    $stock->pre_order_stock
-                );
+                if($stock->all_stock - $oldTotal != 0) {
+                    setStockHistory(
+                        $stock->id,
+                        StockActivity::TRANSFER,
+                        StockStatus::CHANGE,
+                        NULL,
+                        NULL,
+                        $stock->all_stock - $oldTotal < 0 ? -1 * ($stock->all_stock - $oldTotal) : $stock->all_stock - $oldTotal,
+                        NULL,
+                        $stock->all_stock,
+                        $stock->home_stock,
+                        $stock->store_stock,
+                        $stock->pre_order_stock
+                    );
+                }
             }
         }
 

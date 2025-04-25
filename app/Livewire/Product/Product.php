@@ -35,10 +35,14 @@ class Product extends Component
     public $desc='';
 
     #[Validate('required')]
-    public $category_id, $is_favorite=false, $imei, $status;
+    public $category_id, $imei, $status;
+    public $is_favorite=true;
 
     #[Validate('max:512')]
     public $image, $x_image, $y_image, $width_image, $height_image, $current_image;
+
+    public $purchase_price, $selling_price;
+    public $selected_sizes = [], $selected_colors = [];
 
     public $productStock;
     public $stockTypes = ['home_stock' => 'Home Stock', 'store_stock' => 'Store Stock', 'pre_order_stock' => 'Pre Order Stock'];
@@ -152,8 +156,20 @@ class Product extends Component
 
     public function save()
     {
-
         try {
+            // Validate that we have sizes, colors, and prices
+            if (empty($this->selected_sizes)) {
+                return $this->alert('error', 'Please select at least one size');
+            }
+
+            if (empty($this->selected_colors)) {
+                return $this->alert('error', 'Please select at least one color');
+            }
+
+            if (!$this->purchase_price || !$this->selling_price) {
+                return $this->alert('error', 'Purchase price and selling price are required');
+            }
+
             $image = null;
             if($this->image){
                 $width_image = intval(round($this->width_image));
@@ -173,7 +189,10 @@ class Product extends Component
 
                 $this->current_image = $image;
             }
-            ModelsProduct::updateOrCreate(['name' => $this->name],[
+
+            // Create product
+            $product = ModelsProduct::create([
+                'name' => $this->name,
                 'category_id' => $this->category_id,
                 'is_favorite' => $this->is_favorite,
                 'imei' => $this->imei,
@@ -182,7 +201,42 @@ class Product extends Component
                 'desc' => $this->desc,
                 'image' => $image,
             ]);
-            $this->alert('success', 'Product Successfully Created');
+
+            // Create product stocks for all size and color combinations
+            foreach ($this->selected_sizes as $size_id) {
+                foreach ($this->selected_colors as $color_id) {
+                    $stock = ProductStock::create([
+                        'product_id' => $product->id,
+                        'size_id' => $size_id,
+                        'color_id' => $color_id,
+                        'purchase_price' => $this->purchase_price,
+                        'selling_price' => $this->selling_price,
+                        'home_stock' => 0,
+                        'store_stock' => 0,
+                        'pre_order_stock' => 0,
+                        'all_stock' => 0,
+                        'qc_stock' => 0,
+                        'vermak_stock' => 0,
+                        'status' => $this->status,
+                    ]);
+
+                    setStockHistory(
+                        $stock->id,
+                        StockActivity::IMPORT,
+                        StockStatus::ADD,
+                        NULL,
+                        NULL,
+                        0,
+                        NULL,
+                        0,
+                        0,
+                        0,
+                        0
+                    );
+                }
+            }
+
+            $this->alert('success', 'Product and stock variants successfully created');
             $this->closeModal();
             $this->reset();
             $this->mount();
@@ -613,5 +667,23 @@ class Product extends Component
         $this->isEditStock = false;
         $this->editingProduct = null;
         $this->editingStocks = [];
+    }
+
+    public function updatedPurchasePrice()
+    {
+        // Ensure margin is recalculated when purchase price changes
+        if ($this->purchase_price && $this->selling_price) {
+            // The margin calculation is handled in the blade template
+            // but we can use this hook for future enhancements
+        }
+    }
+
+    public function updatedSellingPrice()
+    {
+        // Ensure margin is recalculated when selling price changes
+        if ($this->purchase_price && $this->selling_price) {
+            // The margin calculation is handled in the blade template
+            // but we can use this hook for future enhancements
+        }
     }
 }

@@ -141,12 +141,54 @@
                                     </select>
                                 </div>
 
+                                <!-- Pricing Information -->
+                                <div class="grid grid-cols-1 gap-4 md:grid-cols-2">
+                                    <div>
+                                        <label class="block mb-2 text-sm font-medium text-gray-700 dark:text-gray-200">Purchase Price</label>
+                                        <input type="number" wire:model.live="purchase_price" class="w-full form-input" placeholder="Purchase Price" />
+                                    </div>
+                                    <div>
+                                        <label class="block mb-2 text-sm font-medium text-gray-700 dark:text-gray-200">Selling Price</label>
+                                        <input type="number" wire:model.live="selling_price" class="w-full form-input" placeholder="Selling Price" />
+                                    </div>
+                                </div>
+
+                                <!-- Margin Calculator -->
+                                <div>
+                                    <label class="block mb-2 text-sm font-medium text-gray-700 dark:text-gray-200">Margin</label>
+                                    <div class="flex items-center">
+                                        <input type="number" readonly class="w-full bg-gray-100 form-input" value="{{ $selling_price && $purchase_price ? $selling_price - $purchase_price : 0 }}" />
+                                        <span class="ml-2 text-sm text-gray-500">{{ $selling_price && $purchase_price ? number_format((($selling_price - $purchase_price) / $purchase_price) * 100, 1) . '%' : '0%' }}</span>
+                                    </div>
+                                </div>
+
+                                <!-- Multiple Sizes and Colors Selection -->
+                                <div class="grid grid-cols-1 gap-4 md:grid-cols-2">
+                                    <div>
+                                        <label class="block mb-2 text-sm font-medium text-gray-700 dark:text-gray-200">Sizes</label>
+                                        <select wire:model="selected_sizes" class="w-full form-select" multiple>
+                                            @foreach(\App\Models\Size::all() as $size)
+                                                <option value="{{ $size->id }}">{{ $size->name }}</option>
+                                            @endforeach
+                                        </select>
+                                        <div class="mt-2 text-xs text-gray-500">Hold Ctrl/Cmd to select multiple sizes</div>
+                                    </div>
+                                    <div>
+                                        <label class="block mb-2 text-sm font-medium text-gray-700 dark:text-gray-200">Colors</label>
+                                        <select wire:model="selected_colors" class="w-full form-select" multiple>
+                                            @foreach(\App\Models\Color::all() as $color)
+                                                <option value="{{ $color->id }}">{{ $color->name }}</option>
+                                            @endforeach
+                                        </select>
+                                        <div class="mt-2 text-xs text-gray-500">Hold Ctrl/Cmd to select multiple colors</div>
+                                    </div>
+                                </div>
+
                                 <div class="flex items-center">
-                                    <label class="relative inline-flex cursor-pointer">
-                                        <input type="checkbox" wire:model="is_favorite" class="sr-only">
-                                        <div class="w-11 h-6 bg-gray-200 rounded-full peer peer-focus:ring-4 peer-focus:ring-primary-300 dark:peer-focus:ring-primary-800 dark:bg-gray-700 peer-checked:after:translate-x-full peer-checked:after:border-white after:content-[''] after:absolute after:top-0.5 after:left-[2px] after:bg-white after:border-gray-300 after:border after:rounded-full after:h-5 after:w-5 after:transition-all dark:border-gray-600 peer-checked:bg-primary"></div>
-                                        <span class="ml-3 text-sm font-medium text-gray-700 dark:text-gray-300">Favorite</span>
-                                    </label>
+                                    <div class="flex items-center">
+                                        <input type="checkbox" wire:model.live="is_favorite" class="form-switch text-primary" id="favorite">
+                                        <label class="ms-1.5" for="favorite">Check this Switch</label>
+                                    </div>
                                 </div>
 
                                 <div>

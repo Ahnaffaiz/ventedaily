@@ -33,6 +33,7 @@ class UserSeeder extends Seeder
             'Create Cost', 'Read Cost', 'Update Cost', 'Delete Cost',
             'Create Expense', 'Read Expense', 'Update Expense', 'Delete Expense',
             'Manage Setting', 'Manage User', 'Create User', 'Read User', 'Update User', 'Delete User',
+            'Manage Update Stock'
         ];
 
         // Buat semua permission jika belum ada

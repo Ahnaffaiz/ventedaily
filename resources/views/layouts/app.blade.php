@@ -11,43 +11,35 @@
 
     <title>{{ isset($title) && $title ? $title . ' - Ventedaily' : 'Page Title - Ventedaily' }}</title>
     <link rel="shortcut icon" href="{{ asset('assets/images/light_logo.png') }}" type="image/x-icon">
+
+    <!-- Load preloader script first -->
+    <script src="{{ asset('assets/js/preloader.js') }}"></script>
+
     @vite(['resources/css/app.css', 'resources/js/app.js'])
     @include('components.layouts.styles')
     @livewireStyles
 </head>
 
 <body>
-    <div class="flex wrapper">
+    <!-- Preloader Component -->
+    @include('components.layouts.partials.preloader')
 
+    <div class="flex wrapper">
         @include('components.layouts.partials.menu')
         <div class="page-content">
-
             @include('components.layouts.partials.topbar')
-
             <main class="p-6">
-
                 @include('components.layouts.partials.page-title', ["subtitle" => $subtitle ?? '', "title" => $title ?? ''])
-
                 {{ $slot }}
-
-
             </main>
-
             @include('components.layouts.partials.footer')
-
         </div>
-
-        <!-- ============================================================== -->
-        <!-- End Page content -->
-        <!-- ============================================================== -->
-
     </div>
+
     @livewireScripts
     @livewireChartsScripts
     @include('components.layouts.partials.customizer')
-
     @include('components.layouts.partials.footer-scripts')
-
     @stack('scripts')
     @include('components.layouts.scripts')
     <x-livewire-alert::scripts />

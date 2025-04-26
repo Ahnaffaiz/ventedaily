@@ -2,11 +2,11 @@
 
 <div x-data="{ open: @entangle($attributes->wire('model')).live }" x-show="open"
     class="fixed inset-0 z-50 overflow-y-auto"
-    x-transition:enter="transition ease-out duration-300" 
-    x-transition:enter-start="opacity-0" 
+    x-transition:enter="transition ease-out duration-300"
+    x-transition:enter-start="opacity-0"
     x-transition:enter-end="opacity-100"
-    x-transition:leave="transition ease-in duration-200" 
-    x-transition:leave-start="opacity-100" 
+    x-transition:leave="transition ease-in duration-200"
+    x-transition:leave-start="opacity-100"
     x-transition:leave-end="opacity-0">
     <div class="flex items-center justify-center min-h-screen p-4">
         <div class="fixed inset-0 transition-opacity bg-gray-500 bg-opacity-75" x-show="open"></div>
@@ -20,11 +20,11 @@
                     <i class="text-xl ri-close-line"></i>
                 </button>
             </div>
-            
+
             <div class="overflow-y-auto">
                 {{ $slot }}
             </div>
-            
+
             <div class="flex justify-end mt-6 gap-x-4">
                 <button class="bg-gray-100 btn" wire:click="{{ $closeButton }}" type="button">
                     Cancel

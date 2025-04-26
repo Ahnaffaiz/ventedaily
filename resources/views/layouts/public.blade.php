@@ -7,38 +7,31 @@
     <link rel="shortcut icon" href="{{ asset('assets/images/light_logo.png') }}" type="image/x-icon">
     <title>{{ isset($title) && $title ? $title . ' - Ventedaily' : 'Page Title - Ventedaily' }}</title>
 
+    <!-- Load preloader script first -->
+    <script src="{{ asset('assets/js/preloader.js') }}"></script>
+
     @vite(['resources/css/app.css', 'resources/js/app.js'])
     @include('components.layouts.styles')
     @livewireStyles
 </head>
 
 <body>
+    <!-- Preloader Component -->
+    @include('components.layouts.partials.preloader')
+
     <div class="flex wrapper">
         <div class="page-content">
-
             <main class="p-6">
-
                 @include('components.layouts.partials.page-title', ["subtitle" => $subtitle ?? '', "title" => $title ?? ''])
-
                 {{ $slot }}
-
-
             </main>
-
             @include('components.layouts.partials.footer')
-
         </div>
-
-        <!-- ============================================================== -->
-        <!-- End Page content -->
-        <!-- ============================================================== -->
-
     </div>
+
     @livewireScripts
     @include('components.layouts.partials.customizer')
-
     @include('components.layouts.partials.footer-scripts')
-
     @stack('scripts')
     @include('components.layouts.scripts')
 </body>

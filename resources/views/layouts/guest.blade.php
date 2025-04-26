@@ -7,6 +7,9 @@
 
         <title>{{ config('app.name', 'Laravel') }}</title>
 
+        <!-- Load preloader script first -->
+        <script src="{{ asset('assets/js/preloader.js') }}"></script>
+
         <!-- Fonts -->
         <link rel="preconnect" href="https://fonts.bunny.net">
         <link href="https://fonts.bunny.net/css?family=figtree:400,500,600&display=swap" rel="stylesheet" />
@@ -18,6 +21,9 @@
         @livewireStyles
     </head>
     <body>
+        <!-- Preloader Component -->
+        @include('components.layouts.partials.preloader')
+
         <div class="font-sans text-gray-900 antialiased">
             {{ $slot }}
         </div>

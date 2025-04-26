@@ -6,7 +6,7 @@
                     :options="$products" searchFunction="searchProduct" />
 
                 @if ($productStockList)
-                    <div class="mt-4 border border-gray-300 rounded-md">
+                    <div class="mt-4 overflow-x-auto border border-gray-300 rounded-md">
                         <table class="min-w-full divide-y divide-gray-200 dark:divide-gray-700">
                             <thead>
                                 <tr>

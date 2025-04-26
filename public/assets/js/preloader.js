@@ -20,12 +20,13 @@ function removePreloader() {
     var preloader = document.getElementById('preloader');
 
     if (preloader) {
-        // First make it transparent
-        preloader.style.opacity = '0';
+        // First make it transparent by adding opacity-0 class and removing opacity-100
+        preloader.classList.remove('opacity-100');
+        preloader.classList.add('opacity-0');
 
         // Then after transition (500ms), remove it completely
         setTimeout(function() {
-            preloader.style.display = 'none';
+            preloader.classList.add('hidden');
 
             // Try to remove it from DOM entirely as a last resort
             if (preloader.parentNode) {

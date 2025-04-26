@@ -372,17 +372,22 @@
         </div>
         <div class="px-3 py-4">
             <div class="flex justify-between">
-                <div class="flex items-center">
-                    <label class="w-32 text-sm font-medium text-gray-900">Per Page</label>
-                    <select
-                        class="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full p-2.5"
-                        wire:model.change="perPage">
-                        <option value="5">5</option>
-                        <option value="10">10</option>
-                        <option value="20">20</option>
-                        <option value="50">50</option>
-                        <option value="100">100</option>
-                    </select>
+                <div class="flex flex-col">
+                    <div class="flex items-center">
+                        <label class="w-32 text-sm font-medium text-gray-900">Per Page</label>
+                        <select
+                            class="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full p-2.5"
+                            wire:model.change="perPage">
+                            <option value="5">5</option>
+                            <option value="10">10</option>
+                            <option value="20">20</option>
+                            <option value="50">50</option>
+                            <option value="100">100</option>
+                        </select>
+                    </div>
+                    <div class="mt-2 text-sm text-gray-600">
+                        Showing {{ $saleShippings->firstItem() ?? 0 }} to {{ $saleShippings->lastItem() ?? 0 }} of {{ $saleShippings->total() }} entries
+                    </div>
                 </div>
                 {{ $saleShippings->links(data: ['scrollTo' => false]) }}
                 <x-pagination :paginator="$saleShippings" pageName="listSaleShippings" />

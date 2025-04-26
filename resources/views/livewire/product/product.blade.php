@@ -288,14 +288,31 @@
         </div>
 
         <div class="flex justify-between px-3 py-4">
-            <div class="flex justify-start mb-6">
-                <div class="flex gap-2 pe-4">
-                    <div class="p-2 rounded-full bg-warning"></div>
-                    <span>Product In Keep</span>
+            <div class="flex flex-col">
+                <div class="flex items-center mb-2">
+                    <label class="w-32 text-sm font-medium text-gray-900">Per Page</label>
+                    <select
+                        class="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full p-2.5"
+                        wire:model.change="perPage">
+                        <option value="5">5</option>
+                        <option value="10">10</option>
+                        <option value="20">20</option>
+                        <option value="50">50</option>
+                        <option value="100">100</option>
+                    </select>
                 </div>
-                <div class="flex gap-2">
-                    <div class="p-2 rounded-full bg-danger"></div>
-                    <span>Product In Pre Order</span>
+                <div class="text-sm text-gray-600">
+                    Showing {{ $products->firstItem() ?? 0 }} to {{ $products->lastItem() ?? 0 }} of {{ $products->total() }} entries
+                </div>
+                <div class="flex justify-start mt-2">
+                    <div class="flex gap-2 pe-4">
+                        <div class="p-2 rounded-full bg-warning"></div>
+                        <span>Product In Keep</span>
+                    </div>
+                    <div class="flex gap-2">
+                        <div class="p-2 rounded-full bg-danger"></div>
+                        <span>Product In Pre Order</span>
+                    </div>
                 </div>
             </div>
             <div class="">

@@ -200,25 +200,15 @@
         </div>
 
         <div class="px-3 py-4">
-            <div class="flex justify-between">
-                <div class="flex flex-col">
-                    <div class="flex items-center">
-                        <label class="w-32 text-sm font-medium text-gray-900">Per Page</label>
-                        <select
-                            class="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full p-2.5"
-                            wire:model.change="perPage">
-                            <option value="5">5</option>
-                            <option value="10">10</option>
-                            <option value="20">20</option>
-                            <option value="50">50</option>
-                            <option value="100">100</option>
-                        </select>
-                    </div>
-                    <div class="mt-2 text-sm text-gray-600">
+            <div class="flex flex-col items-center md:flex-row md:justify-between gap-4">
+                <div class="flex flex-col items-center md:items-start">
+                    <div class="mt-2 text-sm text-center md:text-left text-gray-600">
                         Showing {{ $users->firstItem() ?? 0 }} to {{ $users->lastItem() ?? 0 }} of {{ $users->total() }} entries
                     </div>
                 </div>
-                {{ $users->links(data: ['scrollTo' => false]) }}
+                <div class="mt-2 md:mt-0">
+                    <x-pagination :paginator="$users" pageName="listUsers" />
+                </div>
             </div>
         </div>
     </div>

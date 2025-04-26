@@ -1,37 +1,45 @@
 @props(['title' => 'Modal Title', 'isOpen' => false, 'closeButton' => null, 'saveButton' => null, 'large' => false, 'saveLabel' => 'save'])
 
-<div x-data="{ open: @entangle($attributes->wire('model')) }" x-show="open"
-    class="fixed top-0 left-0 z-50 w-full h-full overflow-y-auto transition-all duration-500 bg-gray-800 bg-opacity-50"
-    x-transition:enter="ease-out duration-300" x-transition:enter-start="opacity-0" x-transition:enter-end="opacity-100"
-    x-transition:leave="ease-in duration-300" x-transition:leave-start="opacity-100" x-transition:leave-end="opacity-0">
-    <div
-        class="flex flex-col m-3 transition-all duration-300 ease-in-out bg-white rounded shadow-sm {{ $large ? 'sm:max-w-7xl' : 'sm:max-w-2xl'}} sm:w-full sm:mx-auto dark:bg-gray-800">
-        <div class="flex justify-between items-center py-2.5 px-4 border-b dark:border-gray-700">
-            <h3 class="text-lg font-medium text-gray-600 dark:text-white">
-                {{ $title }}
-            </h3>
-            <button class="inline-flex items-center justify-center flex-shrink-0 w-8 h-8 dark:text-gray-200"
-                wire:click="{{ $closeButton }}" type="button">
-                <i class="text-2xl ri-close-line"></i>
-            </button>
-        </div>
-        <div class="p-4 overflow-y-auto">
-            {{ $slot }}
-        </div>
-        <div class="flex items-center justify-end gap-2 p-4 border-t dark:border-slate-700">
-            <button class="text-gray-800 transition-all btn bg-light" wire:click="{{ $closeButton }}" type="button">
-                Close
-            </button>
-            @if ($saveButton)
-                <button wire:click="{{ $saveButton }}" class="inline gap-2 text-white transition-all btn bg-primary" wire:target="{{ $saveButton }}" wire:loading.attr="disabled">
-                    <div class="flex gap-2" wire:loading.remove wire:target="{{ $saveButton }}">
-                        {{ $saveLabel }}
-                    </div>
-                    <div class="flex gap-2" wire:loading wire:target="{{ $saveButton }}">
-                        <div class="animate-spin w-4 h-4 border-[3px] border-current border-t-transparent text-light rounded-full"></div>
-                    </div>
+<div x-data="{ open: @entangle($attributes->wire('model')).live }" x-show="open"
+    class="fixed inset-0 z-50 overflow-y-auto"
+    x-transition:enter="transition ease-out duration-300" 
+    x-transition:enter-start="opacity-0" 
+    x-transition:enter-end="opacity-100"
+    x-transition:leave="transition ease-in duration-200" 
+    x-transition:leave-start="opacity-100" 
+    x-transition:leave-end="opacity-0">
+    <div class="flex items-center justify-center min-h-screen p-4">
+        <div class="fixed inset-0 transition-opacity bg-gray-500 bg-opacity-75" x-show="open"></div>
+        <div class="relative w-full {{ $large ? 'max-w-7xl' : 'max-w-2xl' }} p-6 mx-auto bg-white rounded-lg shadow-xl dark:bg-gray-800">
+            <div class="flex items-center justify-between mb-4">
+                <h3 class="text-lg font-medium text-gray-900 dark:text-gray-100">
+                    {{ $title }}
+                </h3>
+                <button type="button" class="text-gray-400 hover:text-gray-500" wire:click="{{ $closeButton }}">
+                    <span class="sr-only">Close</span>
+                    <i class="text-xl ri-close-line"></i>
                 </button>
-            @endif
+            </div>
+            
+            <div class="overflow-y-auto">
+                {{ $slot }}
+            </div>
+            
+            <div class="flex justify-end mt-6 gap-x-4">
+                <button class="bg-gray-100 btn" wire:click="{{ $closeButton }}" type="button">
+                    Cancel
+                </button>
+                @if ($saveButton)
+                    <button wire:click="{{ $saveButton }}" class="text-white btn bg-primary" wire:target="{{ $saveButton }}" wire:loading.attr="disabled">
+                        <div class="flex gap-2" wire:loading.remove wire:target="{{ $saveButton }}">
+                            {{ $saveLabel }}
+                        </div>
+                        <div class="flex gap-2" wire:loading wire:target="{{ $saveButton }}">
+                            <div class="animate-spin w-4 h-4 border-[3px] border-current border-t-transparent text-light rounded-full"></div>
+                        </div>
+                    </button>
+                @endif
+            </div>
         </div>
     </div>
 </div>

@@ -14,7 +14,7 @@
                         :options="$termOfPayments" placeholder="Select Term of Payment" />
                 </div>
             </div>
-            <div class="mt-4 border border-gray-200 rounded-md section">
+            <div class="mt-4 overflow-x-auto border border-gray-200 rounded-md section">
                 <table class="min-w-full divide-y divide-gray-200 dark:divide-gray-700">
                     <thead>
                         <tr>

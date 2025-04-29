@@ -101,7 +101,8 @@ class ListTransferStock extends Component
         ->join('sizes', 'product_stocks.size_id', 'sizes.id')
         ->whereNull('transfer_product_stocks.keep_product_id')
         ->whereHas('keep', function($query)  {
-            return $query->whereHas('customer', function($query) {
+            return $query->where('status', '!=', strtolower(KeepStatus::CANCELED))
+                ->whereHas('customer', function($query) {
                 return $query->where('group_id', 1);
             });
         })
@@ -144,11 +145,9 @@ class ListTransferStock extends Component
         ->join('colors', 'product_stocks.color_id', 'colors.id')
         ->join('sizes', 'product_stocks.size_id', 'sizes.id')
         ->whereNull('transfer_product_stocks.keep_product_id')
-
-
-
         ->whereHas('keep', function($query) {
-            return $query->whereHas('customer', function($query) {
+            return $query->where('status', '!=', strtolower(KeepStatus::CANCELED))
+                ->whereHas('customer', function($query) {
                 return $query->where('group_id', 2);
             });
         })

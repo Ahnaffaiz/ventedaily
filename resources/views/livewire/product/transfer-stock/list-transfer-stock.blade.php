@@ -91,7 +91,9 @@
                                     {{ App\Enums\StockType::getLabel($transferStock->transfer_to) }}
                                 </td>
                                 <td class="px-4 py-4 text-sm text-gray-500 whitespace-nowrap dark:text-gray-200">
-                                    @if ($transferStock?->transferProducts?->whereNotNull('keep_product_id')->isNotEmpty())
+                                    @if ($transferStock?->transferProducts?->filter(function($item) {
+                                            return !empty($item->keep_product_id) && $item->keep_product_id != '[]';
+                                        })->isNotEmpty())
                                         <span class="inline-flex items-center gap-1.5 py-0.5 px-1.5 rounded-md text-xs font-medium bg-info/10 text-info">Keep Product</span>
                                     @endif
                                 </td>
@@ -136,9 +138,9 @@
         </div>
 
         <div class="px-3 py-4">
-            <div class="flex flex-col items-center md:flex-row md:justify-between gap-4">
+            <div class="flex flex-col items-center gap-4 md:flex-row md:justify-between">
                 <div class="flex flex-col items-center md:items-start">
-                    <div class="mt-2 text-sm text-center md:text-left text-gray-600">
+                    <div class="mt-2 text-sm text-center text-gray-600 md:text-left">
                         Showing {{ $transferStocks->firstItem() ?? 0 }} to {{ $transferStocks->lastItem() ?? 0 }} of {{ $transferStocks->total() }} entries
                     </div>
                 </div>

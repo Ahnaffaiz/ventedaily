@@ -37,7 +37,7 @@ class UpdateKeepStatus extends Command
 
         try {
             foreach ($keeps as $keep) {
-                $isReseller = $keep->customer->group->name == 'Reseller';
+                $isReseller = $keep->customer->group->name == 'Reseller' ? true : false;
 
                 foreach ($keep?->keepProducts as $keepProduct) {
                     // Check if product has been transferred
@@ -45,30 +45,23 @@ class UpdateKeepStatus extends Command
 
                     if ($hasTransferred) {
                         // Case A: Keep is active and product has been transferred
-                        $transferProductStock = \App\Models\TransferProductStock::whereJsonContains('keep_product_id', $keepProduct->id)
+                        // Get ALL transfer product stocks that contain this keep_product_id
+                        $transferProductStocks = \App\Models\TransferProductStock::whereJsonContains('keep_product_id', $keepProduct->id)
                             ->with('transferStock')
-                            ->first();
+                            ->get();
 
-                        if ($transferProductStock) {
+                        foreach ($transferProductStocks as $transferProductStock) {
                             $stockTypeTransfer = $transferProductStock->transferStock->transfer_from;
 
-                            // If stock becomes 0, delete the transfer record
-                            if ($transferProductStock->stock - $keepProduct->$stockTypeTransfer == 0) {
-                                $transferProductStock->delete();
-                            } else {
-                                // Get current keep_product_ids array
-                                $keepProductIds = $transferProductStock->keep_product_id ?? [];
+                            // Get current keep_product_ids array
+                            $keepProductIds = $transferProductStock->keep_product_id ?? [];
 
-                                // Remove this specific keep_product_id from the array
-                                if (is_array($keepProductIds)) {
-                                    $keepProductIds = array_filter($keepProductIds, function ($id) use ($keepProduct) {
-                                        return $id != $keepProduct->id;
-                                    });
-                                }
-
-                                // Update with modified array instead of setting to null
+                            // Remove this specific keep_product_id from the array
+                            if (is_array($keepProductIds)) {
+                                $keepProductIds = array_filter($keepProductIds, function ($id) use ($keepProduct) {
+                                    return $id != $keepProduct->id;
+                                });
                                 $transferProductStock->update([
-                                    'stock' => $transferProductStock->stock - $keepProduct->$stockTypeTransfer,
                                     'keep_product_id' => array_values($keepProductIds)
                                 ]);
                             }

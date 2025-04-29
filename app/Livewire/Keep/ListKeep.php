@@ -10,6 +10,7 @@ use App\Models\Group;
 use App\Models\Keep;
 use App\Models\KeepProduct;
 use App\Models\Purchase;
+use App\Models\TransferProductStock;
 use Exception;
 use Illuminate\Support\Facades\Auth;
 use Jantinnerezo\LivewireAlert\LivewireAlert;
@@ -151,66 +152,142 @@ class ListKeep extends Component
     {
         try {
             if ($this->keep->status == KeepStatus::ACTIVE) {
+                $customer = $this->keep->customer;
+                $isReseller = $customer->group->name == 'Reseller' ? true : false;
+
                 foreach ($this->keep->keepProducts as $keepProduct) {
-                    if($keepProduct->transferProductStock) {
-                        $stockTypeTransfer = $keepProduct->transferProductStock->transferStock->transfer_from;
-                        $keepProduct->transferProductStock->transferStock->update([
-                            'total_items' => $keepProduct->transferProductStock->transferStock->total_items - $keepProduct->$stockTypeTransfer,
-                        ]);
-                        if ($keepProduct->transferProductStock->stock - $keepProduct->$stockTypeTransfer == 0) {
-                            $keepProduct->transferProductStock->delete();
-                        } else {
-                            $keepProduct->transferProductStock->update([
-                                'stock' => $keepProduct->transferProductStock->stock - $keepProduct->$stockTypeTransfer,
-                                'keep_product_id' => null
+                    // Check if product has been transferred
+                    $hasTransferred = TransferProductStock::whereJsonContains('keep_product_id', $keepProduct->id)->exists();
+
+                    if ($hasTransferred) {
+                        // Condition A: Keep is active and product has been transferred
+                        $transferProductStock = TransferProductStock::whereJsonContains('keep_product_id', $keepProduct->id)
+                            ->with('transferStock')
+                            ->first();
+
+                        if ($transferProductStock) {
+                            $stockTypeTransfer = $transferProductStock->transferStock->transfer_from;
+
+                            // If stock becomes 0, delete the transfer record
+                            if ($transferProductStock->stock - $keepProduct->$stockTypeTransfer == 0) {
+                                $transferProductStock->delete();
+                            } else {
+                                // Get current keep_product_ids array
+                                $keepProductIds = $transferProductStock->keep_product_id ?? [];
+
+                                // Remove this specific keep_product_id from the array
+                                if (is_array($keepProductIds)) {
+                                    $keepProductIds = array_filter($keepProductIds, function ($id) use ($keepProduct) {
+                                        return $id != $keepProduct->id;
+                                    });
+                                }
+
+                                // Update with modified array instead of setting to null
+                                $transferProductStock->update([
+                                    'stock' => $transferProductStock->stock - $keepProduct->$stockTypeTransfer,
+                                    'keep_product_id' => array_values($keepProductIds)
+                                ]);
+                            }
+                        }
+
+                        // Restore stock based on customer group
+                        if ($isReseller) {
+                            $keepProduct->productStock->update([
+                                'all_stock' => $keepProduct->productStock->all_stock + $keepProduct->home_stock + $keepProduct->store_stock,
+                                'store_stock' => $keepProduct->productStock->store_stock + $keepProduct->home_stock + $keepProduct->store_stock,
                             ]);
+
+                            // Record stock history
+                            setStockHistory(
+                                $keepProduct->productStock->id,
+                                StockActivity::KEEP,
+                                StockStatus::REMOVE,
+                                StockType::STORE_STOCK,
+                                NULL,
+                                $keepProduct->home_stock + $keepProduct->store_stock,
+                                $this->keep->no_keep,
+                                $keepProduct->productStock->all_stock,
+                                $keepProduct->productStock->home_stock,
+                                $keepProduct->productStock->store_stock,
+                                $keepProduct->productStock->pre_order_stock,
+                            );
+                        } else {
+                            // For online customers
+                            $keepProduct->productStock->update([
+                                'all_stock' => $keepProduct->productStock->all_stock + $keepProduct->home_stock + $keepProduct->store_stock,
+                                'home_stock' => $keepProduct->productStock->home_stock + $keepProduct->home_stock + $keepProduct->store_stock,
+                            ]);
+
+                            // Record stock history
+                            setStockHistory(
+                                $keepProduct->productStock->id,
+                                StockActivity::KEEP,
+                                StockStatus::REMOVE,
+                                StockType::HOME_STOCK,
+                                NULL,
+                                $keepProduct->home_stock + $keepProduct->store_stock,
+                                $this->keep->no_keep,
+                                $keepProduct->productStock->all_stock,
+                                $keepProduct->productStock->home_stock,
+                                $keepProduct->productStock->store_stock,
+                                $keepProduct->productStock->pre_order_stock,
+                            );
+                        }
+                    } else {
+                        // Condition B: Keep is active but product hasn't been transferred
+                        // Restore home_stock
+                        if ($keepProduct->home_stock > 0) {
+                            $keepProduct->productStock->update([
+                                'all_stock' => $keepProduct->productStock->all_stock + $keepProduct->home_stock,
+                                'home_stock' => $keepProduct->productStock->home_stock + $keepProduct->home_stock,
+                            ]);
+
+                            setStockHistory(
+                                $keepProduct->productStock->id,
+                                StockActivity::KEEP,
+                                StockStatus::REMOVE,
+                                StockType::HOME_STOCK,
+                                NULL,
+                                $keepProduct->home_stock,
+                                $this->keep->no_keep,
+                                $keepProduct->productStock->all_stock,
+                                $keepProduct->productStock->home_stock,
+                                $keepProduct->productStock->store_stock,
+                                $keepProduct->productStock->pre_order_stock,
+                            );
+                        }
+
+                        // Restore store_stock
+                        if ($keepProduct->store_stock > 0) {
+                            $keepProduct->productStock->update([
+                                'all_stock' => $keepProduct->productStock->all_stock + $keepProduct->store_stock,
+                                'store_stock' => $keepProduct->productStock->store_stock + $keepProduct->store_stock,
+                            ]);
+
+                            setStockHistory(
+                                $keepProduct->productStock->id,
+                                StockActivity::KEEP,
+                                StockStatus::REMOVE,
+                                StockType::STORE_STOCK,
+                                NULL,
+                                $keepProduct->store_stock,
+                                $this->keep->no_keep,
+                                $keepProduct->productStock->all_stock,
+                                $keepProduct->productStock->home_stock,
+                                $keepProduct->productStock->store_stock,
+                                $keepProduct->productStock->pre_order_stock,
+                            );
                         }
                     }
-                    if($keepProduct->home_stock > 0) {
-                        $keepProduct->productStock->update([
-                            'all_stock' => $keepProduct->productStock->all_stock + $keepProduct->home_stock,
-                            'home_stock' => $keepProduct->productStock->home_stock + $keepProduct->home_stock,
-                        ]);
-                        setStockHistory(
-                            $keepProduct->productStock->id,
-                            StockActivity::KEEP,
-                            StockStatus::REMOVE,
-                            StockType::HOME_STOCK,
-                            NULL,
-                            $keepProduct->home_stock,
-                            $this->keep->no_keep,
-                            $keepProduct->productStock->all_stock,
-                            $keepProduct->productStock->home_stock,
-                            $keepProduct->productStock->store_stock,
-                            $keepProduct->productStock->pre_order_stock,
-                        );
-                    }
-
-                    if($keepProduct->store_stock > 0) {
-                        $keepProduct->productStock->update([
-                            'all_stock' => $keepProduct->productStock->all_stock + $keepProduct->store_stock,
-                            'store_stock' => $keepProduct->productStock->store_stock + $keepProduct->store_stock,
-                        ]);
-                        setStockHistory(
-                            $keepProduct->productStock->id,
-                            StockActivity::KEEP,
-                            StockStatus::REMOVE,
-                            StockType::STORE_STOCK,
-                            NULL,
-                            $keepProduct->store_stock,
-                            $this->keep->no_keep,
-                            $keepProduct->productStock->all_stock,
-                            $keepProduct->productStock->home_stock,
-                            $keepProduct->productStock->store_stock,
-                            $keepProduct->productStock->pre_order_stock,
-                        );
-                    }
                 }
+                // Condition C: No action needed for keeps with status other than active
             }
+
+            // Delete the keep (and its related keep products through cascade)
             $this->keep->delete();
-            $this->alert('success', 'Keep Data Succesfully Deleted');
+            $this->alert('success', 'Keep Data Successfully Deleted');
         } catch (Exception $th) {
-            $this->alert('error', $th);
+            $this->alert('error', $th->getMessage());
         }
     }
 }

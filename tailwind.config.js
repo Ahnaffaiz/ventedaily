@@ -40,6 +40,11 @@ export default {
                     ...colors.gray,
                     800: "#313a46",
                 },
+
+                slate: {
+                    ...colors.slate,
+                    850: "#172033", // Adding custom slate-850 color for darker theme
+                },
             },
 
             minWidth: (theme) => ({
@@ -57,6 +62,21 @@ export default {
             maxHeight: (theme) => ({
                 ...theme("height"),
             }),
+
+            // Dark mode specific styles
+            backgroundColor: {
+                'dark-primary': 'var(--dark-primary, #172033)', // slate-850
+                'dark-secondary': 'var(--dark-secondary, #1e293b)', // slate-800
+                'dark-tertiary': 'var(--dark-tertiary, #334155)', // slate-700
+            },
+            textColor: {
+                'dark-primary': 'var(--dark-text-primary, #f1f5f9)', // slate-100
+                'dark-secondary': 'var(--dark-text-secondary, #cbd5e1)', // slate-300
+                'dark-muted': 'var(--dark-text-muted, #94a3b8)', // slate-400
+            },
+            borderColor: {
+                'dark-border': 'var(--dark-border, #334155)', // slate-700
+            },
         },
     },
 

@@ -5,3 +5,68 @@
 [x-cloak] {
     display: none;
 }
+
+@layer base {
+    :root {
+        --dark-primary: #172033; /* slate-850 */
+        --dark-secondary: #1e293b; /* slate-800 */
+        --dark-tertiary: #334155; /* slate-700 */
+
+        --dark-text-primary: #f1f5f9; /* slate-100 */
+        --dark-text-secondary: #cbd5e1; /* slate-300 */
+        --dark-text-muted: #94a3b8; /* slate-400 */
+
+        --dark-border: #334155; /* slate-700 */
+    }
+
+    .dark, [data-mode="dark"] {
+        @apply bg-slate-850;
+
+        /* Base element styles for dark mode */
+        h1, h2, h3, h4, h5, h6 {
+            @apply text-dark-primary;
+        }
+
+        p, span, a:not(.btn), div {
+            @apply text-dark-secondary;
+        }
+
+        /* Override for specific components */
+        .card, .modal, .dropdown-menu, .sidebar {
+            @apply bg-dark-secondary border-dark-border;
+        }
+
+        .table {
+            @apply text-dark-secondary;
+        }
+
+        .table thead th {
+            @apply text-dark-primary bg-dark-tertiary;
+        }
+
+        .table tbody td {
+            @apply border-dark-border;
+        }
+
+        .form-control, .form-select, .input-group-text {
+            @apply bg-dark-tertiary border-dark-border text-dark-primary;
+        }
+
+        .btn-light {
+            @apply bg-dark-tertiary text-dark-primary border-dark-border;
+        }
+
+        .text-muted {
+            @apply text-dark-muted;
+        }
+
+        /* Navigation elements */
+        .nav-link, .navbar-nav .nav-link {
+            @apply text-dark-secondary hover:text-dark-primary;
+        }
+
+        .nav-link.active, .navbar-nav .nav-link.active {
+            @apply text-dark-primary;
+        }
+    }
+}

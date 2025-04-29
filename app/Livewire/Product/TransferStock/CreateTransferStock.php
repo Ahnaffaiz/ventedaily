@@ -370,7 +370,7 @@ class CreateTransferStock extends Component
         ]);
         $this->createTransferProductStock($this->transferStock->id);
         $this->alert('success', 'Transfer Stock Succesfully Updated');
-        $this->mount($this->transferStock->id);
+        return redirect()->route('transfer-stock');
     }
 
     public function resetKeep() {

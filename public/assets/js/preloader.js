@@ -9,7 +9,28 @@ window.addEventListener('load', function() {
 // Failsafe - remove preloader after 4 seconds no matter what
 setTimeout(function() {
     removePreloader();
-}, 4000);
+}, 3000);
+
+// Add Livewire navigation event listeners
+if (typeof window.Livewire !== 'undefined') {
+    // Listen for Livewire page transition start
+    document.addEventListener('livewire:navigating', function() {
+        // Show preloader when navigation starts
+        document.documentElement.classList.add('page-loading');
+        const preloader = document.getElementById('preloader');
+        if (preloader) {
+            preloader.classList.remove('hidden');
+            preloader.classList.remove('opacity-0');
+            preloader.classList.add('opacity-100');
+        }
+    });
+
+    // Listen for Livewire page transition end
+    document.addEventListener('livewire:navigated', function() {
+        // Remove preloader when navigation completes
+        removePreloader();
+    });
+}
 
 // Function to remove preloader
 function removePreloader() {

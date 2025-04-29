@@ -7,9 +7,6 @@
     <link rel="shortcut icon" href="{{ asset('assets/images/light_logo.png') }}" type="image/x-icon">
     <title>{{ isset($title) && $title ? $title . ' - Ventedaily' : 'Page Title - Ventedaily' }}</title>
 
-    <!-- Load preloader script first -->
-    <script src="{{ asset('assets/js/preloader.js') }}"></script>
-
     @vite(['resources/css/app.css', 'resources/js/app.js'])
     @include('components.layouts.styles')
     @livewireStyles
@@ -30,6 +27,8 @@
     </div>
 
     @livewireScripts
+    <!-- Load preloader script first -->
+    <script src="{{ asset('assets/js/preloader.js') }}"></script>
     @include('components.layouts.partials.customizer')
     @include('components.layouts.partials.footer-scripts')
     @stack('scripts')

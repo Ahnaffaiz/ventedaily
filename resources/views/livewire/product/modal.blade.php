@@ -187,13 +187,13 @@
                                 <div class="flex items-center">
                                     <div class="flex items-center">
                                         <input type="checkbox" wire:model.live="is_favorite" class="form-switch text-primary" id="favorite">
-                                        <label class="ms-1.5" for="favorite">Check this Switch</label>
+                                        <label class="ms-1.5" for="favorite">Favorite</label>
                                     </div>
                                 </div>
 
                                 <div>
                                     <label class="block mb-2 text-sm font-medium text-gray-700 dark:text-gray-200">Description</label>
-                                    <textarea wire:model="desc" rows="3" class="w-full form-textarea"></textarea>
+                                    <textarea wire:model="desc" rows="3" class="w-full rounded-l-none form-input"></textarea>
                                 </div>
                             </div>
                         </form>

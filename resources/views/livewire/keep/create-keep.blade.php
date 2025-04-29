@@ -123,7 +123,7 @@
                                 </tr>
                             @endforeach
                             <tr>
-                                <td colspan="8" class="py-4 text-center">
+                                <td colspan="10" class="py-4 text-center">
                                     <button class="btn bg-primary/25 text-primary hover:bg-primary hover:text-white"
                                         wire:click="openModal('product')" type="button">
                                         Add Product
@@ -139,7 +139,7 @@
                             </tr>
                         @else
                             <tr>
-                                <td colspan="8" class="py-4 text-center">
+                                <td colspan="10" class="py-4 text-center">
                                     <button class="btn bg-primary/25 text-primary hover:bg-primary hover:text-white"
                                         wire:click="openModal('product')" type="button">
                                         Add Product

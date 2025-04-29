@@ -53,14 +53,14 @@
         @endif
     </table>
     <div class="px-3 py-4">
-        <div class="flex flex-col items-center md:flex-row md:justify-between gap-4">
+        <div class="flex flex-col items-center gap-4 md:flex-row md:justify-between">
             <div class="flex flex-col items-center md:items-start">
-                <div class="mt-2 text-sm text-center md:text-left text-gray-600">
+                <div class="mt-2 text-sm text-center text-gray-600 md:text-left">
                     Showing {{ $productStocks->firstItem() ?? 0 }} to {{ $productStocks->lastItem() ?? 0 }} of {{ $productStocks->total() }} entries
                 </div>
             </div>
             <div class="mt-2 md:mt-0">
-                <x-pagination :paginator="$productStocks" pageName="listProductStocks" />
+                <x-pagination :paginator="$productStocks" pageName="page" />
             </div>
         </div>
     </div>

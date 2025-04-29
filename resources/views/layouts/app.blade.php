@@ -12,9 +12,6 @@
     <title>{{ isset($title) && $title ? $title . ' - Ventedaily' : 'Page Title - Ventedaily' }}</title>
     <link rel="shortcut icon" href="{{ asset('assets/images/light_logo.png') }}" type="image/x-icon">
 
-    <!-- Load preloader script first -->
-    <script src="{{ asset('assets/js/preloader.js') }}"></script>
-
     @vite(['resources/css/app.css', 'resources/js/app.js'])
     @include('components.layouts.styles')
     @livewireStyles
@@ -38,6 +35,8 @@
 
     @livewireScripts
     @livewireChartsScripts
+    <!-- Load preloader script first -->
+    <script src="{{ asset('assets/js/preloader.js') }}"></script>
     @include('components.layouts.partials.customizer')
     @include('components.layouts.partials.footer-scripts')
     @stack('scripts')

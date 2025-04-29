@@ -459,8 +459,9 @@ class CreateKeep extends Component
 
         // Get existing keepProducts indexed by product_stock_id for easy lookup
         $existingKeepProducts = $this->keep->keepProducts->keyBy('product_stock_id');
-        $stockType = $this->group_id == 2 ? 'home_stock' : 'store_stock';
-        $notStockType = $this->group_id == 2 ? 'store_stock' : 'home_stock';
+        $isReseller = $this->group_id == 1; // Group ID 1 is Reseller, 2 is Online
+        $primaryStockType = $isReseller ? 'store_stock' : 'home_stock';
+        $secondaryStockType = $isReseller ? 'home_stock' : 'store_stock';
         $processedItems = [];
 
         // Process items in the cart
@@ -471,97 +472,279 @@ class CreateKeep extends Component
 
             // Check if this product already exists in the keep
             if ($keepProduct) {
-                $transferProductStock = TransferProductStock::whereJsonContains('keep_product_id', $keepProduct->id)
-                    ->with('transferStock')
-                    ->get();
-
-                // If quantity changed, handle stock adjustment
+                // 1. If KeepProduct already exists and quantity has changed
                 if ($keepProduct->total_items != $cartItem['quantity']) {
-                    // Check if there are transfers preventing adjustment
-                    if ($transferProductStock->isNotEmpty() && $transferProductStock->sum('stock') > 0) {
-                        // Just update the keepProduct without modifying stocks
-                        $keepProduct->update([
-                            'total_items' => $cartItem['quantity'],
-                            $notStockType => $cartItem['quantity'] - $cartItem[$stockType],
-                            $stockType => $keepProduct->productStock->$stockType - $cartItem['quantity'] <= 0 ? $keepProduct->productStock->$stockType : $cartItem['quantity'],
-                            'selling_price' => $cartItem['selling_price'],
-                            'total_price' => $cartItem['total_price']
-                        ]);
-                    } else {
-                        // Return old stock to product stock first
-                        $productStock->update([
-                            'home_stock' => $productStock->home_stock + $keepProduct->home_stock,
-                            'store_stock' => $productStock->store_stock + $keepProduct->store_stock,
-                            'all_stock' => $productStock->all_stock + $keepProduct->total_items
-                        ]);
 
-                        if ($keepProduct->home_stock > 0) {
-                            setStockHistory(
-                                $productStock->id,
-                                StockActivity::KEEP,
-                                StockStatus::CHANGE_REMOVE,
-                                StockType::HOME_STOCK,
-                                NULL,
-                                $keepProduct->home_stock,
-                                $this->keep->no_keep,
-                                $productStock->all_stock,
-                                $productStock->home_stock,
-                                $productStock->store_stock,
-                                $productStock->pre_order_stock,
-                                true
+                        // Check if there are any transfers associated with this keep product
+                        $hasTransferredStock = TransferProductStock::whereJsonContains('keep_product_id', $keepProduct->id)->exists();
+
+                        // Calculate the difference between current and new quantity
+                        $quantityDifference = $cartItem['quantity'] - $keepProduct->total_items;
+                        // Get current stocks from KeepProduct
+                        $currentHomeStock = $keepProduct->home_stock;
+                        $currentStoreStock = $keepProduct->store_stock;
+
+                        // Smart allocation based on customer group
+                        $isReseller = $this->group_id == 1; // Group ID 1 is Reseller, 2 is Online
+
+                        if ($quantityDifference < 0) {
+                            // Decreasing quantity - remove stock based on customer preference
+                            $decreaseAmount = abs($quantityDifference);
+                            $newHomeStock = $currentHomeStock;
+                            $newStoreStock = $currentStoreStock;
+
+                            if ($isReseller) {
+                                // For reseller, decrease from home_stock first, then store_stock
+                                if ($newHomeStock >= $decreaseAmount) {
+                                    $newHomeStock -= $decreaseAmount;
+                                } else {
+                                    // If home_stock is not enough, take remaining from store_stock
+                                    $remainingDecrease = $decreaseAmount - $newHomeStock;
+                                    $newHomeStock = 0;
+                                    $newStoreStock -= $remainingDecrease;
+                                }
+                            } else {
+                                // For online, decrease from store_stock first, then home_stock
+                                if ($newStoreStock >= $decreaseAmount) {
+                                    $newStoreStock -= $decreaseAmount;
+                                } else {
+                                    // If store_stock is not enough, take remaining from home_stock
+                                    $remainingDecrease = $decreaseAmount - $newStoreStock;
+                                    $newStoreStock = 0;
+                                    $newHomeStock -= $remainingDecrease;
+                                }
+                            }
+
+                            // Calculate how much stock to return to ProductStock
+                            $homeStockDifference = $currentHomeStock - $newHomeStock;
+                            $storeStockDifference = $currentStoreStock - $newStoreStock;
+
+                            // Return stock to product stock (regardless of whether it has transfers)
+                            $productStock->update([
+                                'home_stock' => $productStock->home_stock + $homeStockDifference,
+                                'store_stock' => $productStock->store_stock + $storeStockDifference,
+                                'all_stock' => $productStock->all_stock + $decreaseAmount
+                            ]);
+
+                            // Create stock history records
+                            if ($homeStockDifference > 0) {
+                                setStockHistory(
+                                    $productStock->id,
+                                    StockActivity::KEEP,
+                                    StockStatus::CHANGE_REMOVE,
+                                    StockType::HOME_STOCK,
+                                    NULL,
+                                    $homeStockDifference,
+                                    $this->keep->no_keep,
+                                    $productStock->all_stock,
+                                    $productStock->home_stock,
+                                    $productStock->store_stock,
+                                    $productStock->pre_order_stock,
+                                    true
+                                );
+                            }
+
+                            if ($storeStockDifference > 0) {
+                                setStockHistory(
+                                    $productStock->id,
+                                    StockActivity::KEEP,
+                                    StockStatus::CHANGE_REMOVE,
+                                    StockType::STORE_STOCK,
+                                    NULL,
+                                    $storeStockDifference,
+                                    $this->keep->no_keep,
+                                    $productStock->all_stock,
+                                    $productStock->home_stock,
+                                    $productStock->store_stock,
+                                    $productStock->pre_order_stock,
+                                    true
+                                );
+                            }
+
+                            // Update the keepProduct with new values
+                            $keepProduct->update([
+                                'total_items' => $cartItem['quantity'],
+                                'home_stock' => $newHomeStock,
+                                'store_stock' => $newStoreStock,
+                                'selling_price' => $cartItem['selling_price'],
+                                'total_price' => $cartItem['total_price']
+                            ]);
+                        } else if ($quantityDifference > 0) {
+                            // Increasing quantity
+
+                            // Return old stock to ProductStock first
+                            $productStock->update([
+                                'home_stock' => $productStock->home_stock + $currentHomeStock,
+                                'store_stock' => $productStock->store_stock + $currentStoreStock,
+                                'all_stock' => $productStock->all_stock + $keepProduct->total_items
+                            ]);
+
+                            // Create stock history records for returning
+                            if ($currentHomeStock > 0) {
+                                setStockHistory(
+                                    $productStock->id,
+                                    StockActivity::KEEP,
+                                    StockStatus::CHANGE_REMOVE,
+                                    StockType::HOME_STOCK,
+                                    NULL,
+                                    $currentHomeStock,
+                                    $this->keep->no_keep,
+                                    $productStock->all_stock,
+                                    $productStock->home_stock,
+                                    $productStock->store_stock,
+                                    $productStock->pre_order_stock,
+                                    true
+                                );
+                            }
+
+                            if ($currentStoreStock > 0) {
+                                setStockHistory(
+                                    $productStock->id,
+                                    StockActivity::KEEP,
+                                    StockStatus::CHANGE_REMOVE,
+                                    StockType::STORE_STOCK,
+                                    NULL,
+                                    $currentStoreStock,
+                                    $this->keep->no_keep,
+                                    $productStock->all_stock,
+                                    $productStock->home_stock,
+                                    $productStock->store_stock,
+                                    $productStock->pre_order_stock,
+                                    true
+                                );
+                            }
+
+                            // Now allocate the new total quantity from ProductStock
+                            $primaryStockType = $isReseller ? 'store_stock' : 'home_stock';
+                            $secondaryStockType = $isReseller ? 'home_stock' : 'store_stock';
+
+                            $stockAllocation = $this->allocateStockBasedOnGroup(
+                                $productStock,
+                                $cartItem['quantity'],
+                                $primaryStockType,
+                                $secondaryStockType
                             );
+
+                            // Update the keepProduct with new allocation
+                            $keepProduct->update([
+                                'total_items' => $cartItem['quantity'],
+                                'home_stock' => $stockAllocation['home_stock'],
+                                'store_stock' => $stockAllocation['store_stock'],
+                                'selling_price' => $cartItem['selling_price'],
+                                'total_price' => $cartItem['total_price']
+                            ]);
+
+                            // Update ProductStock with remaining stock
+                            $productStock->update([
+                                'home_stock' => $stockAllocation['remaining_home_stock'],
+                                'store_stock' => $stockAllocation['remaining_store_stock'],
+                                'all_stock' => $stockAllocation['remaining_home_stock'] + $stockAllocation['remaining_store_stock']
+                            ]);
+
+                            // Create stock history records for new allocation
+                            if ($stockAllocation['home_stock'] > 0) {
+                                setStockHistory(
+                                    $productStock->id,
+                                    StockActivity::KEEP,
+                                    StockStatus::CHANGE_ADD,
+                                    StockType::HOME_STOCK,
+                                    NULL,
+                                    $stockAllocation['home_stock'],
+                                    $this->keep->no_keep,
+                                    $productStock->all_stock,
+                                    $productStock->home_stock,
+                                    $productStock->store_stock,
+                                    $productStock->pre_order_stock,
+                                    true
+                                );
+                            }
+
+                            if ($stockAllocation['store_stock'] > 0) {
+                                setStockHistory(
+                                    $productStock->id,
+                                    StockActivity::KEEP,
+                                    StockStatus::CHANGE_ADD,
+                                    StockType::STORE_STOCK,
+                                    NULL,
+                                    $stockAllocation['store_stock'],
+                                    $this->keep->no_keep,
+                                    $productStock->all_stock,
+                                    $productStock->home_stock,
+                                    $productStock->store_stock,
+                                    $productStock->pre_order_stock,
+                                    true
+                                );
+                            }
+                        } else {
+                            // Quantity hasn't changed, just update pricing if needed
+                            $keepProduct->update([
+                                'selling_price' => $cartItem['selling_price'],
+                                'total_price' => $cartItem['total_price']
+                            ]);
                         }
-
-                        if ($keepProduct->store_stock > 0) {
-                            setStockHistory(
-                                $productStock->id,
-                                StockActivity::KEEP,
-                                StockStatus::CHANGE_REMOVE,
-                                StockType::STORE_STOCK,
-                                NULL,
-                                $keepProduct->store_stock,
-                                $this->keep->no_keep,
-                                $productStock->all_stock,
-                                $productStock->home_stock,
-                                $productStock->store_stock,
-                                $productStock->pre_order_stock,
-                                true
-                            );
-                        }
-
-                        // Take new stock from product stock for the updated quantity
-                        $keepStock = $this->calculateKeepStock($productStock, $cartItem, $stockType, $notStockType);
-                        // Update the keepProduct with new values
-                        $keepProduct->update([
-                            'total_items' => $cartItem['quantity'],
-                            $stockType => $keepStock[$stockType],
-                            $notStockType => $keepStock[$notStockType],
-                            'selling_price' => $cartItem['selling_price'],
-                            'purchase_price' => $productStock->purchase_price,
-                            'total_price' => $cartItem['total_price']
-                        ]);
-
-                        // Update stock in product_stock
-                        $this->updateProductStock($productStock, $keepStock, $stockType, $notStockType, $this->keep->no_keep);
                     }
-                }
             } else {
-                // Create new keep product for items that don't exist
-                $keepStock = $this->calculateKeepStock($productStock, $cartItem, $stockType, $notStockType);
+                // 2. & 3. If KeepProduct doesn't exist, create a new one with stock based on customer group
+                $stockAllocation = $this->allocateStockBasedOnGroup(
+                    $productStock,
+                    $cartItem['quantity'],
+                    $primaryStockType,
+                    $secondaryStockType
+                );
 
+                // Create new KeepProduct
                 KeepProduct::create([
                     'keep_id' => $this->keep->id,
                     'product_stock_id' => $productStockId,
                     'total_items' => $cartItem['quantity'],
-                    $stockType => $keepStock[$stockType],
-                    $notStockType => $keepStock[$notStockType],
+                    'home_stock' => $stockAllocation['home_stock'],
+                    'store_stock' => $stockAllocation['store_stock'],
                     'selling_price' => $cartItem['selling_price'],
                     'purchase_price' => $productStock->purchase_price,
                     'total_price' => $cartItem['total_price']
                 ]);
 
-                // Update stock in product_stock
-                $this->updateProductStock($productStock, $keepStock, $stockType, $notStockType, $this->keep->no_keep);
+                // Update ProductStock based on the allocation
+                $productStock->update([
+                    'home_stock' => $stockAllocation['remaining_home_stock'],
+                    'store_stock' => $stockAllocation['remaining_store_stock'],
+                    'all_stock' => $stockAllocation['remaining_home_stock'] + $stockAllocation['remaining_store_stock']
+                ]);
+
+                // Create stock history records
+                if ($stockAllocation['home_stock'] > 0) {
+                    setStockHistory(
+                        $productStock->id,
+                        StockActivity::KEEP,
+                        StockStatus::ADD,
+                        StockType::HOME_STOCK,
+                        NULL,
+                        $stockAllocation['home_stock'],
+                        $this->keep->no_keep,
+                        $productStock->all_stock,
+                        $productStock->home_stock,
+                        $productStock->store_stock,
+                        $productStock->pre_order_stock,
+                        true
+                    );
+                }
+
+                if ($stockAllocation['store_stock'] > 0) {
+                    setStockHistory(
+                        $productStock->id,
+                        StockActivity::KEEP,
+                        StockStatus::ADD,
+                        StockType::STORE_STOCK,
+                        NULL,
+                        $stockAllocation['store_stock'],
+                        $this->keep->no_keep,
+                        $productStock->all_stock,
+                        $productStock->home_stock,
+                        $productStock->store_stock,
+                        $productStock->pre_order_stock,
+                        true
+                    );
+                }
             }
         }
 
@@ -569,55 +752,71 @@ class CreateKeep extends Component
         foreach ($existingKeepProducts as $productStockId => $keepProduct) {
             if (!in_array($productStockId, $processedItems)) {
                 $productStock = ProductStock::where('id', $productStockId)->first();
-                $transferProductStock = TransferProductStock::whereJsonContains('keep_product_id', $keepProduct->id)
-                    ->with('transferStock')
+
+                // Check if this keep product has any transfers
+                $transferProductStocks = TransferProductStock::whereJsonContains('keep_product_id', $keepProduct->id)
                     ->get();
 
-                // Only return stock if there are no transfers related to this item
-                if ($transferProductStock->isEmpty() || $transferProductStock->sum('stock') == 0) {
-                    // Return stock to product_stock
-                    $productStock->update([
-                        'home_stock' => $productStock->home_stock + $keepProduct->home_stock,
-                        'store_stock' => $productStock->store_stock + $keepProduct->store_stock,
-                        'all_stock' => $productStock->all_stock + $keepProduct->total_items
-                    ]);
+                if ($transferProductStocks->isNotEmpty()) {
+                    // Remove keep_product_id from TransferProductStock records
+                    foreach ($transferProductStocks as $transferProductStock) {
+                        $keepProductIds = $transferProductStock->keep_product_id ?? [];
 
-                    if ($keepProduct->home_stock > 0) {
-                        setStockHistory(
-                            $productStock->id,
-                            StockActivity::KEEP,
-                            StockStatus::CHANGE_REMOVE,
-                            StockType::HOME_STOCK,
-                            NULL,
-                            $keepProduct->home_stock,
-                            $this->keep->no_keep,
-                            $productStock->all_stock,
-                            $productStock->home_stock,
-                            $productStock->store_stock,
-                            $productStock->pre_order_stock,
-                            true
-                        );
+                        if (is_array($keepProductIds)) {
+                            $keepProductIds = array_filter($keepProductIds, function ($id) use ($keepProduct) {
+                                return $id != $keepProduct->id;
+                            });
+
+                            $transferProductStock->update([
+                                'keep_product_id' => array_values($keepProductIds)
+                            ]);
+                        }
                     }
-
-                    if ($keepProduct->store_stock > 0) {
-                        setStockHistory(
-                            $productStock->id,
-                            StockActivity::KEEP,
-                            StockStatus::CHANGE_REMOVE,
-                            StockType::STORE_STOCK,
-                            NULL,
-                            $keepProduct->store_stock,
-                            $this->keep->no_keep,
-                            $productStock->all_stock,
-                            $productStock->home_stock,
-                            $productStock->store_stock,
-                            $productStock->pre_order_stock,
-                            true
-                        );
-                    }
-
-                    $keepProduct->delete();
                 }
+
+                // Return stock to product_stock
+                $productStock->update([
+                    'home_stock' => $productStock->home_stock + $keepProduct->home_stock,
+                    'store_stock' => $productStock->store_stock + $keepProduct->store_stock,
+                    'all_stock' => $productStock->all_stock + $keepProduct->total_items
+                ]);
+
+                if ($keepProduct->home_stock > 0) {
+                    setStockHistory(
+                        $productStock->id,
+                        StockActivity::KEEP,
+                        StockStatus::CHANGE_REMOVE,
+                        StockType::HOME_STOCK,
+                        NULL,
+                        $keepProduct->home_stock,
+                        $this->keep->no_keep,
+                        $productStock->all_stock,
+                        $productStock->home_stock,
+                        $productStock->store_stock,
+                        $productStock->pre_order_stock,
+                        true
+                    );
+                }
+
+                if ($keepProduct->store_stock > 0) {
+                    setStockHistory(
+                        $productStock->id,
+                        StockActivity::KEEP,
+                        StockStatus::CHANGE_REMOVE,
+                        StockType::STORE_STOCK,
+                        NULL,
+                        $keepProduct->store_stock,
+                        $this->keep->no_keep,
+                        $productStock->all_stock,
+                        $productStock->home_stock,
+                        $productStock->store_stock,
+                        $productStock->pre_order_stock,
+                        true
+                    );
+                }
+
+                // Delete the keep product
+                $keepProduct->delete();
             }
         }
 
@@ -625,72 +824,50 @@ class CreateKeep extends Component
         $this->mount($this->keep->id);
     }
 
-    // Helper function to calculate how much stock to take from each stock type
-    private function calculateKeepStock($productStock, $cartItem, $stockType, $notStockType)
+    /**
+     * Allocate stock based on customer group
+     *
+     * @param ProductStock $productStock
+     * @param int $quantity
+     * @param string $primaryStockType
+     * @param string $secondaryStockType
+     * @return array
+     */
+    private function allocateStockBasedOnGroup($productStock, $quantity, $primaryStockType, $secondaryStockType)
     {
-        $keepStock = [
-            $stockType => 0,
-            $notStockType => 0
+        $allocation = [
+            'home_stock' => 0,
+            'store_stock' => 0,
+            'remaining_home_stock' => $productStock->home_stock,
+            'remaining_store_stock' => $productStock->store_stock
         ];
 
-        if ($productStock->$stockType < $cartItem['quantity']) {
-            $keepStock[$stockType] = $productStock->$stockType;
-            $keepStock[$notStockType] = $cartItem['quantity'] - $productStock->$stockType;
+        // Try to take from primary stock type first
+        $primaryStockAvailable = $productStock->$primaryStockType;
+        if ($primaryStockAvailable >= $quantity) {
+            // If primary stock is sufficient
+            $allocation[$primaryStockType] = $quantity;
+            $allocation['remaining_' . $primaryStockType] = $primaryStockAvailable - $quantity;
         } else {
-            $keepStock[$stockType] = $cartItem['quantity'];
+            // If primary stock is not sufficient, take what's available
+            $allocation[$primaryStockType] = $primaryStockAvailable;
+            $allocation['remaining_' . $primaryStockType] = 0;
+
+            // Then take the rest from secondary stock
+            $remainingNeeded = $quantity - $primaryStockAvailable;
+            $secondaryStockAvailable = $productStock->$secondaryStockType;
+
+            if ($secondaryStockAvailable >= $remainingNeeded) {
+                $allocation[$secondaryStockType] = $remainingNeeded;
+                $allocation['remaining_' . $secondaryStockType] = $secondaryStockAvailable - $remainingNeeded;
+            } else {
+                // If even secondary stock is not enough (this shouldn't happen with proper validation)
+                $allocation[$secondaryStockType] = $secondaryStockAvailable;
+                $allocation['remaining_' . $secondaryStockType] = 0;
+            }
         }
 
-        return $keepStock;
-    }
-
-    // Helper function to update product stock and create history
-    private function updateProductStock($productStock, $keepStock, $stockType, $notStockType, $noKeep)
-    {
-        $stockStatus = $this->isEdit ? StockStatus::CHANGE_ADD : StockStatus::ADD;
-
-        if ($keepStock[$stockType] > 0) {
-            $productStock->update([
-                $stockType => $productStock->$stockType - $keepStock[$stockType],
-                'all_stock' => $productStock->all_stock - $keepStock[$stockType],
-            ]);
-
-            setStockHistory(
-                $productStock->id,
-                StockActivity::KEEP,
-                $stockStatus,
-                NULL,
-                $stockType,
-                $keepStock[$stockType],
-                $noKeep,
-                $productStock->all_stock,
-                $productStock->home_stock,
-                $productStock->store_stock,
-                $productStock->pre_order_stock,
-                true
-            );
-        }
-
-        if ($keepStock[$notStockType] > 0) {
-            $productStock->update([
-                $notStockType => $productStock->$notStockType - $keepStock[$notStockType],
-                'all_stock' => $productStock->all_stock - $keepStock[$notStockType],
-            ]);
-
-            setStockHistory(
-                $productStock->id,
-                StockActivity::KEEP,
-                $stockStatus,
-                NULL,
-                $notStockType,
-                $keepStock[$notStockType],
-                $noKeep,
-                $productStock->all_stock,
-                $productStock->home_stock,
-                $productStock->store_stock,
-                $productStock->pre_order_stock,
-                true
-            );
-        }
+        return $allocation;
     }
 
     public function resetKeep() {

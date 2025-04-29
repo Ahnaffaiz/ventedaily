@@ -82,19 +82,11 @@
                                                 @php
                                                     $mainStock = $group_id == 1 ? 'store_stock' : 'home_stock';
                                                 @endphp
-                                                @if ($productStock['transfer'] + $productStock[$mainStock] < $productStock['quantity'])
-                                                    <button wire:click="removeProductStock({{ $productStock['id'] }})"
-                                                        class="h-8 px-4 py-1 text-sm rounded-md bg-primary/25 text-primary hover:bg-primary hover:text-white font-md"
-                                                        type="button">
-                                                        -
-                                                    </button>
-                                                @else
-                                                    <button class="h-8 px-4 py-1 text-sm rounded-md bg-danger/25 text-danger font-md"
-                                                        type="button">
-                                                        x
-                                                    </button>
-
-                                                @endif
+                                                <button wire:click="removeProductStock({{ $productStock['id'] }})"
+                                                    class="h-8 px-4 py-1 text-sm rounded-md bg-primary/25 text-primary hover:bg-primary hover:text-white font-md"
+                                                    type="button">
+                                                    -
+                                                </button>
                                             @else
                                                 <button wire:click="removeProductStock({{ $productStock['id'] }})"
                                                     class="h-8 px-4 py-1 text-sm rounded-md bg-primary/25 text-primary hover:bg-primary hover:text-white font-md"

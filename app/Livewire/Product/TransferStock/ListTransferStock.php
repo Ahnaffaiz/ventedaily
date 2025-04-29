@@ -243,12 +243,33 @@ class ListTransferStock extends Component
     public function createTransferProductStock($transferStockId)
     {
         foreach ($this->cart as $cart) {
+            // Create TransferProductStock record
             TransferProductStock::create([
                 'transfer_stock_id' => $transferStockId,
                 'product_stock_id' => $cart['id'],
                 'stock' => $cart['stock'],
                 'keep_product_id' => $cart['keep_product_id'],
             ]);
+
+            // Update the stock in each related KeepProduct
+            if (!empty($cart['keep_product_id'])) {
+                foreach ($cart['keep_product_id'] as $keepProductId) {
+                    $keepProduct = KeepProduct::find($keepProductId);
+
+                    if ($keepProduct) {
+                        // Calculate new source and destination stock values
+                        $sourceStock = $this->transfer_from; // e.g., 'home_stock'
+                        $destinationStock = $this->transfer_to; // e.g., 'store_stock'
+                        $amountToMove = $keepProduct->$sourceStock;
+
+                        // Update the KeepProduct with the moved stock
+                        $keepProduct->update([
+                            $sourceStock => 0, // Zero out the source stock
+                            $destinationStock => $keepProduct->$destinationStock + $amountToMove // Add to destination stock
+                        ]);
+                    }
+                }
+            }
         }
     }
 

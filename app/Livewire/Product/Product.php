@@ -144,13 +144,15 @@ class Product extends Component
 
     public function openModal()
     {
-        $this->reset();
         $this->isOpen = true;
     }
 
     public function closeModal()
     {
-        $this->reset();
+        $this->isStock = false;
+        $this->isImport = false;
+        $this->isHistory = false;
+        $this->isProductStock = false;
         $this->isOpen = false;
     }
 

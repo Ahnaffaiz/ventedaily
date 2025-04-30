@@ -147,7 +147,7 @@ Permissions are assigned to roles, which are then assigned to users, creating a 
 
 1. Clone the repository
    ```bash
-   git clone [repository-url]
+   git clone [git@github.com:Ahnaffaiz/ventedaily.git](https://github.com/Ahnaffaiz/ventedaily.git)
    cd ventedaily
    ```
 

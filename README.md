@@ -40,9 +40,14 @@ npm install
 # Set up environment
 cp .env.example .env
 php artisan key:generate
+```
 
+Configure your database settings in the `.env` file
+
+```bash
 # Run migrations
 php artisan migrate
+php artisan db:seed
 
 # Compile assets
 npm run dev

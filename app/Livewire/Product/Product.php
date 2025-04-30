@@ -4,6 +4,7 @@ namespace App\Livewire\Product;
 
 use App\Enums\StockActivity;
 use App\Enums\StockStatus;
+use App\Exports\ProductStockExport;
 use App\Imports\ProductImport;
 use App\Imports\ProductStockImport;
 use App\Models\Category;
@@ -669,6 +670,15 @@ class Product extends Component
         $this->isEditStock = false;
         $this->editingProduct = null;
         $this->editingStocks = [];
+    }
+
+    public function exportProductStock()
+    {
+        try {
+            return Excel::download(new ProductStockExport(), 'product-stock-'.Carbon::now()->format('Y-m-d').'.xlsx');
+        } catch (Exception $e) {
+            $this->alert('error', 'Failed to export: ' . $e->getMessage());
+        }
     }
 
     public function updatedPurchasePrice()

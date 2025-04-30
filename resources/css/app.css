@@ -8,11 +8,11 @@
 
 /* Explicit preloader styling to ensure the background color works */
 #preloader {
-    @apply bg-slate-900 !important;
+    @apply bg-white !important;
 }
 
 .dark #preloader, [data-mode="dark"] #preloader {
-    @apply bg-slate-850 !important;
+    @apply bg-gray-800 !important;
 }
 
 @layer base {

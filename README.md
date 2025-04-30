@@ -30,7 +30,7 @@ For detailed documentation, please refer to the [VenteDaily Documentation](resou
 
 ```bash
 # Clone the repository
-git clone [repository-url]
+git clone https://github.com/Ahnaffaiz/ventedaily.git
 cd ventedaily
 
 # Install dependencies

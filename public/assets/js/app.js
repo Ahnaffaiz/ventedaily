@@ -112,9 +112,36 @@ class ThemeCustomizer {
     initConfig() {
         this.defaultConfig = JSON.parse(JSON.stringify(window.defaultConfig));
         this.config = JSON.parse(JSON.stringify(window.config));
+
+        // Load config from localStorage if it exists
+        const savedConfig = localStorage.getItem('__ATTEX_CONFIG__');
+        if (savedConfig) {
+            try {
+                const parsedConfig = JSON.parse(savedConfig);
+                this.config = parsedConfig;
+
+                // Apply saved config immediately on page load
+                this.applyThemeConfig(parsedConfig);
+            } catch (e) {
+                console.error('Error parsing saved config:', e);
+            }
+        }
+
         this.setSwitchFromConfig();
     }
 
+    // Apply theme configuration immediately on page load
+    applyThemeConfig(config) {
+        if (config) {
+            this.html.setAttribute('dir', config.direction);
+            this.html.setAttribute('data-mode', config.theme);
+            this.html.setAttribute('data-layout-width', config.layout.width);
+            this.html.setAttribute('data-layout-position', config.layout.position);
+            this.html.setAttribute('data-topbar-color', config.topbar.color);
+            this.html.setAttribute('data-menu-color', config.menu.color);
+            this.html.setAttribute('data-sidenav-view', config.sidenav.view);
+        }
+    }
 
     reverseQuery(element, query) {
         while (element) {
@@ -351,8 +378,9 @@ class ThemeCustomizer {
 
     setSwitchFromConfig() {
 
-        sessionStorage.setItem('__ATTEX_CONFIG__', JSON.stringify(this.config));
-        // localStorage.setItem('__ATTEX_CONFIG__', JSON.stringify(this.config));
+        // Change to use localStorage instead of sessionStorage for theme persistence
+        // sessionStorage.setItem('__ATTEX_CONFIG__', JSON.stringify(this.config));
+        localStorage.setItem('__ATTEX_CONFIG__', JSON.stringify(this.config));
 
         document.querySelectorAll('#theme-customization input[type=checkbox]').forEach(function (checkbox) {
             checkbox.checked = false;

@@ -11,7 +11,7 @@
     x-effect="search = @js($selectedLabel)"
     class="mt-3"
 >
-    <label class="block mb-2" for="{{ $id }}">{{ $title }}</label>
+    <label class="block mb-2 dark:text-dark-primary" for="{{ $id }}">{{ $title }}</label>
 
     <div class="relative">
         <input type="text"
@@ -19,18 +19,18 @@
             @focus="open = true"
             @click.away="open = false"
             @input="$wire.call(searchFunction, search)"
-            class="w-full form-input {{ $errors->first($name) ? 'border-2 border-danger' : '' }}"
+            class="dark:text-gray-200 w-full form-input {{ $errors->first($name) ? 'border-2 border-danger dark:border-danger' : '' }} "
             placeholder="{{ $placeholder ?? 'Search...' }}"
         >
 
         <div x-show="open"
-            class="absolute z-50 w-full mt-1 overflow-y-auto bg-white border border-gray-300 rounded-md shadow-lg max-h-28">
+            class="absolute z-50 w-full mt-1 overflow-y-auto bg-white border border-gray-300 rounded-md shadow-lg max-h-28 dark:bg-slate-700 dark:border-dark-border">
 
             @if (empty($options))
-                <div class="px-4 py-2 text-gray-500">No results found</div>
+                <div class="px-4 py-2 text-gray-500 dark:text-dark-muted">No results found</div>
             @else
                 @foreach ($options as $value => $label)
-                    <div class="px-4 py-2 cursor-pointer hover:bg-gray-100"
+                    <div class="px-4 py-2 cursor-pointer hover:bg-gray-100 dark:hover:bg-dark-tertiary dark:text-dark-secondary"
                         @click="
                             selectedOption = '{{ $value }}';
                             search = '{{ $label }}';
@@ -47,6 +47,6 @@
     <input type="hidden" wire:model="{{ $name }}" id="{{ $id }}">
 
     @error($name)
-        <span class="font-normal is-invalid text-danger text-small" id="is-invalid">{{ $message }}</span>
+        <span class="font-normal is-invalid text-danger dark:text-danger text-small" id="is-invalid">{{ $message }}</span>
     @enderror
 </div>

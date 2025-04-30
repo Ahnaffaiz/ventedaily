@@ -203,7 +203,7 @@
 
             <!-- Footer -->
             <div class="flex justify-end mt-6 space-x-3">
-                <button type="button" class="bg-gray-100 btn" wire:click="closeModal">
+                <button type="button" class="bg-gray-100 btn dark:bg-gray-500 dark:text-gray-100" wire:click="closeModal">
                     Cancel
                 </button>
                 @if($saveButton)
@@ -271,7 +271,7 @@
             @endif
 
             <div class="flex justify-end mt-6 gap-x-4">
-                <button type="button" class="bg-gray-100 btn" wire:click="$toggle('isEditStock')">
+                <button type="button" class="bg-gray-100 btn dark:bg-gray-500 dark:text-gray-100" wire:click="$toggle('isEditStock')">
                     Cancel
                 </button>
                 <button type="button" class="text-white btn bg-primary" wire:click="saveStockChanges">

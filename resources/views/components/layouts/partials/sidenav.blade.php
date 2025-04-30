@@ -23,9 +23,9 @@
                     @endphp
                     <a href="javascript:void(0)" data-fc-type="collapse" class="menu-link">
                         <span class="menu-icon">
-                            <i class="ri-calculator-line {{ $isActive ? 'text-white font-bold' : 'text-gray-300' }}"></i>
+                            <i class="ri-calculator-line {{ $isActive ? 'text-white font-bold' : 'text-gray-300 dark:text-gray-400' }}"></i>
                         </span>
-                        <span class="menu-text {{ $isActive ? 'text-white font-bold' : 'text-gray-300' }}"> Sale </span>
+                        <span class="menu-text {{ $isActive ? 'text-white font-bold' : 'text-gray-300 dark:text-gray-400' }}"> Sale </span>
                         <span class="menu-arrow"></span>
                     </a>
 
@@ -48,9 +48,9 @@
                 @endphp
                 <a href="javascript:void(0)" data-fc-type="collapse" class="menu-link">
                     <span class="menu-icon">
-                        <i class="ri-shopping-bag-line {{ $isActive ? 'text-white font-bold' : 'text-gray-300' }}"></i>
+                        <i class="ri-shopping-bag-line {{ $isActive ? 'text-white font-bold' : 'text-gray-300 dark:text-gray-400' }}"></i>
                     </span>
-                    <span class="menu-text {{ $isActive ? 'text-white font-bold' : 'text-gray-300' }}"> Keep </span>
+                    <span class="menu-text {{ $isActive ? 'text-white font-bold' : 'text-gray-300 dark:text-gray-400' }}"> Keep </span>
                     <span class="menu-arrow"></span>
                 </a>
 
@@ -73,9 +73,9 @@
                 @endphp
                 <a href="javascript:void(0)" data-fc-type="collapse" class="menu-link">
                     <span class="menu-icon">
-                        <i class="ri-gift-line {{ $isActive ? 'text-white font-bold' : 'text-gray-300' }}"></i>
+                        <i class="ri-gift-line {{ $isActive ? 'text-white font-bold' : 'text-gray-300 dark:text-gray-400' }}"></i>
                     </span>
-                    <span class="menu-text {{ $isActive ? 'text-white font-bold' : 'text-gray-300' }}"> Pre Order </span>
+                    <span class="menu-text {{ $isActive ? 'text-white font-bold' : 'text-gray-300 dark:text-gray-400' }}"> Pre Order </span>
                     <span class="menu-arrow"></span>
                 </a>
 
@@ -98,9 +98,9 @@
                 @endphp
                 <a href="javascript:void(0)" data-fc-type="collapse" class="menu-link">
                     <span class="menu-icon">
-                        <i class="ri-emotion-line {{ $isActive ? 'text-white font-bold' : 'text-gray-300' }}"></i>
+                        <i class="ri-emotion-line {{ $isActive ? 'text-white font-bold' : 'text-gray-300 dark:text-gray-400' }}"></i>
                     </span>
-                    <span class="menu-text {{ $isActive ? 'text-white font-bold' : 'text-gray-300' }}"> Ventedaily </span>
+                    <span class="menu-text {{ $isActive ? 'text-white font-bold' : 'text-gray-300 dark:text-gray-400' }}"> Ventedaily </span>
                     <span class="menu-arrow"></span>
                 </a>
 
@@ -132,9 +132,9 @@
                 @endphp
                 <a href="javascript:void(0)" data-fc-type="collapse" class="menu-link">
                     <span class="menu-icon">
-                        <i class="ri-shirt-line {{ $isActive ? 'text-white font-bold' : 'text-gray-300' }}"></i>
+                        <i class="ri-shirt-line {{ $isActive ? 'text-white font-bold' : 'text-gray-300 dark:text-gray-400' }}"></i>
                     </span>
-                    <span class="menu-text {{ $isActive ? 'text-white font-bold' : 'text-gray-300' }}"> Product </span>
+                    <span class="menu-text {{ $isActive ? 'text-white font-bold' : 'text-gray-300 dark:text-gray-400' }}"> Product </span>
                     <span class="menu-arrow"></span>
                 </a>
 
@@ -170,9 +170,9 @@
                 <a href="javascript:void(0)" data-fc-type="collapse" class="menu-link">
                     <span class="menu-icon">
                         <i
-                            class="ri-shopping-cart-2-line {{ $isActive ? 'text-white font-bold' : 'text-gray-300' }}"></i>
+                            class="ri-shopping-cart-2-line {{ $isActive ? 'text-white font-bold' : 'text-gray-300 dark:text-gray-400' }}"></i>
                     </span>
-                    <span class="menu-text {{ $isActive ? 'text-white font-bold' : 'text-gray-300' }}"> Purchase </span>
+                    <span class="menu-text {{ $isActive ? 'text-white font-bold' : 'text-gray-300 dark:text-gray-400' }}"> Purchase </span>
                     <span class="menu-arrow"></span>
                 </a>
 
@@ -194,9 +194,9 @@
                 @endphp
                 <a href="javascript:void(0)" data-fc-type="collapse" class="menu-link">
                     <span class="menu-icon">
-                        <i class="ri-text-wrap {{ $isActive ? 'text-white font-bold' : 'text-gray-300' }}"></i>
+                        <i class="ri-text-wrap {{ $isActive ? 'text-white font-bold' : 'text-gray-300 dark:text-gray-400' }}"></i>
                     </span>
-                    <span class="menu-text {{ $isActive ? 'text-white font-bold' : 'text-gray-300' }}"> Retur </span>
+                    <span class="menu-text {{ $isActive ? 'text-white font-bold' : 'text-gray-300 dark:text-gray-400' }}"> Retur </span>
                     <span class="menu-arrow"></span>
                 </a>
 
@@ -225,9 +225,9 @@
                         @endphp
                         <a href="javascript:void(0)" data-fc-type="collapse" class="menu-link">
                             <span class="menu-icon">
-                                <i class="ri-calculator-line {{ $isActive ? 'text-white font-bold' : 'text-gray-300' }}"></i>
+                                <i class="ri-calculator-line {{ $isActive ? 'text-white font-bold' : 'text-gray-300 dark:text-gray-400' }}"></i>
                             </span>
-                            <span class="menu-text {{ $isActive ? 'text-white font-bold' : 'text-gray-300' }}"> Report </span>
+                            <span class="menu-text {{ $isActive ? 'text-white font-bold' : 'text-gray-300 dark:text-gray-400' }}"> Report </span>
                             <span class="menu-arrow"></span>
                         </a>
 

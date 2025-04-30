@@ -43,7 +43,7 @@
                     </thead>
                     <tbody class="divide-y divide-gray-200 dark:divide-gray-700">
                         @foreach ($roles as $role)
-                            <tr class="{{ $loop->index % 2 === 0 ? 'bg-gray-100 dark:bg-gray-900' : '' }}">
+                            <tr class="">
                                 <th class="w-2/12 px-4 py-4 text-sm text-gray-500 whitespace-nowrap dark:text-gray-200">
                                     {{($roles->currentpage() - 1) * $roles->perpage() + $loop->index + 1}}
                                 </th>

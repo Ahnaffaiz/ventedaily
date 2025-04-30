@@ -12,6 +12,7 @@ export default {
         "./storage/framework/views/*.php",
         "./resources/views/**/*.blade.php",
         "node_modules/@frostui/tailwindcss/dist/*.js",
+        "./public/assets/js/**/*.js", // Added to include your app.js
     ],
 
     darkMode: ["class", '[data-mode="dark"]'],
@@ -43,7 +44,7 @@ export default {
 
                 slate: {
                     ...colors.slate,
-                    850: "#172033", // Adding custom slate-850 color for darker theme
+                    850: "#172033", // Custom slate-850 color for darker theme - matching app.css custom property
                 },
             },
 
@@ -63,19 +64,19 @@ export default {
                 ...theme("height"),
             }),
 
-            // Dark mode specific styles
+            // Dark mode specific styles - aligned with CSS custom properties in app.css
             backgroundColor: {
-                'dark-primary': 'var(--dark-primary, #172033)', // slate-850
-                'dark-secondary': 'var(--dark-secondary, #1e293b)', // slate-800
-                'dark-tertiary': 'var(--dark-tertiary, #334155)', // slate-700
+                'dark-primary': 'var(--dark-primary)', // Using CSS variable from app.css
+                'dark-secondary': 'var(--dark-secondary)',
+                'dark-tertiary': 'var(--dark-tertiary)',
             },
             textColor: {
-                'dark-primary': 'var(--dark-text-primary, #f1f5f9)', // slate-100
-                'dark-secondary': 'var(--dark-text-secondary, #cbd5e1)', // slate-300
-                'dark-muted': 'var(--dark-text-muted, #94a3b8)', // slate-400
+                'dark-primary': 'var(--dark-text-primary)',
+                'dark-secondary': 'var(--dark-text-secondary)',
+                'dark-muted': 'var(--dark-text-muted)',
             },
             borderColor: {
-                'dark-border': 'var(--dark-border, #334155)', // slate-700
+                'dark-border': 'var(--dark-border)',
             },
         },
     },

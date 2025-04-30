@@ -1,8 +1,8 @@
 @props(['id', 'name', 'title', 'placeholder' => null, 'options' => []])
 
 <div class="mt-3">
-    <label class="block mb-2" for="{{ $id }}">{{ $title }}</label>
-    <select class="w-full form-input {{ $errors->first($name) ? 'border-2 border-danger' : '' }}"
+    <label class="block mb-2 dark:text-dark-primary" for="{{ $id }}">{{ $title }}</label>
+    <select class="dark:text-gray-200 w-full form-input {{ $errors->first($name) ? 'border-2 border-danger dark:border-rose-500' : '' }}"
         wire:model.change="{{ $name }}" id="{{ $id }}">
         @if ($placeholder)
             <option value="">{{ $placeholder }}</option>
@@ -12,6 +12,6 @@
         @endforeach
     </select>
     @error($name)
-        <span class="font-normal is-invalid text-danger text-small" id="is-invalid">{{ $message }}</span>
+        <span class="font-normal is-invalid text-danger text-small dark:text-danger" id="is-invalid">{{ $message }}</span>
     @enderror
 </div>

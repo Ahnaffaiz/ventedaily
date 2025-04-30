@@ -5,7 +5,7 @@
         <div class="card-header">
             <h4 class="card-title">
                 Sale
-                <span class="font-bold text-success">{{ $no_sale }}</span>
+                <span class="font-bold text-success dark:text-success">{{ $no_sale }}</span>
             </h4>
         </div>
         <div class="p-6">
@@ -13,11 +13,11 @@
                 <div class="flex gap-5">
                     <div class="flex items-center">
                         <input type="radio" class="form-radio text-primary" wire:model.live="saleFrom" value="keep" id="keep">
-                        <label class="ms-1.5" for="keep">Keep</label>
+                        <label class="ms-1.5 dark:text-gray-200" for="keep">Keep</label>
                     </div>
                     <div class="flex items-center">
                         <input type="radio" class="form-radio text-primary" wire:model.live="saleFrom" value="pre_order" id="pre_order">
-                        <label class="ms-1.5" for="pre_order">Pre Order</label>
+                        <label class="ms-1.5 dark:text-gray-200" for="pre_order">Pre Order</label>
                     </div>
                 </div>
                 <div class="section">
@@ -55,73 +55,73 @@
                     </div>
                 @endif
             </div>
-            <div class="mt-4 overflow-x-auto border border-gray-200 rounded-md section">
-                <table class="min-w-full divide-y divide-gray-200 dark:divide-gray-700">
+            <div class="mt-4 overflow-x-auto border border-gray-200 rounded-md dark:border-gray-600 section">
+                <table class="min-w-full divide-y divide-gray-200 dark:divide-gray-600">
                     <thead>
                         <tr>
-                            <th scope="col" class="px-4 py-4 text-sm font-medium text-center text-gray-500">No</th>
-                            <th scope="col" class="px-4 py-4 text-sm font-medium text-gray-500 text-start">Product Name
+                            <th scope="col" class="px-4 py-4 text-sm font-medium text-center text-gray-500 dark:text-gray-200">No</th>
+                            <th scope="col" class="px-4 py-4 text-sm font-medium text-gray-500 dark:text-gray-200 text-start">Product Name
                             </th>
-                            <th scope="col" class="px-4 py-4 text-sm font-medium text-gray-500 text-start">Color</th>
-                            <th scope="col" class="px-4 py-4 text-sm font-medium text-gray-500 text-start">Size</th>
+                            <th scope="col" class="px-4 py-4 text-sm font-medium text-gray-500 dark:text-gray-200 text-start">Color</th>
+                            <th scope="col" class="px-4 py-4 text-sm font-medium text-gray-500 dark:text-gray-200 text-start">Size</th>
                             @if ($preOrder || $sale?->pre_order_id != null)
-                                <th scope="col" class="px-4 py-4 text-sm font-medium text-gray-500 text-start">Pre Order Stock</th>
+                                <th scope="col" class="px-4 py-4 text-sm font-medium text-gray-500 dark:text-gray-200 text-start">Pre Order Stock</th>
                             @else
                                 @if ($group_id == 2)
-                                    <th scope="col" class="px-4 py-4 text-sm font-medium text-gray-500 text-start">Home Stock
+                                    <th scope="col" class="px-4 py-4 text-sm font-medium text-gray-500 dark:text-gray-200 text-start">Home Stock
                                     </th>
                                 @endif
                                 @if ($group_id == 1)
-                                    <th scope="col" class="px-4 py-4 text-sm font-medium text-gray-500 text-start">Store Stock
+                                    <th scope="col" class="px-4 py-4 text-sm font-medium text-gray-500 dark:text-gray-200 text-start">Store Stock
                                     </th>
                                 @endif
                             @endif
-                            <th scope="col" class="px-4 py-4 text-sm font-medium text-gray-500 text-start">Price (@)
+                            <th scope="col" class="px-4 py-4 text-sm font-medium text-gray-500 dark:text-gray-200 text-start">Price (@)
                             </th>
-                            <th scope="col" class="px-4 py-4 text-sm font-medium text-center text-gray-500">Qty</th>
-                            <th scope="col" class="px-4 py-4 text-sm font-medium text-gray-500 text-start">Total</th>
-                            <th scope="col" class="justify-end px-4 py-4 pr-3 text-sm font-medium text-gray-500"></th>
+                            <th scope="col" class="px-4 py-4 text-sm font-medium text-center text-gray-500 dark:text-gray-200">Qty</th>
+                            <th scope="col" class="px-4 py-4 text-sm font-medium text-gray-500 dark:text-gray-200 text-start">Total</th>
+                            <th scope="col" class="justify-end px-4 py-4 pr-3 text-sm font-medium text-gray-500 dark:text-gray-200"></th>
                         </tr>
                     </thead>
-                    <tbody class="divide-y divide-gray-200 dark:divide-gray-700">
+                    <tbody class="divide-y divide-gray-200 dark:divide-gray-600">
                         @if ($cart != null)
                             @foreach ($cart as $productStock)
-                                <tr class="{{ $loop->index % 2 === 0 ? 'bg-gray-100 dark:bg-gray-900' : '' }}">
-                                    <td class="px-4 py-4 text-sm text-center text-gray-500 whitespace-nowrap">
+                                <tr>
+                                    <td class="px-4 py-4 text-sm text-center text-gray-200 whitespace-nowrap">
                                         {{ $loop->iteration }}
                                     </td>
-                                    <td class="px-4 py-4 text-sm text-gray-500 whitespace-nowrap">
+                                    <td class="px-4 py-4 text-sm text-gray-200 whitespace-nowrap">
                                         {{ $productStock['product'] }}
                                     </td>
-                                    <td class="px-4 py-4 text-sm text-gray-500 whitespace-nowrap">
+                                    <td class="px-4 py-4 text-sm text-gray-200 whitespace-nowrap">
                                         {{ $productStock['color'] }}
                                     </td>
-                                    <td class="px-4 py-4 text-sm text-gray-500 whitespace-nowrap">
+                                    <td class="px-4 py-4 text-sm text-gray-200 whitespace-nowrap">
                                         {{ $productStock['size'] }}
                                     </td>
                                     @if ($preOrder || $sale?->pre_order_id != null)
-                                        <td class="px-4 py-4 text-sm text-gray-500 whitespace-nowrap">
+                                        <td class="px-4 py-4 text-sm text-gray-200 whitespace-nowrap">
                                             {{ $productStock['pre_order_stock'] }}
                                         </td>
                                     @else
                                         @if ($group_id == 2)
-                                            <td class="px-4 py-4 text-sm text-gray-500 whitespace-nowrap">
+                                            <td class="px-4 py-4 text-sm text-gray-200 whitespace-nowrap">
                                                 {{ $productStock['home_stock'] }}
                                             </td>
                                         @endif
                                         @if ($group_id == 1)
-                                            <td class="px-4 py-4 text-sm text-gray-500 whitespace-nowrap">
+                                            <td class="px-4 py-4 text-sm text-gray-200 whitespace-nowrap">
                                                 {{ $productStock['store_stock'] }}
                                             </td>
                                         @endif
                                     @endif
-                                    <td class="px-4 py-4 text-sm text-gray-500 whitespace-nowrap">
+                                    <td class="px-4 py-4 text-sm text-gray-200 whitespace-nowrap">
                                         {{ number_format($productStock['selling_price'], 0, ',', '.') }}
                                     </td>
-                                    <td class="px-4 py-4 text-sm text-gray-500 whitespace-nowrap">
+                                    <td class="px-4 py-4 text-sm text-gray-200 whitespace-nowrap">
                                         <div class="flex items-center justify-center gap-2">
                                             <button wire:click="removeProductStock({{ $productStock['id'] }})"
-                                                class="h-8 px-4 py-1 text-sm rounded-md bg-primary/25 text-primary hover:bg-primary hover:text-white font-md"
+                                                class="h-8 px-4 py-1 text-sm rounded-md bg-primary/25 text-primary hover:bg-primary hover:text-white font-md dark:text-white"
                                                 type="button">
                                                 -
                                             </button>
@@ -129,25 +129,25 @@
                                             <input type="number"
                                                 wire:model.lazy="cart.{{ $productStock['id'] }}.{{ 'quantity' }}"
                                                 wire:change="addToCart({{ $productStock['id'] }})"
-                                                class="w-16 h-8 text-sm text-center text-gray-900 border border-gray-200 rounded-md no-arrow font-base"
+                                                class="w-16 h-8 text-sm text-center text-gray-900 border border-gray-200 rounded-md form-input no-arrow font-base "
                                                 disabled>
 
                                             <button wire:click="addProductStock({{ $productStock['id'] }})"
-                                                class="h-8 px-4 py-1 text-sm rounded-md bg-primary/25 text-primary hover:bg-primary hover:text-white font-md"
+                                                class="h-8 px-4 py-1 text-sm rounded-md bg-primary/25 text-primary hover:bg-primary hover:text-white font-md dark:text-white"
                                                 type="button">
                                                 +
                                             </button>
                                         </div>
                                     </td>
-                                    <td class="px-4 py-4 text-sm text-gray-500 whitespace-nowrap">
+                                    <td class="px-4 py-4 text-sm text-gray-200 whitespace-nowrap">
                                         Rp. {{ number_format($productStock['total_price'], 0, ',', '.') }}
                                     </td>
-                                    <td class="px-4 py-4 text-sm text-gray-500 whitespace-nowrap"></td>
+                                    <td class="px-4 py-4 text-sm text-gray-200 whitespace-nowrap"></td>
                                 </tr>
                             @endforeach
                             <tr>
                                 <td colspan="8" class="py-4 text-center">
-                                    <button class="btn bg-primary/25 text-primary hover:bg-primary hover:text-white"
+                                    <button class="btn bg-primary/25 text-primary hover:bg-primary hover:text-white dark:text-white"
                                         wire:click="openModal('product')" type="button">
                                         Add Product
                                     </button>
@@ -158,19 +158,19 @@
                                 <td class="py-4 text-end">
                                     <p class="mt-2 mb-2 text-lg font-semibold">Sub Total :</p>
                                     <div class="mb-2">
-                                        <a wire:click="openModal('discount')" class="text-base font-bold text-success">
+                                        <a wire:click="openModal('discount')" class="text-base font-bold text-success dark:text-success">
                                             Discount
                                             @if (strtolower($discount_type) === App\Enums\DiscountType::PERSEN)
                                                 <span
-                                                    class="inline-flex items-center gap-1.5 py-0.5 px-1.5 rounded-full text-sm font-medium bg-success/10 text-success">{{ $discount }}%</span>
+                                                    class="inline-flex items-center gap-1.5 py-0.5 px-1.5 rounded-full text-sm font-medium bg-success/10 text-success dark:text-success">{{ $discount }}%</span>
                                             @endif
                                         </a> :
                                     </div>
                                     <div class="mb-2">
-                                        <a wire:click="openModal('tax')" class="text-base font-bold text-danger">
+                                        <a wire:click="openModal('tax')" class="text-base font-bold text-danger dark:text-danger">
                                             Tax
                                             <span
-                                                class="inline-flex items-center gap-1.5 py-0.5 px-1.5 rounded-full text-sm font-medium bg-danger/10 text-danger">{{ $tax }}%</span>
+                                                class="inline-flex items-center gap-1.5 py-0.5 px-1.5 rounded-full text-sm font-medium bg-danger/10 text-danger dark:text-danger">{{ $tax }}%</span>
                                         </a> :
                                     </div>
                                     <div class="mb-2">
@@ -183,11 +183,11 @@
                                     <p class="mt-2 text-lg font-semibold text-end">Rp
                                         {{ number_format($sub_total, 0, ',', '.') }}
                                     </p>
-                                    <p class="mt-2 text-base font-semibold text-success text-end">
+                                    <p class="mt-2 text-base font-semibold text-success dark:text-success text-end">
                                         -Rp.
                                         {{ strtolower($discount_type) === App\Enums\DiscountType::PERSEN ? number_format($sub_total * (int) $discount / 100, 0, ',', '.') : number_format((int) $discount, 0, ',', '.') }}
                                     </p>
-                                    <p class="mt-2 text-base font-semibold text-danger text-end">
+                                    <p class="mt-2 text-base font-semibold text-danger dark:text-danger text-end">
                                         +Rp. {{ number_format($sub_total_after_discount * (int) $tax / 100, 0, ',', '.') }}
                                     </p>
                                     <p class="mt-2 text-base font-semibold text-end">
@@ -205,7 +205,7 @@
                         @else
                             <tr>
                                 <td colspan="8" class="py-4 text-center">
-                                    <button class="btn bg-primary/25 text-primary hover:bg-primary hover:text-white"
+                                    <button class="btn bg-primary/25 text-primary hover:bg-primary hover:text-white dark:text-white"
                                         wire:click="openModal('product')" type="button">
                                         Add Product
                                     </button>

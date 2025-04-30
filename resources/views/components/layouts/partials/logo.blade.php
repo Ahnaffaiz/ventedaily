@@ -1,5 +1,5 @@
 <!-- App Logo -->
-<a href="index.html" class="logo-box">
+<a href="/" class="logo-box">
     <!-- Light Logo -->
     <div class="logo-light">
         <img src="{{ asset('assets/images/main_dark_logo.png') }}" class="logo-lg h-[65px]" alt="Light logo">

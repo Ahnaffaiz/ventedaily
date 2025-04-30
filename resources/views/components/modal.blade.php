@@ -26,7 +26,7 @@
             </div>
 
             <div class="flex justify-end mt-6 gap-x-4">
-                <button class="bg-gray-100 btn" wire:click="{{ $closeButton }}" type="button">
+                <button class="bg-gray-100 btn dark:bg-gray-500 dark:text-gray-100" wire:click="{{ $closeButton }}" type="button">
                     Cancel
                 </button>
                 @if ($saveButton)

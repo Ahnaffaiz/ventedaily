@@ -10,10 +10,10 @@
 <li class="menu-item">
     <a href="{{ is_array($activeRoute) ? route($activeRoute[0], $activeRoute[1]) : route($activeRoute) }}" class="menu-link">
         @if ($iconClass)
-            <span class="menu-icon {{ $isActive ? 'text-white font-bold' : 'text-gray-300' }}">
+            <span class="menu-icon {{ $isActive ? 'text-white font-bold' : 'text-gray-400 dark:text-gray-400' }}">
                 <i class="{{ $iconClass }}"></i>
             </span>
         @endif
-        <span class="menu-text {{ $isActive ? 'text-white font-bold' : 'text-gray-300' }}">{{ $text }}</span>
+        <span class="menu-text {{ $isActive ? 'text-white font-bold' : 'text-gray-400 dark:text-gray-400' }}">{{ $text }}</span>
     </a>
 </li>

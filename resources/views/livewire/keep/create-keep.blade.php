@@ -25,8 +25,8 @@
                     <x-textarea-input id="desc" name="desc" title="Keep Note" />
                 </div>
             </div>
-            <div class="mt-4 overflow-x-auto border border-gray-200 rounded-md section">
-                <table class="min-w-full divide-y divide-gray-200 dark:divide-gray-700">
+            <div class="mt-4 overflow-x-auto border border-gray-200 rounded-md dark:border-gray-600 section">
+                <table class="min-w-full divide-y divide-gray-200 dark:divide-gray-600">
                     <thead>
                         <tr>
                             <th scope="col" class="px-4 py-4 text-sm font-medium text-center text-gray-500">No</th>

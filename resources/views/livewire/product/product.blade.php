@@ -216,12 +216,12 @@
                                             <thead>
                                                 <tr>
                                                     <th class="text-sm text-gray-900"></th>
-                                                    <th class="px-4 text-sm text-gray-900 text-start">Color Size</th>
-                                                    <th class="px-4 text-sm text-gray-900 text-start">Selling Price</th>
-                                                    <th class="text-sm text-gray-900">All</th>
-                                                    <th class="text-sm text-gray-900">Home</th>
-                                                    <th class="text-sm text-gray-900">Store</th>
-                                                    <th class="text-sm text-gray-900">Pre Order</th>
+                                                    <th class="px-4 text-sm text-gray-900 dark:text-gray-100 text-start">Color Size</th>
+                                                    <th class="px-4 text-sm text-gray-900 dark:text-gray-100 text-start">Selling Price</th>
+                                                    <th class="text-sm text-gray-900 dark:text-gray-100">All</th>
+                                                    <th class="text-sm text-gray-900 dark:text-gray-100">Home</th>
+                                                    <th class="text-sm text-gray-900 dark:text-gray-100">Store</th>
+                                                    <th class="text-sm text-gray-900 dark:text-gray-100">Pre Order</th>
                                                     <th class="text-sm text-gray-900"></th>
                                                 </tr>
                                             </thead>
@@ -288,8 +288,8 @@
         </div>
 
         <div class="flex px-3 py-4">
-            <div class="flex flex-col items-center md:items-start flex-grow">
-                <div class="text-sm text-center md:text-left text-gray-600">
+            <div class="flex flex-col items-center flex-grow md:items-start">
+                <div class="text-sm text-center text-gray-600 md:text-left">
                     Showing {{ $products->firstItem() ?? 0 }} to {{ $products->lastItem() ?? 0 }} of {{ $products->total() }} entries
                 </div>
                 <div class="flex justify-start mt-2">

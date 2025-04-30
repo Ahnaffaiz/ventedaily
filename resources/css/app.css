@@ -6,15 +6,24 @@
     display: none;
 }
 
+/* Explicit preloader styling to ensure the background color works */
+#preloader {
+    @apply bg-slate-900 !important;
+}
+
+.dark #preloader, [data-mode="dark"] #preloader {
+    @apply bg-slate-850 !important;
+}
+
 @layer base {
     :root {
-        --dark-primary: #172033; /* slate-850 */
-        --dark-secondary: #1e293b; /* slate-800 */
-        --dark-tertiary: #334155; /* slate-700 */
+        --dark-primary: #0f172a; /* Even darker than slate-850, almost black */
+        --dark-secondary: #111827; /* Darker than previous slate-800 */
+        --dark-tertiary: #1e293b; /* Using previous slate-800 as tertiary */
 
-        --dark-text-primary: #f1f5f9; /* slate-100 */
-        --dark-text-secondary: #cbd5e1; /* slate-300 */
-        --dark-text-muted: #94a3b8; /* slate-400 */
+        --dark-text-primary: #f8fafc; /* slate-50 - brighter white for better contrast */
+        --dark-text-secondary: #f1f5f9; /* slate-100 - brighter than before */
+        --dark-text-muted: #cbd5e1; /* slate-300 - brighter muted text */
 
         --dark-border: #334155; /* slate-700 */
     }

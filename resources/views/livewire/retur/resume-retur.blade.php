@@ -33,7 +33,7 @@
                         </thead>
                         <tbody class="divide-y divide-gray-200 dark:divide-gray-700">
                             @foreach ($returItems as $returItem)
-                                <tr class="{{ $loop->index % 2 === 0 ? 'bg-gray-100 dark:bg-gray-900' : '' }}">
+                                <tr class="">
                                     <th class="px-4 py-4 text-sm text-gray-500 whitespace-nowrap dark:text-gray-200">
                                         {{($returItems->currentpage() - 1) * $returItems->perpage() + $loop->index + 1}}
                                     </th>
@@ -73,7 +73,7 @@
             <div class="px-3 py-4">
                 <div class="flex justify-between">
                     <div class="flex flex-col">
-                        <div class="flex items-center">
+                        {{-- <div class="flex items-center">
                             <label class="w-32 text-sm font-medium text-gray-900">Per Page</label>
                             <select
                                 class="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full p-2.5"
@@ -84,7 +84,7 @@
                                 <option value="50">50</option>
                                 <option value="100">100</option>
                             </select>
-                        </div>
+                        </div> --}}
                         <div class="mt-2 text-sm text-gray-600">
                             Showing {{ $returItems->firstItem() ?? 0 }} to {{ $returItems->lastItem() ?? 0 }} of {{ $returItems->total() }} entries
                         </div>

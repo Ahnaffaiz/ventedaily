@@ -6,8 +6,9 @@
 
 (function () {
 
-    var savedConfig = sessionStorage.getItem("__ATTEX_CONFIG__");
-    // var savedConfig = localStorage.getItem("__ATTEX_CONFIG__");
+    // Use localStorage instead of sessionStorage to persist theme settings
+    // var savedConfig = sessionStorage.getItem("__ATTEX_CONFIG__");
+    var savedConfig = localStorage.getItem("__ATTEX_CONFIG__");
 
     var defaultConfig = {
         direction: "ltr",
@@ -23,7 +24,7 @@
             color: "dark",
         },
         sidenav: {
-            view: "default"  
+            view: "default"
         },
     };
 

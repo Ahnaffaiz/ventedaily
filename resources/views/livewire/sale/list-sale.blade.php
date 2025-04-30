@@ -78,8 +78,8 @@
                 @if ($sales->count() > 0)
                     <thead class="bg-gray-50 dark:bg-gray-800">
                         <tr>
-                            <th scope="col" class="px-4 py-4 text-sm font-medium text-center text-gray-500">No</th>
-                            <th scope="col" class="px-4 py-4 text-sm font-medium text-gray-500 text-start"
+                            <th scope="col" class="px-4 py-4 text-sm font-medium text-center text-gray-200">No</th>
+                            <th scope="col" class="px-4 py-4 text-sm font-medium text-gray-200 text-start"
                                 wire:click="sortByColumn('no_sale')">
                                 No Sale
                                 @if ($sortBy === 'no_sale')
@@ -92,7 +92,7 @@
                                     <i class="ri-expand-up-down-line"></i>
                                 @endif
                             </th>
-                            <th scope="col" class="px-4 py-4 text-sm font-medium text-gray-500 text-start"
+                            <th scope="col" class="px-4 py-4 text-sm font-medium text-gray-200 text-start"
                                 wire:click="sortByColumn('customer_id')">
                                 Customer
                                 @if ($sortBy === 'customer_id')
@@ -106,27 +106,27 @@
                                 @endif
                             </th>
                             @if ($showColumns['keep_id'])
-                                <th scope="col" class="px-4 py-4 text-sm font-medium text-gray-500 text-start">
+                                <th scope="col" class="px-4 py-4 text-sm font-medium text-gray-200 text-start">
                                     No Keep
                                 </th>
                             @endif
                             @if ($showColumns['pre_order_id'])
-                                <th scope="col" class="px-4 py-4 text-sm font-medium text-gray-500 text-start">
+                                <th scope="col" class="px-4 py-4 text-sm font-medium text-gray-200 text-start">
                                     No Pre Order
                                 </th>
                             @endif
                             @if ($showColumns['order_id_marketplace'])
-                                <th scope="col" class="px-4 py-4 text-sm font-medium text-gray-500 text-start">
+                                <th scope="col" class="px-4 py-4 text-sm font-medium text-gray-200 text-start">
                                     Order ID
                                 </th>
                             @endif
                             @if ($showColumns['group'])
-                                <th scope="col" class="px-4 py-4 text-sm font-medium text-gray-500 text-start">
+                                <th scope="col" class="px-4 py-4 text-sm font-medium text-gray-200 text-start">
                                     Group
                                 </th>
                             @endif
                             @if ($showColumns['term_of_payment_id'])
-                                <th scope="col" class="px-4 py-4 text-sm font-medium text-gray-500 text-start"
+                                <th scope="col" class="px-4 py-4 text-sm font-medium text-gray-200 text-start"
                                     wire:click="sortByColumn('term_of_payment_id')">
                                     Term
                                     @if ($sortBy === 'term_of_payment_id')
@@ -141,7 +141,7 @@
                                 </th>
                             @endif
                             @if ($showColumns['total_items'])
-                                <th scope="col" class="px-4 py-4 text-sm font-medium text-gray-500 text-start"
+                                <th scope="col" class="px-4 py-4 text-sm font-medium text-gray-200 text-start"
                                     wire:click="sortByColumn('total_items')">
                                     Total Items
                                     @if ($sortBy === 'total_items')
@@ -156,7 +156,7 @@
                                 </th>
                             @endif
                             @if ($showColumns['sub_total'])
-                                <th scope="col" class="px-4 py-4 text-sm font-medium text-gray-500 text-start"
+                                <th scope="col" class="px-4 py-4 text-sm font-medium text-gray-200 text-start"
                                     wire:click="sortByColumn('sub_total')">
                                     Amount
                                     @if ($sortBy === 'sub_total')
@@ -171,7 +171,7 @@
                                 </th>
                             @endif
                             @if ($showColumns['discount'])
-                                <th scope="col" class="px-4 py-4 text-sm font-medium text-gray-500 text-start"
+                                <th scope="col" class="px-4 py-4 text-sm font-medium text-gray-200 text-start"
                                     wire:click="sortByColumn('discount')">
                                     Discount
                                     @if ($sortBy === 'discount')
@@ -186,7 +186,7 @@
                                 </th>
                             @endif
                             @if ($showColumns['tax'])
-                                <th scope="col" class="px-4 py-4 text-sm font-medium text-gray-500 text-start"
+                                <th scope="col" class="px-4 py-4 text-sm font-medium text-gray-200 text-start"
                                     wire:click="sortByColumn('tax')">
                                     Tax
                                     @if ($sortBy === 'tax')
@@ -201,7 +201,7 @@
                                 </th>
                             @endif
                             @if ($showColumns['total_price'])
-                                <th scope="col" class="px-4 py-4 text-sm font-medium text-gray-500 text-start"
+                                <th scope="col" class="px-4 py-4 text-sm font-medium text-gray-200 text-start"
                                     wire:click="sortByColumn('total_price')">
                                     Total Sale
                                     @if ($sortBy === 'total_price')
@@ -216,7 +216,7 @@
                                 </th>
                             @endif
                             @if ($showColumns['payment_type'])
-                                <th scope="col" class="px-4 py-4 text-sm font-medium text-gray-500 text-start"
+                                <th scope="col" class="px-4 py-4 text-sm font-medium text-gray-200 text-start"
                                     wire:click="sortByColumn('payment_type')">
                                     Payment Type
                                     @if ($sortBy === 'payment_type')
@@ -231,7 +231,7 @@
                                 </th>
                             @endif
                             @if ($showColumns['created_at'])
-                                <th scope="col" class="px-4 py-4 text-sm font-medium text-gray-500 text-start"
+                                <th scope="col" class="px-4 py-4 text-sm font-medium text-gray-200 text-start"
                                     wire:click="sortByColumn('created_at')">
                                     Created at
                                     @if ($sortBy === 'created_at')
@@ -246,7 +246,7 @@
                                 </th>
                             @endif
                             @if ($showColumns['updated_at'])
-                                <th scope="col" class="px-4 py-4 text-sm font-medium text-gray-500 text-start"
+                                <th scope="col" class="px-4 py-4 text-sm font-medium text-gray-200 text-start"
                                     wire:click="sortByColumn('updated_at')">
                                     Updated at
                                     @if ($sortBy === 'updated_at')
@@ -260,13 +260,13 @@
                                     @endif
                                 </th>
                             @endif
-                            <th scope="col" class="justify-end px-4 py-4 pr-3 text-sm font-medium text-gray-500">
+                            <th scope="col" class="justify-end px-4 py-4 pr-3 text-sm font-medium text-gray-200">
                                 Action</th>
                         </tr>
                     </thead>
                     <tbody class="divide-y divide-gray-200 dark:divide-gray-700">
                         @foreach ($sales as $sale)
-                            <tr class="{{ $loop->index % 2 === 0 ? 'bg-gray-100 dark:bg-gray-900' : '' }}">
+                            <tr>
                                 <!-- Always visible columns (mobile and desktop) -->
                                 <th class="px-4 py-4 text-sm text-gray-500 whitespace-nowrap dark:text-gray-200">
                                     {{($sales->currentpage() - 1) * $sales->perpage() + $loop->index + 1}}
@@ -291,11 +291,11 @@
                                 @if ($showColumns['group'])
                                     <td class="px-4 py-4 text-sm text-gray-500 whitespace-nowrap dark:text-gray-200">
                                         @if (strtolower($sale->customer?->group?->name) === 'reseller')
-                                            <span class="inline-flex items-center gap-1.5 py-0.5 px-1.5 rounded-md text-xs font-medium bg-info/10 text-info">
+                                            <span class="inline-flex items-center gap-1.5 py-0.5 px-1.5 rounded-md text-xs font-medium bg-info/10 text-info dark:bg-info dark:text-white">
                                                 {{ ucwords($sale->customer?->group?->name) }}
                                             </span>
                                         @elseif (strtolower($sale->customer?->group?->name) === 'online')
-                                            <span class="inline-flex items-center gap-1.5 py-0.5 px-1.5 rounded-md text-xs font-medium bg-warning/10 text-warning">
+                                            <span class="inline-flex items-center gap-1.5 py-0.5 px-1.5 rounded-md text-xs font-medium bg-warning/10 text-warning dark:bg-warning dark:text-white">
                                                 {{ ucwords($sale->customer?->group?->name) }}
                                             </span>
                                         @endif
@@ -455,7 +455,7 @@
                                             <i class="ri-bank-card-2-line"></i>
                                         </button>
                                         <a wire:navigate href="{{ route('create-sale', ['sale' => $sale->id]) }}"
-                                            class="text-info">
+                                            class="text-info dark:text-sky-500">
                                             <i class="ri-edit-circle-line"></i>
                                         </a>
                                         <button wire:click="deleteAlert({{ $sale->id }})" class="text-danger">
@@ -476,69 +476,14 @@
         </div>
 
         <div class="px-3 py-4">
-            <div class="flex flex-col items-center md:flex-row md:justify-between gap-4">
+            <div class="flex flex-col items-center gap-4 md:flex-row md:justify-between">
                 <div class="flex flex-col items-center md:items-start">
-                    <div class="mt-2 text-sm text-center md:text-left text-gray-600">
+                    <div class="mt-2 text-sm text-center text-gray-600 md:text-left">
                         Showing {{ $sales->firstItem() ?? 0 }} to {{ $sales->lastItem() ?? 0 }} of {{ $sales->total() }} entries
                     </div>
                 </div>
                 <div class="mt-2 md:mt-0">
-                    @if($sales->hasPages())
-                        <nav role="navigation" aria-label="Pagination Navigation" class="flex items-center justify-between">
-                            <div class="flex items-center space-x-2">
-                                {{-- Previous Page Link --}}
-                                @if ($sales->onFirstPage())
-                                    <span class="px-3 py-1 text-sm font-medium text-gray-500 bg-white border border-gray-300 rounded-md cursor-not-allowed">
-                                        Previous
-                                    </span>
-                                @else
-                                    <button wire:click="previousPage('page')" wire:loading.attr="disabled" class="px-3 py-1 text-sm font-medium text-gray-700 bg-white border border-gray-300 rounded-md hover:bg-gray-50">
-                                        Previous
-                                    </button>
-                                @endif
-
-                                {{-- First Page --}}
-                                @if($sales->currentPage() > 3)
-                                    <button wire:click="gotoPage(1)" class="px-3 py-1 text-sm font-medium text-gray-700 bg-white border border-gray-300 rounded-md hover:bg-gray-50">
-                                        1
-                                    </button>
-                                    <span class="px-3 py-1 text-sm font-medium text-gray-500">...</span>
-                                @endif
-
-                                {{-- Pagination Elements --}}
-                                @for($i = max(1, $sales->currentPage() - 1); $i <= min($sales->lastPage(), $sales->currentPage() + 1); $i++)
-                                    @if ($i == $sales->currentPage())
-                                        <span class="px-3 py-1 text-sm font-medium text-white border rounded-md bg-primary border-primary">
-                                            {{ $i }}
-                                        </span>
-                                    @else
-                                        <button wire:click="gotoPage({{ $i }})" class="px-3 py-1 text-sm font-medium text-gray-700 bg-white border border-gray-300 rounded-md hover:bg-gray-50">
-                                            {{ $i }}
-                                        </button>
-                                    @endif
-                                @endfor
-
-                                {{-- Last Page --}}
-                                @if($sales->currentPage() < $sales->lastPage() - 2)
-                                    <span class="px-3 py-1 text-sm font-medium text-gray-500">...</span>
-                                    <button wire:click="gotoPage({{ $sales->lastPage() }})" class="px-3 py-1 text-sm font-medium text-gray-700 bg-white border border-gray-300 rounded-md hover:bg-gray-50">
-                                        {{ $sales->lastPage() }}
-                                    </button>
-                                @endif
-
-                                {{-- Next Page Link --}}
-                                @if ($sales->hasMorePages())
-                                    <button wire:click="nextPage('page')" wire:loading.attr="disabled" class="px-3 py-1 text-sm font-medium text-gray-700 bg-white border border-gray-300 rounded-md hover:bg-gray-50">
-                                        Next
-                                    </button>
-                                @else
-                                    <span class="px-3 py-1 text-sm font-medium text-gray-500 bg-white border border-gray-300 rounded-md cursor-not-allowed">
-                                        Next
-                                    </span>
-                                @endif
-                            </div>
-                        </nav>
-                    @endif
+                    <x-pagination :paginator="$sales" pageName="page" />
                 </div>
             </div>
         </div>

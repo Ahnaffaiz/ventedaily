@@ -42,6 +42,15 @@
     @stack('scripts')
     @include('components.layouts.scripts')
     <x-livewire-alert::scripts />
+
+    <!-- Script to handle LivewireAlert dark mode with wire:navigate -->
+    <script>
+        document.addEventListener('livewire:navigated', function() {
+            if (window.initLivewireAlertDarkMode) {
+                window.initLivewireAlertDarkMode();
+            }
+        });
+    </script>
 </body>
 
 </html>

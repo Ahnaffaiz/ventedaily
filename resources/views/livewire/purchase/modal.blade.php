@@ -18,7 +18,7 @@
                             </thead>
                             <tbody>
                                 @foreach ($productStockList as $productStock)
-                                    <tr class="{{ $loop->index % 2 === 0 ? 'bg-gray-100 dark:bg-gray-900' : '' }}">
+                                    <tr class="">
                                         <td class="px-4 py-4 text-sm text-gray-500 whitespace-nowrap">
                                             {{ $productStock->color->name }}
                                         </td>

@@ -5,52 +5,48 @@
             <x-input-select-search id="product_id" name="product_id" title="Product" placeholder="Select Product"
                 :options="$products" searchFunction="searchProduct"/>
                 @if ($productStockList)
-                <div class="mt-4 border border-gray-300 rounded-md overflow-x-auto">
+                <div class="mt-4 overflow-x-auto border border-gray-300 rounded-md dark:border-gray-600">
                     <table class="min-w-full divide-y divide-gray-200 dark:divide-gray-700">
                         <thead>
                             <tr>
-                                <th class="px-4 py-4 text-sm font-medium text-gray-500 text-start">Color</th>
-                                <th class="px-4 py-4 text-sm font-medium text-gray-500 text-start">Size</th>
+                                <th class="px-4 py-4 text-sm font-medium text-gray-500 text-start dark:text-gray-200">Color Size</th>
                                 @if ($preOrder || $sale?->pre_order_id)
-                                    <th class="px-4 py-4 text-sm font-medium text-gray-500 text-start">Pre Order Stock</th>
+                                    <th class="px-4 py-4 text-sm font-medium text-gray-500 dark:text-gray-200 text-start">Pre Order Stock</th>
                                 @else
                                     @if ($group_id == 2)
-                                        <th class="px-4 py-4 text-sm font-medium text-gray-500 text-start">Home Stock</th>
+                                        <th class="px-4 py-4 text-sm font-medium text-gray-500 dark:text-gray-200 text-start">Home Stock</th>
                                     @endif
                                     @if ($group_id == 1)
-                                        <th class="px-4 py-4 text-sm font-medium text-gray-500 text-start">Store Stock</th>
+                                        <th class="px-4 py-4 text-sm font-medium text-gray-500 dark:text-gray-200 text-start">Store Stock</th>
                                     @endif
                                 @endif
-                                <th class="px-4 py-4 text-sm font-medium text-gray-500 text-start">Price</th>
-                                <th class="px-4 py-4 text-sm font-medium text-center text-gray-500">Action</th>
+                                <th class="px-4 py-4 text-sm font-medium text-gray-500 dark:text-gray-200 text-start">Price</th>
+                                <th class="px-4 py-4 text-sm font-medium text-center text-gray-500 dark:text-gray-200">Action</th>
                             </tr>
                         </thead>
                         <tbody>
                             @foreach ($productStockList as $productStock)
-                                <tr class="{{ $loop->index % 2 === 0 ? 'bg-gray-50 dark:bg-gray-900' : '' }}">
-                                    <td class="px-4 py-4 text-sm text-gray-500 whitespace-nowrap">
-                                        {{ $productStock['color']['name'] }}
-                                    </td>
-                                    <td class="px-4 py-4 text-sm text-gray-500 whitespace-nowrap">
-                                        {{ $productStock['size']['name'] }}
+                                <tr>
+                                    <td class="px-4 py-4 text-sm text-gray-500 dark:text-gray-200 whitespace-nowrap">
+                                        {{ $productStock['color']['name'] }} {{ $productStock['size']['name'] }}
                                     </td>
                                     @if ($preOrder || $sale?->pre_order_id)
-                                        <td class="px-4 py-4 text-sm text-gray-500 whitespace-nowrap">
+                                        <td class="px-4 py-4 text-sm text-gray-500 dark:text-gray-200 whitespace-nowrap">
                                             {{ $productStock['pre_order_stock'] }}
                                         </td>
                                     @else
                                         @if ($group_id == 2)
-                                            <td class="px-4 py-4 text-sm text-gray-500 whitespace-nowrap">
+                                            <td class="px-4 py-4 text-sm text-gray-500 dark:text-gray-200 whitespace-nowrap">
                                                 {{ $productStock['home_stock'] }}
                                             </td>
                                         @endif
                                         @if ($group_id == 1)
-                                            <td class="px-4 py-4 text-sm text-gray-500 whitespace-nowrap">
+                                            <td class="px-4 py-4 text-sm text-gray-500 dark:text-gray-200 whitespace-nowrap">
                                                 {{ $productStock['store_stock'] }}
                                             </td>
                                         @endif
                                     @endif
-                                    <td class="px-4 py-4 text-sm text-gray-500 whitespace-nowrap">
+                                    <td class="px-4 py-4 text-sm text-gray-500 dark:text-gray-200 whitespace-nowrap">
                                         Rp. {{ number_format($productStock['selling_price'], 0, ',', '.') }}
                                     </td>
                                     <td>
@@ -65,7 +61,7 @@
                                                 <input type="number"
                                                     wire:model.lazy="cart.{{ $productStock['id'] }}.{{ 'quantity' }}"
                                                     wire:change="addToCart({{ $productStock['id'] }})"
-                                                    class="w-16 h-8 text-center text-gray-900 border border-gray-200 rounded-md no-arrow font-base" disabled>
+                                                    class="w-16 h-8 text-sm text-center text-gray-900 border border-gray-200 rounded-md form-input no-arrow font-base " disabled>
 
                                                 <button wire:click="addProductStock({{ $productStock['id'] }})"
                                                     class="h-8 px-4 py-1 rounded-md bg-primary/25 text-primary hover:bg-primary hover:text-white font-md"

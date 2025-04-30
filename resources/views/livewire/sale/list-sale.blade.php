@@ -454,9 +454,8 @@
                                         <button wire:click="addPayment({{ $sale->id }})" class="text-primary">
                                             <i class="ri-bank-card-2-line"></i>
                                         </button>
-                                        <a wire:navigate href="{{ route('create-sale', ['sale' => $sale->id]) }}"
-                                            class="text-info dark:text-sky-500">
-                                            <i class="ri-edit-circle-line"></i>
+                                        <a wire:navigate href="{{ route('create-sale', ['sale' => $sale->id]) }}">
+                                            <i class="ri-edit-circle-line text-info "></i>
                                         </a>
                                         <button wire:click="deleteAlert({{ $sale->id }})" class="text-danger">
                                             <i class="text-base ri-delete-bin-2-line"></i>

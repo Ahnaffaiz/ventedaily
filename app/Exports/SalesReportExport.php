@@ -28,11 +28,13 @@ class SalesReportExport implements FromView
         foreach ($sales as $sale) {
 
             //discount
+            $discount = 0;
             if($sale->discount) {
                 $discount = $sale->discount_type === DiscountType::PERSEN ? $sale->sub_total * (int) $sale->discount / 100 : $sale->discount;
             }
 
             //tax
+            $tax = 0;
             if($sale->tax) {
                 $tax = $sale->tax / 100 * ($sale->sub_total - $discount);
             }
@@ -56,7 +58,7 @@ class SalesReportExport implements FromView
             $this->sales[$sale->id]['total_price'] = $sale->total_price;
             $this->sales[$sale->id]['hpp'] = $hpp;
             $this->sales[$sale->id]['profit'] = $profit;
-            $this->sales[$sale->id]['payment_type'] = $sale->salePayment->payment_type == PaymentType::TRANSFER ? $sale->salePayment->bank->name : $sale->salePayment->payment_type;
+            $this->sales[$sale->id]['payment_type'] = $sale->salePayment->payment_type == PaymentType::TRANSFER ? $sale->salePayment?->bank?->name : $sale->salePayment->payment_type;
             $this->sales[$sale->id]['payment_amount'] = $sale->salePayment->amount;
 
             $banks = Bank::get();

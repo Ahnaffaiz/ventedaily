@@ -145,7 +145,7 @@
                     </div>
                 </div>
                 <div class="mt-2 md:mt-0">
-                    <x-pagination :paginator="$transferStocks" pageName="listTransferStocks" />
+                    <x-pagination :paginator="$transferStocks" pageName="page" />
                 </div>
             </div>
         </div>

@@ -75,7 +75,7 @@ class SalesReportExport implements FromView
             if($sale->saleWithdrawal) {
                 $this->sales[$sale->id]['marketplace_price'] = $sale->saleWithdrawal->marketplace_price;
                 $this->sales[$sale->id]['wd_amount'] = $sale->saleWithdrawal->withdrawal_amount;
-                $this->sales[$sale->id]['wd_date'] = Carbon::parse($sale->saleWithdrawal->created_at)->format('d-m-Y');
+                $this->sales[$sale->id]['wd_date'] = Carbon::parse($sale->saleWithdrawal->date)->format('d-m-Y');
                 if($sale->saleShipping?->marketplace?->name == 'tiktok') {
                     $this->sales[$sale->id]['tiktok_fee'] = $sale->saleWithdrawal->marketplace_price - $sale->saleWithdrawal->withdrawal_amount;
                     $this->sales[$sale->id]['shopee_fee'] = 0;

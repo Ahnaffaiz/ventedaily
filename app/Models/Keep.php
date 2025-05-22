@@ -11,7 +11,7 @@ class Keep extends Model
 {
     use HasFactory;
 
-    protected $fillable = ['no_keep', 'customer_id', 'user_id', 'keep_type', 'keep_time', 'total_items', 'total_price', 'desc', 'status'];
+    protected $fillable = ['no_keep', 'customer_id', 'user_id', 'keep_type', 'keep_time', 'marketplace_id', 'order_id_marketplace', 'total_items', 'total_price', 'desc', 'status'];
 
     protected $casts = [
         'keep_type' => KeepType::class,
@@ -36,6 +36,11 @@ class Keep extends Model
     public function sale()
     {
         return $this->hasOne(Sale::class);
+    }
+
+    public function marketplace()
+    {
+        return $this->belongsTo(Marketplace::class);
     }
 
     public static function allTotalItems()

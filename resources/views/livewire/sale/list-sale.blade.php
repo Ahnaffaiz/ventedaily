@@ -78,8 +78,8 @@
                 @if ($sales->count() > 0)
                     <thead class="bg-gray-50 dark:bg-gray-800">
                         <tr>
-                            <th scope="col" class="px-4 py-4 text-sm font-medium text-center text-gray-200">No</th>
-                            <th scope="col" class="px-4 py-4 text-sm font-medium text-gray-200 text-start"
+                            <th scope="col" class="px-4 py-4 text-sm font-medium text-center text-gray-500 dark:text-gray-200">No</th>
+                            <th scope="col" class="px-4 py-4 text-sm font-medium text-gray-500 dark:text-gray-200 text-start"
                                 wire:click="sortByColumn('no_sale')">
                                 No Sale
                                 @if ($sortBy === 'no_sale')
@@ -92,7 +92,7 @@
                                     <i class="ri-expand-up-down-line"></i>
                                 @endif
                             </th>
-                            <th scope="col" class="px-4 py-4 text-sm font-medium text-gray-200 text-start"
+                            <th scope="col" class="px-4 py-4 text-sm font-medium text-gray-500 dark:text-gray-200 text-start"
                                 wire:click="sortByColumn('customer_id')">
                                 Customer
                                 @if ($sortBy === 'customer_id')
@@ -106,27 +106,27 @@
                                 @endif
                             </th>
                             @if ($showColumns['keep_id'])
-                                <th scope="col" class="px-4 py-4 text-sm font-medium text-gray-200 text-start">
+                                <th scope="col" class="px-4 py-4 text-sm font-medium text-gray-500 dark:text-gray-200 text-start">
                                     No Keep
                                 </th>
                             @endif
                             @if ($showColumns['pre_order_id'])
-                                <th scope="col" class="px-4 py-4 text-sm font-medium text-gray-200 text-start">
+                                <th scope="col" class="px-4 py-4 text-sm font-medium text-gray-500 dark:text-gray-200 text-start">
                                     No Pre Order
                                 </th>
                             @endif
                             @if ($showColumns['order_id_marketplace'])
-                                <th scope="col" class="px-4 py-4 text-sm font-medium text-gray-200 text-start">
+                                <th scope="col" class="px-4 py-4 text-sm font-medium text-gray-500 dark:text-gray-200 text-start">
                                     Order ID
                                 </th>
                             @endif
                             @if ($showColumns['group'])
-                                <th scope="col" class="px-4 py-4 text-sm font-medium text-gray-200 text-start">
+                                <th scope="col" class="px-4 py-4 text-sm font-medium text-gray-500 dark:text-gray-200 text-start">
                                     Group
                                 </th>
                             @endif
                             @if ($showColumns['term_of_payment_id'])
-                                <th scope="col" class="px-4 py-4 text-sm font-medium text-gray-200 text-start"
+                                <th scope="col" class="px-4 py-4 text-sm font-medium text-gray-500 dark:text-gray-200 text-start"
                                     wire:click="sortByColumn('term_of_payment_id')">
                                     Term
                                     @if ($sortBy === 'term_of_payment_id')
@@ -141,7 +141,7 @@
                                 </th>
                             @endif
                             @if ($showColumns['total_items'])
-                                <th scope="col" class="px-4 py-4 text-sm font-medium text-gray-200 text-start"
+                                <th scope="col" class="px-4 py-4 text-sm font-medium text-gray-500 dark:text-gray-200 text-start"
                                     wire:click="sortByColumn('total_items')">
                                     Total Items
                                     @if ($sortBy === 'total_items')
@@ -156,7 +156,7 @@
                                 </th>
                             @endif
                             @if ($showColumns['sub_total'])
-                                <th scope="col" class="px-4 py-4 text-sm font-medium text-gray-200 text-start"
+                                <th scope="col" class="px-4 py-4 text-sm font-medium text-gray-500 dark:text-gray-200 text-start"
                                     wire:click="sortByColumn('sub_total')">
                                     Amount
                                     @if ($sortBy === 'sub_total')
@@ -171,7 +171,7 @@
                                 </th>
                             @endif
                             @if ($showColumns['discount'])
-                                <th scope="col" class="px-4 py-4 text-sm font-medium text-gray-200 text-start"
+                                <th scope="col" class="px-4 py-4 text-sm font-medium text-gray-500 dark:text-gray-200 text-start"
                                     wire:click="sortByColumn('discount')">
                                     Discount
                                     @if ($sortBy === 'discount')
@@ -186,7 +186,7 @@
                                 </th>
                             @endif
                             @if ($showColumns['tax'])
-                                <th scope="col" class="px-4 py-4 text-sm font-medium text-gray-200 text-start"
+                                <th scope="col" class="px-4 py-4 text-sm font-medium text-gray-500 dark:text-gray-200 text-start"
                                     wire:click="sortByColumn('tax')">
                                     Tax
                                     @if ($sortBy === 'tax')
@@ -201,7 +201,7 @@
                                 </th>
                             @endif
                             @if ($showColumns['total_price'])
-                                <th scope="col" class="px-4 py-4 text-sm font-medium text-gray-200 text-start"
+                                <th scope="col" class="px-4 py-4 text-sm font-medium text-gray-500 dark:text-gray-200 text-start"
                                     wire:click="sortByColumn('total_price')">
                                     Total Sale
                                     @if ($sortBy === 'total_price')
@@ -216,7 +216,7 @@
                                 </th>
                             @endif
                             @if ($showColumns['payment_type'])
-                                <th scope="col" class="px-4 py-4 text-sm font-medium text-gray-200 text-start"
+                                <th scope="col" class="px-4 py-4 text-sm font-medium text-gray-500 dark:text-gray-200 text-start"
                                     wire:click="sortByColumn('payment_type')">
                                     Payment Type
                                     @if ($sortBy === 'payment_type')
@@ -231,7 +231,7 @@
                                 </th>
                             @endif
                             @if ($showColumns['created_at'])
-                                <th scope="col" class="px-4 py-4 text-sm font-medium text-gray-200 text-start"
+                                <th scope="col" class="px-4 py-4 text-sm font-medium text-gray-500 dark:text-gray-200 text-start"
                                     wire:click="sortByColumn('created_at')">
                                     Created at
                                     @if ($sortBy === 'created_at')
@@ -246,7 +246,7 @@
                                 </th>
                             @endif
                             @if ($showColumns['updated_at'])
-                                <th scope="col" class="px-4 py-4 text-sm font-medium text-gray-200 text-start"
+                                <th scope="col" class="px-4 py-4 text-sm font-medium text-gray-500 dark:text-gray-200 text-start"
                                     wire:click="sortByColumn('updated_at')">
                                     Updated at
                                     @if ($sortBy === 'updated_at')
@@ -260,7 +260,7 @@
                                     @endif
                                 </th>
                             @endif
-                            <th scope="col" class="justify-end px-4 py-4 pr-3 text-sm font-medium text-gray-200">
+                            <th scope="col" class="justify-end px-4 py-4 pr-3 text-sm font-medium text-gray-500 dark:text-gray-200">
                                 Action</th>
                         </tr>
                     </thead>

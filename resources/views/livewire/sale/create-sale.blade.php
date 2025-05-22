@@ -87,38 +87,38 @@
                         @if ($cart != null)
                             @foreach ($cart as $productStock)
                                 <tr>
-                                    <td class="px-4 py-4 text-sm text-center text-gray-200 whitespace-nowrap">
+                                    <td class="px-4 py-4 text-sm text-center text-gray-500 dark:text-gray-200 whitespace-nowrap">
                                         {{ $loop->iteration }}
                                     </td>
-                                    <td class="px-4 py-4 text-sm text-gray-200 whitespace-nowrap">
+                                    <td class="px-4 py-4 text-sm text-gray-500 dark:text-gray-200 whitespace-nowrap">
                                         {{ $productStock['product'] }}
                                     </td>
-                                    <td class="px-4 py-4 text-sm text-gray-200 whitespace-nowrap">
+                                    <td class="px-4 py-4 text-sm text-gray-500 dark:text-gray-200 whitespace-nowrap">
                                         {{ $productStock['color'] }}
                                     </td>
-                                    <td class="px-4 py-4 text-sm text-gray-200 whitespace-nowrap">
+                                    <td class="px-4 py-4 text-sm text-gray-500 dark:text-gray-200 whitespace-nowrap">
                                         {{ $productStock['size'] }}
                                     </td>
                                     @if ($preOrder || $sale?->pre_order_id != null)
-                                        <td class="px-4 py-4 text-sm text-gray-200 whitespace-nowrap">
+                                        <td class="px-4 py-4 text-sm text-gray-500 dark:text-gray-200 whitespace-nowrap">
                                             {{ $productStock['pre_order_stock'] }}
                                         </td>
                                     @else
                                         @if ($group_id == 2)
-                                            <td class="px-4 py-4 text-sm text-gray-200 whitespace-nowrap">
+                                            <td class="px-4 py-4 text-sm text-gray-500 dark:text-gray-200 whitespace-nowrap">
                                                 {{ $productStock['home_stock'] }}
                                             </td>
                                         @endif
                                         @if ($group_id == 1)
-                                            <td class="px-4 py-4 text-sm text-gray-200 whitespace-nowrap">
+                                            <td class="px-4 py-4 text-sm text-gray-500 dark:text-gray-200 whitespace-nowrap">
                                                 {{ $productStock['store_stock'] }}
                                             </td>
                                         @endif
                                     @endif
-                                    <td class="px-4 py-4 text-sm text-gray-200 whitespace-nowrap">
+                                    <td class="px-4 py-4 text-sm text-gray-500 dark:text-gray-200 whitespace-nowrap">
                                         {{ number_format($productStock['selling_price'], 0, ',', '.') }}
                                     </td>
-                                    <td class="px-4 py-4 text-sm text-gray-200 whitespace-nowrap">
+                                    <td class="px-4 py-4 text-sm text-gray-500 dark:text-gray-200 whitespace-nowrap">
                                         <div class="flex items-center justify-center gap-2">
                                             <button wire:click="removeProductStock({{ $productStock['id'] }})"
                                                 class="h-8 px-4 py-1 text-sm rounded-md bg-primary/25 text-primary hover:bg-primary hover:text-white font-md dark:text-white"
@@ -139,10 +139,10 @@
                                             </button>
                                         </div>
                                     </td>
-                                    <td class="px-4 py-4 text-sm text-gray-200 whitespace-nowrap">
+                                    <td class="px-4 py-4 text-sm text-gray-500 dark:text-gray-200 whitespace-nowrap">
                                         Rp. {{ number_format($productStock['total_price'], 0, ',', '.') }}
                                     </td>
-                                    <td class="px-4 py-4 text-sm text-gray-200 whitespace-nowrap"></td>
+                                    <td class="px-4 py-4 text-sm text-gray-500 dark:text-gray-200 whitespace-nowrap"></td>
                                 </tr>
                             @endforeach
                             <tr>

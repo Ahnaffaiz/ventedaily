@@ -7,12 +7,16 @@
                     <td class="font-normal text-md text-start">Type:</td>
                     <td class="font-normal text-md text-start">Customer Name:</td>
                     <td class="font-normal text-md text-start">End Keep:</td>
+                    <td class="font-normal text-md text-start">Marketplace:</td>
+                    <td class="font-normal text-md text-start">Order ID Marketplace:</td>
                 </tr>
                 <tr>
                     <td class="font-bold text-md text-start">{{ $keep?->no_keep }}</td>
                     <td class="font-bold text-md text-start">{{ $keep?->customer?->group?->name }}</td>
                     <td class="font-bold text-md text-start">{{ $keep?->customer?->name }}</td>
                     <td class="font-bold text-md text-start">{{ $keep?->keep_time }}</td>
+                    <td class="font-bold text-md text-start">{{ $keep?->marketplace?->name }}</td>
+                    <td class="font-bold text-md text-start">{{ $keep?->order_id_marketplace }}</td>
                 </tr>
             </tbody>
         </table>

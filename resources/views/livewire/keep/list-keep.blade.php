@@ -143,6 +143,34 @@
                                     @endif
                                 </th>
                             @endif
+                            @if ($showColumns['order_id_marketplace'])
+                                <th scope="col" class="px-4 py-4 text-sm font-medium text-gray-500 text-start"
+                                    wire:click="sortByColumn('marketplace_id')">
+                                    Marketplace
+                                    @if ($sortBy === 'marketplace_id')
+                                        @if ($sortDirection === 'asc')
+                                            <i class="ri-arrow-up-s-line"></i>
+                                        @else
+                                            <i class="ri-arrow-down-s-line"></i>
+                                        @endif
+                                    @else
+                                        <i class="ri-expand-up-down-line"></i>
+                                    @endif
+                                </th>
+                                <th scope="col" class="px-4 py-4 text-sm font-medium text-gray-500 text-start"
+                                    wire:click="sortByColumn('order_id_marketplace')">
+                                    Order ID Marketplace
+                                    @if ($sortBy === 'order_id_marketplace')
+                                        @if ($sortDirection === 'asc')
+                                            <i class="ri-arrow-up-s-line"></i>
+                                        @else
+                                            <i class="ri-arrow-down-s-line"></i>
+                                        @endif
+                                    @else
+                                        <i class="ri-expand-up-down-line"></i>
+                                    @endif
+                                </th>
+                            @endif
                             @if ($showColumns['total_items'])
                                 <th scope="col" class="px-4 py-4 text-sm font-medium text-gray-500 text-start"
                                     wire:click="sortByColumn('total_items')">
@@ -255,6 +283,14 @@
                                 @if ($showColumns['keep_time'])
                                     <td class="px-4 py-4 text-sm text-gray-500 whitespace-nowrap dark:text-gray-200">
                                         {{ $keep->keep_time }}
+                                    </td>
+                                @endif
+                                @if ($showColumns['order_id_marketplace'])
+                                    <td class="px-4 py-4 text-sm text-gray-500 whitespace-nowrap dark:text-gray-200">
+                                        {{ $keep->marketplace_name ?? '-' }}
+                                    </td>
+                                    <td class="px-4 py-4 text-sm text-gray-500 whitespace-nowrap dark:text-gray-200">
+                                        {{ $keep->order_id_marketplace }}
                                     </td>
                                 @endif
                                 @if ($showColumns['total_items'])

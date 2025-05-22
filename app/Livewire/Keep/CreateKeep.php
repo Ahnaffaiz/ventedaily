@@ -11,6 +11,7 @@ use App\Models\Customer;
 use App\Models\Group;
 use App\Models\Keep;
 use App\Models\KeepProduct;
+use App\Models\Marketplace;
 use App\Models\Product;
 use App\Models\ProductStock;
 use App\Models\Setting;
@@ -34,6 +35,7 @@ class CreateKeep extends Component
     public $customers, $groups;
     public $keep, $isEdit, $no_keep;
     public $productStockList, $product_id, $productStock, $products;
+    public $order_id_marketplace, $marketplace_id, $marketplaces;
 
     #[Rule('required')]
     public $group_id;
@@ -69,6 +71,7 @@ class CreateKeep extends Component
         View::share('subRoute', $this->subRoute);
         $this->groups = Group::all()->pluck('name', 'id')->toArray();
         $this->products = Product::all()->pluck('name', 'id')->toArray();
+        $this->marketplaces = Marketplace::all()->pluck('name', 'id')->toArray();
         if($keep) {
             $this->keep = Keep::where('id', $keep)->first();
             if ($this->keep) {
@@ -116,6 +119,12 @@ class CreateKeep extends Component
     public function updatedGroupId()
     {
         $this->customers = Customer::where('group_id', $this->group_id)->pluck('name', 'id')->toArray();
+
+        // Clear order_id_marketplace if group is not Online (group_id != 2)
+        if ($this->group_id != 2) {
+            $this->order_id_marketplace = null;
+            $this->marketplace_id = null;
+        }
     }
 
     public function searchCustomer($query)
@@ -387,6 +396,12 @@ class CreateKeep extends Component
         $this->validate();
         $setting = Setting::first();
         try {
+            // Clear order_id_marketplace if not an Online customer
+            if ($this->group_id != 2) {
+                $this->order_id_marketplace = null;
+                $this->marketplace_id = null;
+            }
+
             $keep = Keep::create([
                 'user_id' => Auth::user()->id,
                 'status' => strtolower(KeepStatus::ACTIVE),
@@ -396,6 +411,8 @@ class CreateKeep extends Component
                 'keep_type' => strtolower($this->keep_type),
                 'total_items' => $this->total_items,
                 'keep_time' => $this->keep_time,
+                'marketplace_id' => $this->marketplace_id,
+                'order_id_marketplace' => $this->order_id_marketplace,
                 'desc' => $this->desc,
             ]);
 
@@ -421,6 +438,8 @@ class CreateKeep extends Component
         $this->selectedCustomerLabel = Customer::find($this->customer_id)?->name ?? '';
         $this->keep_type = $this->keep->keep_type->key;
         $this->keep_time = $this->keep->keep_time;
+        $this->marketplace_id = $this->keep->marketplace_id;
+        $this->order_id_marketplace = $this->keep->order_id_marketplace;
         foreach ($this->keep->keepProducts as $keepProduct) {
             $transferProductStock = TransferProductStock::whereJsonContains('keep_product_id', $keepProduct->id)
                     ->with('transferStock')
@@ -446,6 +465,13 @@ class CreateKeep extends Component
     public function update()
     {
         $this->validate();
+
+        // Clear order_id_marketplace if not an Online customer
+        if ($this->group_id != 2) {
+            $this->order_id_marketplace = null;
+            $this->marketplace_id = null;
+        }
+
         $this->keep->update([
             'user_id' => Auth::user()->id,
             'status' => strtolower(KeepStatus::ACTIVE),
@@ -454,6 +480,8 @@ class CreateKeep extends Component
             'total_items' => $this->total_items,
             'keep_type' => strtolower($this->keep_type),
             'keep_time' => $this->keep_time,
+            'marketplace_id' => $this->marketplace_id,
+            'order_id_marketplace' => $this->order_id_marketplace,
             'desc' => $this->desc,
         ]);
 

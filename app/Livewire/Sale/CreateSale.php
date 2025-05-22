@@ -269,6 +269,8 @@ class CreateSale extends Component
                 $this->group_id = $this->keep->customer->group_id;
                 $this->searchCustomer('');
                 $this->customer_id = $this->keep->customer_id;
+                $this->order_id_marketplace = $this->keep->order_id_marketplace;
+                $this->marketplace_id = $this->keep->marketplace_id;
                 $this->selectedCustomerLabel = $this->keep->customer->name ?? '';
                 $this->cart = [];
                 $stockType = $this->group_id == 1 ? 'store_stock' : 'home_stock';

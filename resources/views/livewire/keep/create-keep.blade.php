@@ -21,6 +21,13 @@
                             type="datetime-local" />
                     @endif
                 </div>
+                <div class="grid gap-4 mt-2 lg:grid-cols-2">
+                     @if ($group_id == 2)
+                        <x-input-select id="marketplace_id" name="marketplace_id" title="Marketplace" :options="$marketplaces"
+                            placeholder="Select Marketplace" />
+                        <x-input-text id="order_id_marketplace" name="order_id_marketplace" title="Order ID Marketplace" placeholder="Enter Order ID" />
+                    @endif
+                </div>
                 <div class="mt-4">
                     <x-textarea-input id="desc" name="desc" title="Keep Note" />
                 </div>

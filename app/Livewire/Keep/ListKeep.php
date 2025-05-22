@@ -9,6 +9,7 @@ use App\Enums\StockType;
 use App\Models\Group;
 use App\Models\Keep;
 use App\Models\KeepProduct;
+use App\Models\Marketplace;
 use App\Models\Purchase;
 use App\Models\TransferProductStock;
 use Exception;
@@ -36,6 +37,8 @@ class ListKeep extends Component
         'group' => true,
         'status' => true,
         'keep_time' => true,
+        'order_id_marketplace' => true,
+        'marketplace_id' => true,
         'total_items' => true,
         'total_price' => true,
         'created_at' => false,
@@ -93,6 +96,9 @@ class ListKeep extends Component
                 'keeps.customer_id',
                 'keeps.keep_time',
                 'keeps.status',
+                'keeps.marketplace_id',
+                'keeps.order_id_marketplace',
+                'marketplaces.name as marketplace_name',
                 'customers.name as customer_name',
                 'customers.group_id',
                 'products.name as product_name',
@@ -101,12 +107,14 @@ class ListKeep extends Component
             )
                 ->join('keeps', 'keep_products.keep_id', '=', 'keeps.id')
                 ->join('customers', 'keeps.customer_id', '=', 'customers.id')
+                ->leftJoin('marketplaces', 'keeps.marketplace_id', '=', 'marketplaces.id')
                 ->join('product_stocks', 'keep_products.product_stock_id', '=', 'product_stocks.id')
                 ->join('products', 'product_stocks.product_id', '=', 'products.id')
                 ->join('colors', 'product_stocks.color_id', '=', 'colors.id')
                 ->join('sizes', 'product_stocks.size_id', '=', 'sizes.id')
                 ->where(function($query) {
                     $query->where('keeps.no_keep', 'like', '%' . $this->query . '%')
+                        ->orWhere('keeps.order_id_marketplace', 'like', '%' . $this->query . '%')
                         ->orWhere('customers.name', 'like', '%' . $this->query . '%')
                         ->orWhere('products.name', 'like', '%' . $this->query . '%')
                         ->orWhere('colors.name', 'like', '%' . $this->query . '%')

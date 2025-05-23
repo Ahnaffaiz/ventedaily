@@ -90,8 +90,11 @@ class OnlineSales extends Component
                     ->whereHas('customer', function($query){
                         return $query->where('group_id', 2);
                     })
-                    ->where('pre_order_id', null)
-                    ->where('no_sale', 'like', '%' . $this->query . '%')
+                    ->where('sales.pre_order_id', null)
+                    ->where(function($query) {
+                        $query->where('sales.no_sale', 'like', '%' . $this->query . '%')
+                              ->orWhere('sales.order_id_marketplace', 'like', '%' . $this->query . '%');
+                    })
                     ->orderBy($this->sortBy, $this->sortDirection)
                     ->paginate($this->perPage, ['*'], 'listOnlineSales')
             ]);

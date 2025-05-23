@@ -9,7 +9,7 @@
             <div class="flex justify-end mb-4">
                 <div class="relative mr-4 ms-auto">
                     <input type="search" class="relative border-none form-input bg-black/5 ps-8" wire:model.live="query"
-                        placeholder="Masukkan No Sale">
+                        placeholder="Search by Sale Number or Order ID">
                     <span class="absolute z-10 text-base -translate-y-1/2 ri-search-line start-2 top-1/2"></span>
                 </div>
                 <div class="relative ms-auto">

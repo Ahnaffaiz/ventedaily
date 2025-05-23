@@ -24,7 +24,7 @@
             <div class="flex justify-end mb-4">
                 <div class="relative mr-4 ms-auto">
                     <input type="search" class="relative h-10 border-none form-input bg-black/5 ps-8"
-                        wire:model.live="query" placeholder="Search...">
+                        wire:model.live="query" placeholder="Search by Retur Number or Order ID...">
                     <span class="absolute z-10 text-base -translate-y-1/2 ri-search-line start-2 top-1/2"></span>
                 </div>
                 <div class="relative ms-auto">
@@ -138,6 +138,11 @@
                                     @else
                                         <i class="ri-expand-up-down-line"></i>
                                     @endif
+                                </th>
+                            @endif
+                            @if ($showColumns['order_id_marketplace'])
+                                <th scope="col" class="px-4 py-4 text-sm font-medium text-gray-500 text-start">
+                                    Order ID Marketplace
                                 </th>
                             @endif
                             @if ($showColumns['total_items'])
@@ -274,6 +279,11 @@
                                                 {{ ucwords($retur->reason) }}
                                             </span>
                                         @endif
+                                    </td>
+                                @endif
+                                @if ($showColumns['order_id_marketplace'])
+                                    <td class="px-4 py-4 text-sm text-gray-500 whitespace-nowrap dark:text-gray-200">
+                                        {{ $retur->sale->order_id_marketplace ?? '-' }}
                                     </td>
                                 @endif
                                 @if ($showColumns['total_items'])

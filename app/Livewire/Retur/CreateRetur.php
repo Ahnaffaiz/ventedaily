@@ -55,7 +55,19 @@ class CreateRetur extends Component
         View::share('subtitle', $this->subtitle);
         View::share('subRoute', $this->subRoute);
         $this->sales_ids = Retur::get()->pluck('sale_id')->toArray();
-        $this->sales = Sale::whereNotIn('id', $this->sales_ids)->pluck('no_sale', 'id')->toArray();
+
+        // Updated to include order_id_marketplace in the display format
+        $this->sales = Sale::whereNotIn('id', $this->sales_ids)
+            ->get()
+            ->mapWithKeys(function ($sale) {
+                $label = $sale->no_sale;
+                if ($sale->order_id_marketplace) {
+                    $label .= ' (Order ID: ' . $sale->order_id_marketplace . ')';
+                }
+                return [$sale->id => $label];
+            })
+            ->toArray();
+
         if($retur) {
             $this->retur = Retur::where('id', $retur)->first();
             if($this->retur) {
@@ -90,8 +102,19 @@ class CreateRetur extends Component
     {
         $this->sales = Sale::whereNotIn('id', $this->sales_ids)->pluck('no_sale', 'id')->toArray();
         if ($query) {
-            $this->sales = Sale::whereNotIn('id', $this->sales_ids)->where('no_sale', 'like', '%'.$query.'%')
-                ->pluck('no_sale', 'id')
+            $this->sales = Sale::whereNotIn('id', $this->sales_ids)
+                ->where(function($queryBuilder) use ($query) {
+                    $queryBuilder->where('no_sale', 'like', '%'.$query.'%')
+                               ->orWhere('order_id_marketplace', 'like', '%'.$query.'%');
+                })
+                ->get()
+                ->mapWithKeys(function ($sale) {
+                    $label = $sale->no_sale;
+                    if ($sale->order_id_marketplace) {
+                        $label .= ' (Order ID: ' . $sale->order_id_marketplace . ')';
+                    }
+                    return [$sale->id => $label];
+                })
                 ->toArray();
             }
     }

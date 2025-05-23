@@ -44,6 +44,7 @@ class ListRetur extends Component
         'group' => true,
         'total_items' => true,
         'total_price' => true,
+        'order_id_marketplace' => true,
         'created_at' => false,
         'updated_at' => false,
     ];
@@ -87,7 +88,13 @@ class ListRetur extends Component
             'returs' => Retur::select('returs.*')
                 ->join('sales', 'returs.sale_id', '=', 'sales.id')
                 ->join('customers', 'sales.customer_id', '=', 'customers.id')
-                ->where('status', 'like', '%' . $this->status . '%')
+                ->where('returs.status', 'like', '%' . $this->status . '%')
+                ->where(function($query) {
+                    if($this->query) {
+                        $query->where('returs.no_retur', 'like', '%' . $this->query . '%')
+                              ->orWhere('sales.order_id_marketplace', 'like', '%' . $this->query . '%');
+                    }
+                })
                 ->orderBy($this->sortBy, $this->sortDirection)
                 ->paginate($this->perPage, ['*'], 'listReturs')
         ]);

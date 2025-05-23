@@ -13,7 +13,7 @@
         <div class="p-6">
             <div class="section">
                 <div class="grid gap-3 lg:grid-cols-3 md:grid-cols-2">
-                    <x-input-select-search id="sale_id" name="sale_id" title="Sale Code" placeholder="Type Sale Code" :options="$sales" searchFunction="searchSales" />
+                    <x-input-select-search id="sale_id" name="sale_id" title="Sale Code" placeholder="Search by Sale Code or Order ID" :options="$sales" searchFunction="searchSales" />
                     <x-input-select id="status" name="status" title="Status" :options="App\Enums\ReturStatus::asSelectArray()" />
                     <x-input-select id="reason" name="reason" title="Reason" :options="App\Enums\ReturReason::asSelectArray()" />
                 </div>

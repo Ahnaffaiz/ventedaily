@@ -60,17 +60,37 @@ class Withdrawal extends Component
 
     public function searchSale($query)
     {
-        $this->sales = Sale::whereHas('customer', function($query){
+        $sales = Sale::whereHas('customer', function($query){
             $query->where('group_id', 2);
         })->whereDoesntHave('saleWithdrawal')
-        ->pluck('no_sale','id')->toArray();
+        ->get();
+
+        $this->sales = $sales->mapWithKeys(function ($sale) {
+            $label = $sale->no_sale;
+            if ($sale->order_id_marketplace) {
+                $label .= ' (Order ID: ' . $sale->order_id_marketplace . ')';
+            }
+            return [$sale->id => $label];
+        })->toArray();
 
         if ($query) {
-            $this->sales = Sale::whereHas('customer', function($q){
+            $filteredSales = Sale::whereHas('customer', function($q){
                 $q->where('group_id', 2);
-            })->where('no_sale', 'like', '%'.$query.'%')
+            })
+            ->where(function($queryBuilder) use ($query) {
+                $queryBuilder->where('no_sale', 'like', '%'.$query.'%')
+                           ->orWhere('order_id_marketplace', 'like', '%'.$query.'%');
+            })
             ->whereDoesntHave('saleWithdrawal')
-            ->pluck('no_sale','id')->toArray();
+            ->get();
+
+            $this->sales = $filteredSales->mapWithKeys(function ($sale) {
+                $label = $sale->no_sale;
+                if ($sale->order_id_marketplace) {
+                    $label .= ' (Order ID: ' . $sale->order_id_marketplace . ')';
+                }
+                return [$sale->id => $label];
+            })->toArray();
         }
     }
 
@@ -79,8 +99,9 @@ class Withdrawal extends Component
         return view('livewire.sale.withdrawal', [
             'withdrawals' => SaleWithdrawal::join('sales', 'sales.id', '=', 'sale_withdrawals.sale_id')
                 ->leftJoin('sale_shippings', 'sale_shippings.sale_id', '=', 'sale_withdrawals.sale_id')
-                ->leftJoin('marketplaces', 'marketplaces.id', '=', 'sale_shippings.marketplace_id')
+                ->leftJoin('marketplaces', 'marketplaces.id', '=', 'sales.marketplace_id')
                 ->select(
+                    'sales.marketplace_id',
                     'sale_withdrawals.id',
                     'sale_withdrawals.marketplace_price',
                     'sale_withdrawals.withdrawal_amount',
@@ -92,12 +113,13 @@ class Withdrawal extends Component
                     'sales.created_at as sale_date',
                     'sale_shippings.no_resi',
                     'sale_shippings.customer_name as customer_name',
-                    'sale_shippings.order_id_marketplace',
+                    'sales.order_id_marketplace',
                     'marketplaces.name as marketplace_name'
                 )
                 ->where(function($query) {
                     $query->where('sale_shippings.no_resi', 'like', '%' . $this->query . '%')
-                        ->orWhere('sales.no_sale', 'like', '%' . $this->query . '%');
+                        ->orWhere('sales.no_sale', 'like', '%' . $this->query . '%')
+                        ->orWhere('sales.order_id_marketplace', 'like', '%' . $this->query . '%');
                 })
                 ->orderBy($this->sortBy, $this->sortDirection)
                 ->paginate($this->perPage, ['*'], 'listWithdrawals')
@@ -109,10 +131,18 @@ class Withdrawal extends Component
     {
         $this->resetForm();
         if (!$this->withdrawal) {
-            $this->sales = Sale::whereHas('customer', function($query){
+            $sales = Sale::whereHas('customer', function($query){
                 $query->where('group_id', 2);
             })->whereDoesntHave('saleWithdrawal')
-            ->pluck('no_sale','id')->toArray();
+            ->get();
+
+            $this->sales = $sales->mapWithKeys(function ($sale) {
+                $label = $sale->no_sale;
+                if ($sale->order_id_marketplace) {
+                    $label .= ' (Order ID: ' . $sale->order_id_marketplace . ')';
+                }
+                return [$sale->id => $label];
+            })->toArray();
         }
         $this->isOpen = true;
     }

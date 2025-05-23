@@ -3,7 +3,7 @@
         saveButton="{{ $withdrawal ? 'update' : 'save' }}" closeButton="closeModal">
         <form>
             @if (!$withdrawal)
-                <x-input-select-search id="sale_id" name="sale_id" title="No Sale" placeholder="Type No Sale"
+                <x-input-select-search id="sale_id" name="sale_id" title="No Sale" placeholder="Search by Sale Number or Order ID"
                 :options="$sales" searchFunction="searchSale" />
             @endif
             <x-input-text type="datetime-local" name="date" id="date" title="Date"/>
@@ -23,7 +23,7 @@
             <div class="flex justify-end mb-4">
                 <div class="relative mr-4 ms-auto">
                     <input type="search" class="relative w-48 border-none form-input bg-black/5 ps-8" wire:model.live="query"
-                        placeholder="Order Id atau No Resi">
+                        placeholder="Search by Sale Number, Order ID, or Resi">
                     <span class="absolute z-10 text-base -translate-y-1/2 ri-search-line start-2 top-1/2"></span>
                 </div>
                 <div class="relative ms-auto">
@@ -344,9 +344,9 @@
             </table>
         </div>
         <div class="px-3 py-4">
-            <div class="flex flex-col items-center md:flex-row md:justify-between gap-4">
+            <div class="flex flex-col items-center gap-4 md:flex-row md:justify-between">
                 <div class="flex flex-col items-center md:items-start">
-                    <div class="mt-2 text-sm text-center md:text-left text-gray-600">
+                    <div class="mt-2 text-sm text-center text-gray-600 md:text-left">
                         Showing {{ $withdrawals->firstItem() ?? 0 }} to {{ $withdrawals->lastItem() ?? 0 }} of {{ $withdrawals->total() }} entries
                     </div>
                 </div>

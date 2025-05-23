@@ -22,7 +22,7 @@
                 </div>
                 <div class="section">
                     @if ($saleFrom === 'keep')
-                        <x-input-select-search id="keep_id" name="keep_id" title="Keep Code" placeholder="Type Keep Code"
+                        <x-input-select-search id="keep_id" name="keep_id" title="Keep Code" placeholder="Search by Keep Code or Order ID"
                             :options="$keeps" searchFunction="searchKeep" />
                     @elseif ($saleFrom === 'pre_order')
                         <x-input-select-search id="pre_order_id" name="pre_order_id" title="Pre Order Code" placeholder="Type Pre Order Code"

@@ -92,7 +92,20 @@ class CreateSale extends Component
         $this->marketplaces = Marketplace::all()->pluck('name', 'id')->toArray();
         $this->discount_type = DiscountType::PERSEN;
         $this->discount_programs = Discount::all()->pluck('name', 'id')->toArray();
-        $this->keeps = Keep::where('keep_time', '>=', Carbon::now())->where('status', strtolower(KeepStatus::ACTIVE))->pluck('no_keep', 'id')->toArray();
+
+        // Load keeps with both keep code and order ID
+        $keeps = Keep::where('keep_time', '>=', Carbon::now())
+            ->where('status', strtolower(KeepStatus::ACTIVE))
+            ->get();
+
+        $this->keeps = $keeps->mapWithKeys(function ($keep) {
+            $label = $keep->no_keep;
+            if ($keep->order_id_marketplace) {
+                $label .= ' (Order ID: ' . $keep->order_id_marketplace . ')';
+            }
+            return [$keep->id => $label];
+        })->toArray();
+
         $this->preOrders = PreOrder::whereNotIn('id', Sale::where('pre_order_id', '!=', null)->pluck('pre_order_id'))->pluck('no_pre_order', 'id')->toArray();
         $this->groups = Group::all()->pluck('name', 'id')->toArray();
         $this->customers = Customer::all()->pluck('name', 'id')->toArray();
@@ -187,13 +200,34 @@ class CreateSale extends Component
 
     public function searchKeep($query)
     {
-        $this->keeps = Keep::where('keep_time', '>=', Carbon::now())->where('status', strtolower(KeepStatus::ACTIVE))->pluck('no_keep', 'id')->toArray();
-        if ($query) {
-            $this->keeps = Keep::where('keep_time', '>=', Carbon::now())
+        $keeps = Keep::where('keep_time', '>=', Carbon::now())
             ->where('status', strtolower(KeepStatus::ACTIVE))
-            ->where('no_keep', 'like', '%'.$query.'%')
-            ->pluck('no_keep', 'id')
-            ->toArray();
+            ->get();
+
+        $this->keeps = $keeps->mapWithKeys(function ($keep) {
+            $label = $keep->no_keep;
+            if ($keep->order_id_marketplace) {
+                $label .= ' (Order ID: ' . $keep->order_id_marketplace . ')';
+            }
+            return [$keep->id => $label];
+        })->toArray();
+
+        if ($query) {
+            $filteredKeeps = Keep::where('keep_time', '>=', Carbon::now())
+                ->where('status', strtolower(KeepStatus::ACTIVE))
+                ->where(function($queryBuilder) use ($query) {
+                    $queryBuilder->where('no_keep', 'like', '%'.$query.'%')
+                               ->orWhere('order_id_marketplace', 'like', '%'.$query.'%');
+                })
+                ->get();
+
+            $this->keeps = $filteredKeeps->mapWithKeys(function ($keep) {
+                $label = $keep->no_keep;
+                if ($keep->order_id_marketplace) {
+                    $label .= ' (Order ID: ' . $keep->order_id_marketplace . ')';
+                }
+                return [$keep->id => $label];
+            })->toArray();
         }
     }
 

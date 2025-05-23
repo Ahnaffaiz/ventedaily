@@ -62,7 +62,9 @@ class SaleProductExport implements FromView
                     'size' => $items->first()->productStock->size->name,
                     'qty' => $items->sum('total_items'),
                 ];
-            })->values();
+            })
+            ->sortBy('product_name')
+            ->values();
     }
 
     public function view(): View

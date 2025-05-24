@@ -19,6 +19,7 @@ class Supplier extends Component
 
     public $supplier, $name, $phone, $address;
     public $query = '', $perPage = 10, $sortBy = 'name', $sortDirection = 'asc';
+    public $perPageOptions = [10, 50, 100, 200];
     public $showColumns = [
         'phone' => true,
         'address' => true,
@@ -55,6 +56,11 @@ class Supplier extends Component
     }
 
     public function updatedShowColumns($column)
+    {
+        $this->resetPage();
+    }
+
+    public function updatedPerPage()
     {
         $this->resetPage();
     }

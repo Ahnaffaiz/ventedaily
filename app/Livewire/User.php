@@ -34,6 +34,7 @@ class User extends Component
     public $email;
 
     public $query = '', $perPage = 10, $sortBy = 'name', $sortDirection = 'asc';
+    public $perPageOptions = [10, 50, 100, 200];
     public $showColumns = [
         'name' => true,
         'email' => true,
@@ -70,6 +71,11 @@ class User extends Component
     }
 
     public function updatedShowColumns($column)
+    {
+        $this->resetPage();
+    }
+
+    public function updatedPerPage()
     {
         $this->resetPage();
     }

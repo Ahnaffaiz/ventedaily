@@ -58,18 +58,12 @@
                 </table>
             </div>
 
-            <div class="px-3 py-4">
-                <div class="flex flex-col items-center md:flex-row md:justify-between gap-4">
-                    <div class="flex flex-col items-center md:items-start">
-                        <div class="mt-2 text-sm text-center md:text-left text-gray-600">
-                            Showing {{ $saleItems->firstItem() ?? 0 }} to {{ $saleItems->lastItem() ?? 0 }} of {{ $saleItems->total() }} entries
-                        </div>
-                    </div>
-                    <div class="mt-2 md:mt-0">
-                        <x-pagination :paginator="$saleItems" pageName="resumeSale" />
-                    </div>
-                </div>
-            </div>
+            <x-data-pagination 
+                :paginator="$saleItems" 
+                :perPageOptions="$perPageOptions"
+                perPageProperty="perPage"
+                pageName="resumeSale" 
+            />
         </div>
     </div>
 </div>

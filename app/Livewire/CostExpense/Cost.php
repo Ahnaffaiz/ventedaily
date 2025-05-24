@@ -17,6 +17,7 @@ class Cost extends Component
     public $isOpen = false;
     public $cost, $name, $desc;
     public $query = '', $perPage = 10, $sortBy = 'name', $sortDirection = 'asc';
+    public $perPageOptions = [10, 50, 100, 200];
     public $showColumns = [
         'desc' => true,
         'created_at' => true,
@@ -50,6 +51,11 @@ class Cost extends Component
     }
 
     public function updatedShowColumns($column)
+    {
+        $this->resetPage();
+    }
+
+    public function updatedPerPage()
     {
         $this->resetPage();
     }

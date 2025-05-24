@@ -199,17 +199,13 @@
             </table>
         </div>
 
-        <div class="px-3 py-4">
-            <div class="flex flex-col items-center md:flex-row md:justify-between gap-4">
-                <div class="flex flex-col items-center md:items-start">
-                    <div class="mt-2 text-sm text-center md:text-left text-gray-600">
-                        Showing {{ $users->firstItem() ?? 0 }} to {{ $users->lastItem() ?? 0 }} of {{ $users->total() }} entries
-                    </div>
-                </div>
-                <div class="mt-2 md:mt-0">
-                    <x-pagination :paginator="$users" pageName="listUsers" />
-                </div>
-            </div>
+        <div class="flex-shrink-0">
+            <x-data-pagination
+                :paginator="$users"
+                :perPageOptions="$perPageOptions"
+                perPageProperty="perPage"
+                pageName="listCategories"
+            />
         </div>
     </div>
 </div>

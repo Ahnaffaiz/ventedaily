@@ -15,6 +15,7 @@ class ResumeRetur extends Component
     public $returStatus, $retur_status;
     public $productData, $productLabel;
     public $perPage = 10;
+    public $perPageOptions = [10, 50, 100, 200];
 
     public function mount()
     {
@@ -85,5 +86,10 @@ class ResumeRetur extends Component
         'productLabel' => $data->pluck('full_name'),
         'productData' => $data->pluck('items'),
     ]);
+    }
+
+    public function updatedPerPage()
+    {
+        $this->resetPage();
     }
 }

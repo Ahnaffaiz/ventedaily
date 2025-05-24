@@ -32,6 +32,7 @@ class Expense extends Component
     public $expense, $costs;
 
     public $query = '', $perPage = 10, $sortBy = 'date', $sortDirection = 'asc';
+    public $perPageOptions = [10, 50, 100, 200];
     public $showColumns = [
         'desc' => false,
         'created_at' => false,
@@ -61,6 +62,11 @@ class Expense extends Component
     }
 
     public function updatedShowColumns($column)
+    {
+        $this->resetPage();
+    }
+
+    public function updatedPerPage()
     {
         $this->resetPage();
     }

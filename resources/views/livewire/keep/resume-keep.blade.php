@@ -58,18 +58,12 @@
                 </table>
             </div>
 
-            <div class="px-3 py-4">
-                <div class="flex flex-col items-center md:flex-row md:justify-between gap-4">
-                    <div class="flex flex-col items-center md:items-start">
-                        <div class="mt-2 text-sm text-center md:text-left text-gray-600">
-                            Showing {{ $keepProducts->firstItem() ?? 0 }} to {{ $keepProducts->lastItem() ?? 0 }} of {{ $keepProducts->total() }} entries
-                        </div>
-                    </div>
-                    <div class="mt-2 md:mt-0">
-                        <x-pagination :paginator="$keepProducts" pageName="resumeKeep" />
-                    </div>
-                </div>
-            </div>
+            <x-data-pagination 
+                :paginator="$keepProducts" 
+                :perPageOptions="$perPageOptions"
+                perPageProperty="perPage"
+                pageName="resumeKeep" 
+            />
         </div>
     </div>
 </div>

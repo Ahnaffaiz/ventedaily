@@ -15,6 +15,7 @@ class ResumeSale extends Component
     public $groups, $group_id;
     public $productData, $productLabel;
     public $perPage = 10;
+    public $perPageOptions = [10, 50, 100, 200];
 
     public function mount()
     {
@@ -80,5 +81,10 @@ class ResumeSale extends Component
         'productLabel' => $data->pluck('full_name'),
         'productData' => $data->pluck('items'),
     ]);
+    }
+
+    public function updatedPerPage()
+    {
+        $this->resetPage();
     }
 }

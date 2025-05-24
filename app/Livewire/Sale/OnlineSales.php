@@ -14,7 +14,7 @@ class OnlineSales extends Component
     public $sale;
     public $isOpen = false;
     public $query = '', $perPage = 10, $sortBy = 'no_sale', $sortDirection = 'desc';
-
+    public $perPageOptions = [10, 50, 100, 200];
     public $total_price, $sub_total_after_discount;
 
     #[Title('Online Sales')]
@@ -46,6 +46,11 @@ class OnlineSales extends Component
     }
 
     public function updatedShowColumns($column)
+    {
+        $this->resetPage();
+    }
+
+    public function updatedPerPage()
     {
         $this->resetPage();
     }

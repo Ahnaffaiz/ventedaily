@@ -213,17 +213,13 @@
                 @endif
             </table>
         </div>
-        <div class="px-3 py-4">
-            <div class="flex flex-col items-center md:flex-row md:justify-between gap-4">
-                <div class="flex flex-col items-center md:items-start">
-                    <div class="mt-2 text-sm text-center md:text-left text-gray-600">
-                        Showing {{ $categories->firstItem() ?? 0 }} to {{ $categories->lastItem() ?? 0 }} of {{ $categories->total() }} entries
-                    </div>
-                </div>
-                <div class="mt-2 md:mt-0">
-                    <x-pagination :paginator="$categories" pageName="listCategories" />
-                </div>
-            </div>
+        <div class="flex-shrink-0">
+            <x-data-pagination
+                :paginator="$categories"
+                :perPageOptions="$perPageOptions"
+                perPageProperty="perPage"
+                pageName="listCategories"
+            />
         </div>
     </div>
 </div>

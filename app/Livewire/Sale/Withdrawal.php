@@ -20,6 +20,7 @@ class Withdrawal extends Component
 
     public $isOpen = false;
     public $query = '', $perPage = 10, $sortBy = 'no_sale', $sortDirection = 'desc';
+    public $perPageOptions = [10, 50, 100, 200];
 
     #[Validate('required')]
     public $date, $withdrawal_amount, $marketplace_price, $sale_id;
@@ -54,6 +55,11 @@ class Withdrawal extends Component
     }
 
     public function updatedShowColumns($column)
+    {
+        $this->resetPage();
+    }
+
+    public function updatedPerPage()
     {
         $this->resetPage();
     }

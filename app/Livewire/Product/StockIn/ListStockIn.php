@@ -27,6 +27,9 @@ class ListStockIn extends Component
     public $query = '', $perPage = 10, $sortBy = 'created_at', $sortDirection = 'desc';
     public $total_price;
 
+    // Pagination options
+    public $perPageOptions = [10, 50, 100, 200];
+
     public $stockType;
 
     #[Rule('required')]
@@ -54,6 +57,11 @@ class ListStockIn extends Component
         }
 
         $this->sortBy = $column;
+    }
+
+    public function updatedPerPage()
+    {
+        $this->resetPage();
     }
 
     public function render()

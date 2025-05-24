@@ -294,71 +294,12 @@
         </div>
 
         <div class="px-3 py-4">
-            <div class="flex flex-col items-center md:flex-row md:justify-between gap-4">
-                <div class="flex flex-col items-center md:items-start">
-                    <div class="mt-2 text-sm text-center md:text-left text-gray-600">
-                        Showing {{ $purchases->firstItem() ?? 0 }} to {{ $purchases->lastItem() ?? 0 }} of {{ $purchases->total() }} entries
-                    </div>
-                </div>
-                <div class="mt-2 md:mt-0">
-                    @if($purchases->hasPages())
-                        <nav role="navigation" aria-label="Pagination Navigation" class="flex items-center justify-between">
-                            <div class="flex items-center space-x-2">
-                                {{-- Previous Page Link --}}
-                                @if ($purchases->onFirstPage())
-                                    <span class="px-3 py-1 text-sm font-medium text-gray-500 bg-white border border-gray-300 rounded-md cursor-not-allowed">
-                                        Previous
-                                    </span>
-                                @else
-                                    <button wire:click="previousPage('page')" wire:loading.attr="disabled" class="px-3 py-1 text-sm font-medium text-gray-700 bg-white border border-gray-300 rounded-md hover:bg-gray-50">
-                                        Previous
-                                    </button>
-                                @endif
-
-                                {{-- First Page --}}
-                                @if($purchases->currentPage() > 3)
-                                    <button wire:click="gotoPage(1)" class="px-3 py-1 text-sm font-medium text-gray-700 bg-white border border-gray-300 rounded-md hover:bg-gray-50">
-                                        1
-                                    </button>
-                                    <span class="px-3 py-1 text-sm font-medium text-gray-500">...</span>
-                                @endif
-
-                                {{-- Pagination Elements --}}
-                                @for($i = max(1, $purchases->currentPage() - 1); $i <= min($purchases->lastPage(), $purchases->currentPage() + 1); $i++)
-                                    @if ($i == $purchases->currentPage())
-                                        <span class="px-3 py-1 text-sm font-medium text-white bg-primary border border-primary rounded-md">
-                                            {{ $i }}
-                                        </span>
-                                    @else
-                                        <button wire:click="gotoPage({{ $i }})" class="px-3 py-1 text-sm font-medium text-gray-700 bg-white border border-gray-300 rounded-md hover:bg-gray-50">
-                                            {{ $i }}
-                                        </button>
-                                    @endif
-                                @endfor
-
-                                {{-- Last Page --}}
-                                @if($purchases->currentPage() < $purchases->lastPage() - 2)
-                                    <span class="px-3 py-1 text-sm font-medium text-gray-500">...</span>
-                                    <button wire:click="gotoPage({{ $purchases->lastPage() }})" class="px-3 py-1 text-sm font-medium text-gray-700 bg-white border border-gray-300 rounded-md hover:bg-gray-50">
-                                        {{ $purchases->lastPage() }}
-                                    </button>
-                                @endif
-
-                                {{-- Next Page Link --}}
-                                @if ($purchases->hasMorePages())
-                                    <button wire:click="nextPage('page')" wire:loading.attr="disabled" class="px-3 py-1 text-sm font-medium text-gray-700 bg-white border border-gray-300 rounded-md hover:bg-gray-50">
-                                        Next
-                                    </button>
-                                @else
-                                    <span class="px-3 py-1 text-sm font-medium text-gray-500 bg-white border border-gray-300 rounded-md cursor-not-allowed">
-                                        Next
-                                    </span>
-                                @endif
-                            </div>
-                        </nav>
-                    @endif
-                </div>
-            </div>
+            <x-data-pagination
+                :paginator="$purchases"
+                :perPageOptions="$perPageOptions"
+                perPageProperty="perPage"
+                pageName="page"
+            />
         </div>
     </div>
 

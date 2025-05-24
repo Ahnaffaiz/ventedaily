@@ -22,6 +22,7 @@ class ListPreOrder extends Component
     public $isOpen = false;
     public $preOrder;
     public $query = '', $perPage = 10, $sortBy = 'no_pre_order', $sortDirection = 'desc';
+    public $perPageOptions = [10, 25, 50, 100];
     public $total_price;
     public $showColumns = [
         'total_items' => true,
@@ -51,6 +52,11 @@ class ListPreOrder extends Component
         }
 
         $this->sortBy = $column;
+    }
+
+    public function updatedPerPage()
+    {
+        $this->resetPage();
     }
 
     public function updatedShowColumns($column)

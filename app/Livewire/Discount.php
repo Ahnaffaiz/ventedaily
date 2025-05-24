@@ -32,6 +32,7 @@ class Discount extends Component
     public $is_active = true;
 
     public $query = '', $perPage = 10, $sortBy = 'name', $sortDirection = 'asc';
+    public $perPageOptions = [10, 50, 100, 200];
     public $showColumns = [
         'name' => true,
         'value' => true,
@@ -63,6 +64,11 @@ class Discount extends Component
     }
 
     public function updatedShowColumns($column)
+    {
+        $this->resetPage();
+    }
+
+    public function updatedPerPage()
     {
         $this->resetPage();
     }

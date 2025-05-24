@@ -21,6 +21,7 @@ class Size extends Component
     public $isOpen = false, $isImport = false;
     public $size, $name, $desc, $size_file, $sizePreviews;
     public $query = '', $perPage = 10, $sortBy = 'name', $sortDirection = 'asc';
+    public $perPageOptions = [10, 50, 100, 200];
     public $showColumns = [
         'desc' => true,
         'created_at' => true,
@@ -54,6 +55,11 @@ class Size extends Component
     }
 
     public function updatedShowColumns($column)
+    {
+        $this->resetPage();
+    }
+
+    public function updatedPerPage()
     {
         $this->resetPage();
     }

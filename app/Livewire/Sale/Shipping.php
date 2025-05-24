@@ -19,6 +19,7 @@ class Shipping extends Component
     public $shipping, $sales, $shipping_id, $banks;
     public $isOpen = false, $modal;
     public $query = '', $perPage = 10, $sortBy = 'no_sale', $sortDirection = 'desc';
+    public $perPageOptions = [10, 50, 100, 200];
 
     public $marketplace;
 
@@ -61,6 +62,11 @@ class Shipping extends Component
     }
 
     public function updatedShowColumns($column)
+    {
+        $this->resetPage();
+    }
+
+    public function updatedPerPage()
     {
         $this->resetPage();
     }

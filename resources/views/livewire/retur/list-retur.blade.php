@@ -335,16 +335,12 @@
         </div>
 
         <div class="px-3 py-4">
-            <div class="flex flex-col items-center md:flex-row md:justify-between gap-4">
-                <div class="flex flex-col items-center md:items-start">
-                    <div class="mt-2 text-sm text-center md:text-left text-gray-600">
-                        Showing {{ $returs->firstItem() ?? 0 }} to {{ $returs->lastItem() ?? 0 }} of {{ $returs->total() }} entries
-                    </div>
-                </div>
-                <div class="mt-2 md:mt-0">
-                    <x-pagination :paginator="$returs" pageName="listReturs" />
-                </div>
-            </div>
+            <x-data-pagination
+                :paginator="$returs"
+                :perPageOptions="$perPageOptions"
+                perPageProperty="perPage"
+                pageName="listReturs"
+            />
         </div>
     </div>
     <div class="mt-2">

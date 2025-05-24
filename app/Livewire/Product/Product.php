@@ -53,6 +53,7 @@ class Product extends Component
     public $categories, $product, $isProductStock = false, $isStock = false, $isImport = false, $importType = 'product', $isHistory = false;
 
     public $query = '', $perPage = 10, $sortBy = 'name', $sortDirection = 'asc';
+    public $perPageOptions = [10, 50, 100, 200];
 
     public $start_date, $end_date;
 
@@ -101,6 +102,11 @@ class Product extends Component
     }
 
     public function updatedShowColumns($column)
+    {
+        $this->resetPage();
+    }
+
+    public function updatedPerPage()
     {
         $this->resetPage();
     }

@@ -32,6 +32,9 @@ class ListPurchase extends Component
     public $isOpen = false, $isPayment = false, $isExport = false;
     public $query = '', $perPage = 10, $sortBy = 'created_at', $sortDirection = 'desc';
 
+    // Pagination options
+    public $perPageOptions = [10, 50, 100, 200];
+
     #[Rule('required')]
     public $start_date, $end_date, $exportType = 'product';
     public $supplier_id, $suppliers, $product_id, $products;
@@ -69,6 +72,12 @@ class ListPurchase extends Component
     {
         $this->resetPage();
     }
+
+    public function updatedPerPage()
+    {
+        $this->resetPage();
+    }
+
     public function render()
     {
         return view('livewire.purchase.list-purchase', [

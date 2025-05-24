@@ -368,16 +368,12 @@
             </table>
         </div>
         <div class="px-3 py-4">
-            <div class="flex flex-col items-center md:flex-row md:justify-between gap-4">
-                <div class="flex flex-col items-center md:items-start">
-                    <div class="mt-2 text-sm text-center md:text-left text-gray-600">
-                        Showing {{ $onlineSales->firstItem() ?? 0 }} to {{ $onlineSales->lastItem() ?? 0 }} of {{ $onlineSales->total() }} entries
-                    </div>
-                </div>
-                <div class="mt-2 md:mt-0">
-                    <x-pagination :paginator="$onlineSales" pageName="listOnlineSales" />
-                </div>
-            </div>
+            <x-data-pagination
+                :paginator="$onlineSales"
+                :perPageOptions="$perPageOptions"
+                perPageProperty="perPage"
+                pageName="listOnlineSales"
+            />
         </div>
     </div>
 </div>

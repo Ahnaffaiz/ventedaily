@@ -33,6 +33,7 @@ class ListTransferStock extends Component
     public $isOpen = false, $isExport = false;
     public $transferStock;
     public $query = '', $perPage = 10, $sortBy = 'created_at', $sortDirection = 'desc';
+    public $perPageOptions = [10, 50, 100, 200];
     public $total_price;
 
     #[Rule('required')]
@@ -68,6 +69,11 @@ class ListTransferStock extends Component
         }
 
         $this->sortBy = $column;
+    }
+
+    public function updatedPerPage()
+    {
+        $this->resetPage();
     }
 
     public function mount()

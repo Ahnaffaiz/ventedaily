@@ -37,6 +37,9 @@ class ListRetur extends Component
     public $query = '', $perPage = 10, $sortBy = 'no_retur', $sortDirection = 'desc', $status, $returStatus;
     public $total_price;
 
+    // Pagination options
+    public $perPageOptions = [10, 50, 100, 200];
+
     public $user;
     public $showColumns = [
         'status' => true,
@@ -73,6 +76,11 @@ class ListRetur extends Component
     }
 
     public function updatedShowColumns($column)
+    {
+        $this->resetPage();
+    }
+
+    public function updatedPerPage()
     {
         $this->resetPage();
     }

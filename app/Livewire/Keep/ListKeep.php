@@ -30,6 +30,9 @@ class ListKeep extends Component
     public $keep;
     public $query = '', $perPage = 10, $sortBy = 'no_keep', $sortDirection = 'desc', $groupIds, $groupId = '', $status = KeepStatus::ACTIVE;
 
+    // Pagination options
+    public $perPageOptions = [10, 50, 100, 200];
+
     public $online_keep_products, $reseller_keep_products, $all_keep_products;
     public $online_keep_price, $reseller_keep_price, $all_keep_price;
     public $total_price;
@@ -69,6 +72,11 @@ class ListKeep extends Component
     }
 
     public function updatedShowColumns($column)
+    {
+        $this->resetPage();
+    }
+
+    public function updatedPerPage()
     {
         $this->resetPage();
     }

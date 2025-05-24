@@ -38,6 +38,9 @@ class ListSale extends Component
     public $isOpen = false, $isPayment = false, $isExport = false;
     public $query = '', $perPage = 10, $sortBy = 'no_sale', $sortDirection = 'desc', $groupIds, $groupId;
 
+    // Pagination options
+    public $perPageOptions = [10, 50, 100, 200];
+
     #[Rule('required')]
     public $start_date, $end_date, $exportType = 'product';
     public $customer_id, $customers, $group_id, $groups, $product_id, $products;
@@ -91,6 +94,11 @@ class ListSale extends Component
     }
 
     public function updatedShowColumns($column)
+    {
+        $this->resetPage();
+    }
+
+    public function updatedPerPage()
     {
         $this->resetPage();
     }

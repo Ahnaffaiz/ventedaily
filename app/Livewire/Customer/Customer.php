@@ -38,6 +38,7 @@ class Customer extends Component
     public $customerPreviews, $customer_file;
 
     public $query = '', $perPage = 10, $sortBy = 'name', $sortDirection = 'asc';
+    public $perPageOptions = [10, 50, 100, 200];
     public $showColumns = [
         'phone' => true,
         'email' => true,
@@ -70,6 +71,11 @@ class Customer extends Component
     }
 
     public function updatedShowColumns($column)
+    {
+        $this->resetPage();
+    }
+
+    public function updatedPerPage()
     {
         $this->resetPage();
     }

@@ -346,16 +346,12 @@
         </div>
 
         <div class="px-3 py-4">
-            <div class="flex flex-col items-center gap-4 md:flex-row md:justify-between">
-                <div class="flex flex-col items-center md:items-start">
-                    <div class="mt-2 text-sm text-center text-gray-600 md:text-left">
-                        Showing {{ $keeps->firstItem() ?? 0 }} to {{ $keeps->lastItem() ?? 0 }} of {{ $keeps->total() }} entries
-                    </div>
-                </div>
-                <div class="mt-2 md:mt-0">
-                    <x-pagination :paginator="$keeps" pageName="listKeep" />
-                </div>
-            </div>
+            <x-data-pagination
+                :paginator="$keeps"
+                :perPageOptions="$perPageOptions"
+                perPageProperty="perPage"
+                pageName="listKeep"
+            />
         </div>
     </div>
     @livewire('keep.resume-keep', ['user' => $user], key($user->id))

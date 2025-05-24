@@ -272,16 +272,12 @@
         </div>
 
         <div class="px-3 py-4">
-            <div class="flex flex-col items-center gap-4 md:flex-row md:justify-between">
-                <div class="flex flex-col items-center md:items-start">
-                    <div class="mt-2 text-sm text-center text-gray-600 md:text-left">
-                        Showing {{ $customers->firstItem() ?? 0 }} to {{ $customers->lastItem() ?? 0 }} of {{ $customers->total() }} entries
-                    </div>
-                </div>
-                <div class="mt-2 md:mt-0">
-                    <x-pagination :paginator="$customers" pageName="listCustomers" />
-                </div>
-            </div>
+            <x-data-pagination
+                :paginator="$customers"
+                :perPageOptions="$perPageOptions"
+                perPageProperty="perPage"
+                pageName="listCustomers"
+            />
         </div>
     </div>
 </div>

@@ -300,24 +300,22 @@
             </table>
         </div>
 
-        <div class="flex px-3 py-4">
-            <div class="flex flex-col items-center flex-grow md:items-start">
-                <div class="text-sm text-center text-gray-600 md:text-left">
-                    Showing {{ $products->firstItem() ?? 0 }} to {{ $products->lastItem() ?? 0 }} of {{ $products->total() }} entries
-                </div>
-                <div class="flex justify-start mt-2">
-                    <div class="flex gap-2 pe-4">
-                        <div class="p-2 rounded-full bg-warning"></div>
-                        <span>Product In Keep</span>
-                    </div>
-                    <div class="flex gap-2">
-                        <div class="p-2 rounded-full bg-danger"></div>
-                        <span>Product In Pre Order</span>
-                    </div>
-                </div>
+        <div class="flex-shrink-0">
+            <x-data-pagination
+                :paginator="$products"
+                :perPageOptions="$perPageOptions"
+                perPageProperty="perPage"
+                pageName="listProducts"
+            />
+        </div>
+        <div class="flex m-3">
+            <div class="flex gap-2 pe-4">
+                <div class="p-2 rounded-full bg-warning"></div>
+                <span>Product In Keep</span>
             </div>
-            <div class="flex-shrink-0">
-                <x-pagination :paginator="$products" pageName="listProducts" />
+            <div class="flex gap-2">
+                <div class="p-2 rounded-full bg-danger"></div>
+                <span>Product In Pre Order</span>
             </div>
         </div>
     </div>

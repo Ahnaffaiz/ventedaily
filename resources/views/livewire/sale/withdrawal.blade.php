@@ -344,16 +344,12 @@
             </table>
         </div>
         <div class="px-3 py-4">
-            <div class="flex flex-col items-center gap-4 md:flex-row md:justify-between">
-                <div class="flex flex-col items-center md:items-start">
-                    <div class="mt-2 text-sm text-center text-gray-600 md:text-left">
-                        Showing {{ $withdrawals->firstItem() ?? 0 }} to {{ $withdrawals->lastItem() ?? 0 }} of {{ $withdrawals->total() }} entries
-                    </div>
-                </div>
-                <div class="mt-2 md:mt-0">
-                    <x-pagination :paginator="$withdrawals" pageName="listWithdrawals" />
-                </div>
-            </div>
+            <x-data-pagination
+                :paginator="$withdrawals"
+                :perPageOptions="$perPageOptions"
+                perPageProperty="perPage"
+                pageName="listWithdrawals"
+            />
         </div>
     </div>
 </div>
